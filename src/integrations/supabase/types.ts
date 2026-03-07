@@ -14,7 +14,215 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          message: string | null
+          provider_id: string
+          scheduled_day: string | null
+          seeker_id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          message?: string | null
+          provider_id: string
+          scheduled_day?: string | null
+          seeker_id: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          message?: string | null
+          provider_id?: string
+          scheduled_day?: string | null
+          seeker_id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          availability: string[] | null
+          completed_jobs: number | null
+          created_at: string
+          description: string
+          experience: string | null
+          fixed_price: number | null
+          hourly_rate: number | null
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          latitude: number | null
+          listing_type: Database["public"]["Enums"]["listing_type"]
+          location: string | null
+          longitude: number | null
+          rating: number | null
+          response_time: string | null
+          review_count: number | null
+          services: string[] | null
+          skills: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: string[] | null
+          completed_jobs?: number | null
+          created_at?: string
+          description?: string
+          experience?: string | null
+          fixed_price?: number | null
+          hourly_rate?: number | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
+          location?: string | null
+          longitude?: number | null
+          rating?: number | null
+          response_time?: string | null
+          review_count?: number | null
+          services?: string[] | null
+          skills?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: string[] | null
+          completed_jobs?: number | null
+          created_at?: string
+          description?: string
+          experience?: string | null
+          fixed_price?: number | null
+          hourly_rate?: number | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          latitude?: number | null
+          listing_type?: Database["public"]["Enums"]["listing_type"]
+          location?: string | null
+          longitude?: number | null
+          rating?: number | null
+          response_time?: string | null
+          review_count?: number | null
+          services?: string[] | null
+          skills?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string
+          id: string
+          latitude: number | null
+          live_location_enabled: boolean | null
+          location: string | null
+          longitude: number | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          latitude?: number | null
+          live_location_enabled?: boolean | null
+          location?: string | null
+          longitude?: number | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          latitude?: number | null
+          live_location_enabled?: boolean | null
+          location?: string | null
+          longitude?: number | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          booking_id: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +231,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status: "pending" | "confirmed" | "completed" | "cancelled"
+      listing_type: "service" | "product" | "property" | "vehicle" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +359,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: ["pending", "confirmed", "completed", "cancelled"],
+      listing_type: ["service", "product", "property", "vehicle", "other"],
+    },
   },
 } as const
