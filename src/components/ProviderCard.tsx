@@ -2,7 +2,25 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Star, MapPin, Clock, CheckCircle2, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { Provider } from "@/data/mockProviders";
+
+export interface Provider {
+  id: string;
+  name: string;
+  avatar: string;
+  title: string;
+  skills: string[];
+  rating: number;
+  reviews: number;
+  hourlyRate: number;
+  location: string;
+  distance: string;
+  bio: string;
+  experience: string;
+  availability: string[];
+  completedJobs: number;
+  responseTime: string;
+  verified: boolean;
+}
 
 interface ProviderCardProps {
   provider: Provider;
