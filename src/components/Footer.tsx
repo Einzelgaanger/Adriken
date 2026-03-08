@@ -7,9 +7,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center gap-2 font-display font-bold text-xl text-background">
-            <div className="w-8 h-8 rounded-lg bg-gradient-warm flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <img src={adrikenLogo} alt="Adriken" className="w-8 h-8" />
             Adriken
           </Link>
           <p className="mt-4 text-sm text-background/60 leading-relaxed">
