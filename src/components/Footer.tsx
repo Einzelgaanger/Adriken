@@ -10,7 +10,7 @@ const Footer = () => (
             <div className="w-8 h-8 rounded-lg bg-gradient-warm flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            HireFlow
+            Adriken
           </Link>
           <p className="mt-4 text-sm text-background/60 leading-relaxed">
             The AI-powered marketplace where you just say what you need, and we find who.
