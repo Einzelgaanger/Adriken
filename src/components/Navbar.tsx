@@ -30,7 +30,7 @@ const Navbar = () => {
           <div className="w-8 h-8 rounded-lg bg-gradient-warm flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span>HireFlow</span>
+          <span>Adriken</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-1">

@@ -27,7 +27,7 @@ const testimonials = [
     name: "Priya S.",
     role: "Event Planner",
     avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop&crop=face",
-    text: "Needed a photographer, caterer, AND decorator for a last-minute event. HireFlow found all three in under 10 minutes. Absolutely incredible.",
+    text: "Needed a photographer, caterer, AND decorator for a last-minute event. Adriken found all three in under 10 minutes. Absolutely incredible.",
     rating: 5,
   },
 ];

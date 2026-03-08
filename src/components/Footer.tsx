@@ -36,7 +36,7 @@ const Footer = () => (
         ))}
       </div>
       <div className="mt-12 pt-8 border-t border-background/10 text-center text-xs text-background/40">
-        © {new Date().getFullYear()} HireFlow. All rights reserved.
+        © {new Date().getFullYear()} Adriken. All rights reserved.
       </div>
     </div>
   </footer>
