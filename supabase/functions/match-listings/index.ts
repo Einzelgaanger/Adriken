@@ -13,7 +13,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are HireFlow's AI matching engine. Given a user's natural language request and a list of available listings (services, products, properties, vehicles, etc.), rank and return the best matches.
+    const systemPrompt = `You are Adriken's AI matching engine. Given a user's natural language request and a list of available listings (services, products, properties, vehicles, etc.), rank and return the best matches.
 
 For each match, provide:
 - id: the listing ID

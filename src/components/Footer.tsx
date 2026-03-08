@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import adrikenLogo from "@/assets/adriken-logo.png";
 
 const Footer = () => (
   <footer className="bg-foreground py-16">
@@ -7,10 +7,8 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center gap-2 font-display font-bold text-xl text-background">
-            <div className="w-8 h-8 rounded-lg bg-gradient-warm flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
-            </div>
-            HireFlow
+            <img src={adrikenLogo} alt="Adriken" className="w-8 h-8" />
+            Adriken
           </Link>
           <p className="mt-4 text-sm text-background/60 leading-relaxed">
             The AI-powered marketplace where you just say what you need, and we find who.
@@ -36,7 +34,7 @@ const Footer = () => (
         ))}
       </div>
       <div className="mt-12 pt-8 border-t border-background/10 text-center text-xs text-background/40">
-        © {new Date().getFullYear()} HireFlow. All rights reserved.
+        © {new Date().getFullYear()} Adriken. All rights reserved.
       </div>
     </div>
   </footer>

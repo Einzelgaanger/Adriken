@@ -41,7 +41,7 @@ const Login = () => {
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground mb-2">Welcome back</h1>
-            <p className="text-muted-foreground">Log in to your HireFlow account</p>
+            <p className="text-muted-foreground">Log in to your Adriken account</p>
           </div>
           <div className="rounded-2xl bg-card border border-border p-6 shadow-card">
             <form onSubmit={handleSubmit} className="space-y-4">
