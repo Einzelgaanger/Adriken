@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import adrikenLogo from "@/assets/adriken-logo.png";
 
 const Footer = () => (
   <footer className="bg-foreground py-16">
