@@ -93,17 +93,38 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    /* Safe area for notched devices */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Prevent overscroll bounce when modal/menu is open (handled via JS where needed) */
+  body.menu-open {
+    overflow: hidden;
+    touch-action: none;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
   }
+
 }
 
 @layer utilities {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-warm);

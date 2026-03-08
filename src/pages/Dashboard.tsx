@@ -112,13 +112,13 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div className="container mx-auto max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="font-display text-3xl font-bold text-foreground">Dashboard</h1>
-              <Link to="/become-provider">
-                <Button variant="hero" size="sm"><Plus className="w-4 h-4 mr-1" /> New Listing</Button>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
+              <Link to="/become-provider" className="w-full sm:w-auto">
+                <Button variant="hero" size="sm" className="w-full sm:w-auto h-11 rounded-xl"><Plus className="w-4 h-4 mr-1" /> New Listing</Button>
               </Link>
             </div>
 
@@ -130,17 +130,17 @@ const Dashboard = () => {
               ) : listings && listings.length > 0 ? (
                 <div className="space-y-3">
                   {listings.map((l) => (
-                    <div key={l.id} className="rounded-xl bg-card border border-border p-4 flex items-center justify-between gap-4">
+                    <div key={l.id} className="rounded-xl bg-card border border-border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                       <div className="flex-1 min-w-0">
-                        <Link to={`/provider/${l.id}`} className="font-display font-semibold text-foreground hover:text-primary truncate block">{l.title}</Link>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                        <Link to={`/provider/${l.id}`} className="font-display font-semibold text-foreground hover:text-primary truncate block focus:outline-none focus:ring-2 focus:ring-ring rounded">{l.title}</Link>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-muted-foreground mt-1">
                           <Badge variant="secondary" className="text-xs capitalize">{l.listing_type}</Badge>
                           {l.location && <span>{l.location}</span>}
                           {l.hourly_rate && <span>${Number(l.hourly_rate)}/hr</span>}
                           {l.fixed_price && <span>${Number(l.fixed_price)}</span>}
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => deleteListing.mutate(l.id)} className="text-muted-foreground hover:text-destructive shrink-0">
+                      <Button variant="ghost" size="icon" onClick={() => deleteListing.mutate(l.id)} className="text-muted-foreground hover:text-destructive shrink-0 self-end sm:self-center min-w-[44px] min-h-[44px] rounded-xl" aria-label="Delete listing">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -177,11 +177,11 @@ const Dashboard = () => {
                           </span>
                         </div>
                         {b.status === "pending" && (
-                          <div className="flex gap-2 mt-3">
-                            <Button size="sm" variant="hero" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "confirmed" })}>
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            <Button size="sm" variant="hero" className="min-h-[44px] rounded-xl touch-manipulation" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "confirmed" })}>
                               Confirm
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "cancelled" })}>
+                            <Button size="sm" variant="outline" className="min-h-[44px] rounded-xl touch-manipulation" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "cancelled" })}>
                               Decline
                             </Button>
                           </div>

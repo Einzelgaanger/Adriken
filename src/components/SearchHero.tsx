@@ -30,12 +30,12 @@ const SearchHero = () => {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center bg-gradient-hero overflow-hidden">
+    <section className="relative min-h-[85dvh] sm:min-h-[90vh] flex items-center justify-center bg-gradient-hero overflow-hidden py-12 sm:py-16">
       {/* Decorative blobs */}
-      <div className="absolute top-20 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute bottom-20 -right-32 w-80 h-80 rounded-full bg-accent/5 blur-3xl" />
+      <div className="absolute top-20 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-20 -right-32 w-80 h-80 rounded-full bg-accent/5 blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto px-4 pt-20 pb-16 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-12 sm:pb-16 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -46,22 +46,22 @@ const SearchHero = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-8 font-medium text-sm"
+            className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 rounded-full bg-primary/10 text-primary mb-6 sm:mb-8 font-medium text-xs sm:text-sm"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             AI-Powered Service Matching
           </motion.div>
 
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-foreground">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6 text-foreground px-1">
             Just say what you need.{" "}
             <span className="text-gradient">We'll find who.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto px-1">
             No filters. No categories. Just tell us what you're looking for in your own words — our AI matches you with the perfect person nearby.
           </p>
 
-          {/* Search box */}
+          {/* Search box - stacked on small screens for better mobile UX */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,9 +70,9 @@ const SearchHero = () => {
               focused ? "border-primary shadow-elevated" : "border-border shadow-card"
             }`}
           >
-            <div className="flex items-start p-2">
-              <div className="flex-1 flex items-start gap-3 p-3">
-                <Search className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+            <div className="flex flex-col sm:flex-row sm:items-start p-3 sm:p-2 gap-3 sm:gap-0">
+              <div className="flex-1 flex items-start gap-3 p-2 sm:p-3 min-w-0">
+                <Search className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0 hidden sm:block" aria-hidden />
                 <textarea
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -85,39 +85,43 @@ const SearchHero = () => {
                     }
                   }}
                   placeholder="Tell us what you need... e.g. 'I need a nanny for 2 kids on weekdays'"
-                  className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground text-base min-h-[24px] max-h-[120px] font-body"
-                  rows={1}
+                  className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground text-base min-h-[44px] sm:min-h-[24px] max-h-[120px] font-body py-2 sm:py-0"
+                  rows={2}
+                  aria-label="Describe what you need"
                 />
               </div>
               <Button
                 variant="hero"
                 size="lg"
                 onClick={handleSearch}
-                className="rounded-xl shrink-0 m-1"
+                className="rounded-xl w-full sm:w-auto sm:shrink-0 h-12 sm:h-11 px-6 sm:m-1"
                 disabled={!query.trim()}
+                aria-label="Search for providers"
               >
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 sm:mr-0" />
+                <span className="sm:sr-only">Search</span>
               </Button>
             </div>
 
-            <div className="px-5 pb-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <MapPin className="w-3 h-3" />
+            <div className="px-4 sm:px-5 pb-3 flex items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground">
+              <MapPin className="w-3 h-3 shrink-0" aria-hidden />
               <span>Results prioritized by your location</span>
             </div>
           </motion.div>
 
-          {/* Suggestions */}
+          {/* Suggestions - larger tap targets on mobile */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-8 flex flex-wrap justify-center gap-2"
+            className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-2 sm:gap-2"
           >
             {suggestions.slice(0, 4).map((s) => (
               <button
                 key={s}
+                type="button"
                 onClick={() => handleSuggestion(s)}
-                className="px-4 py-2 rounded-full bg-card border border-border text-sm text-muted-foreground hover:border-primary hover:text-primary transition-colors duration-200 shadow-soft"
+                className="px-4 py-3 sm:py-2 rounded-full bg-card border border-border text-sm text-muted-foreground hover:border-primary hover:text-primary active:bg-primary/5 transition-colors duration-200 shadow-soft min-h-[44px] sm:min-h-0 inline-flex items-center justify-center text-left"
               >
                 {s}
               </button>

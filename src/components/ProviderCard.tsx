@@ -37,15 +37,15 @@ const ProviderCard = ({ provider, index, matchReason }: ProviderCardProps) => {
     >
       <Link
         to={`/provider/${provider.id}`}
-        className="block rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-card transition-all duration-300 overflow-hidden group"
+        className="block rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-card active:scale-[0.99] transition-all duration-300 overflow-hidden group focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
       >
-        <div className="p-5">
-          <div className="flex items-start gap-4">
+        <div className="p-4 sm:p-5">
+          <div className="flex items-start gap-3 sm:gap-4">
             <div className="relative shrink-0">
               <img
                 src={provider.avatar}
                 alt={provider.name}
-                className="w-14 h-14 rounded-xl object-cover"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover"
               />
               {provider.verified && (
                 <CheckCircle2 className="w-4 h-4 text-accent absolute -bottom-1 -right-1 bg-card rounded-full" />
@@ -88,18 +88,18 @@ const ProviderCard = ({ provider, index, matchReason }: ProviderCardProps) => {
             )}
           </div>
 
-          <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
-              <Star className="w-3.5 h-3.5 text-primary fill-primary" />
+              <Star className="w-3.5 h-3.5 text-primary fill-primary shrink-0" />
               <span className="font-medium text-foreground">{provider.rating}</span>
               <span>({provider.reviews})</span>
             </span>
             <span className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5" />
+              <MapPin className="w-3.5 h-3.5 shrink-0" />
               {provider.distance}
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
+              <Clock className="w-3.5 h-3.5 shrink-0" />
               {provider.responseTime}
             </span>
           </div>

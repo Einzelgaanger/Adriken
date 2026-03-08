@@ -95,20 +95,20 @@ const ProviderDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <button onClick={() => window.history.back()}>
-            <Button variant="ghost" size="sm" className="mb-6">
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div className="container mx-auto max-w-3xl">
+          <button type="button" onClick={() => window.history.back()} className="mb-4 sm:mb-6">
+            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl">
               <ArrowLeft className="w-4 h-4 mr-1" /> Back
             </Button>
           </button>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             {/* Header */}
-            <div className="rounded-2xl bg-card border border-border p-6 mb-6">
-              <div className="flex flex-col sm:flex-row items-start gap-5">
-                <div className="relative">
-                  <img src={avatar} alt={name} className="w-20 h-20 rounded-2xl object-cover" />
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+                <div className="relative shrink-0">
+                  <img src={avatar} alt={name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover" />
                   <CheckCircle2 className="w-5 h-5 text-accent absolute -bottom-1 -right-1 bg-card rounded-full" />
                 </div>
                 <div className="flex-1">
@@ -146,7 +146,7 @@ const ProviderDetail = () => {
             </div>
 
             {/* About */}
-            <div className="rounded-2xl bg-card border border-border p-6 mb-6">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
               <h2 className="font-display font-bold text-lg text-foreground mb-3 flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-primary" /> About
               </h2>
@@ -171,7 +171,7 @@ const ProviderDetail = () => {
             </div>
 
             {/* Booking */}
-            <div className="rounded-2xl bg-card border border-border p-6">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
               <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary" /> Book This
               </h2>
@@ -182,12 +182,19 @@ const ProviderDetail = () => {
                     {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
                       const available = listing.availability?.includes(day);
                       return (
-                        <button key={day} disabled={!available} onClick={() => setSelectedDay(day)}
-                          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        <button
+                          key={day}
+                          type="button"
+                          disabled={!available}
+                          onClick={() => setSelectedDay(day)}
+                          className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 touch-manipulation ${
                             selectedDay === day ? "bg-primary text-primary-foreground shadow-elevated"
-                            : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                            : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70"
                             : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
-                          }`}>{day}</button>
+                          }`}
+                        >
+                          {day}
+                        </button>
                       );
                     })}
                   </div>
@@ -200,7 +207,7 @@ const ProviderDetail = () => {
                 rows={3}
                 className="mb-4"
               />
-              <Button variant="hero" size="lg" className="w-full" onClick={handleBook} disabled={booking}>
+              <Button variant="hero" size="lg" className="w-full h-12 sm:h-11 rounded-xl text-base font-semibold touch-manipulation" onClick={handleBook} disabled={booking}>
                 {booking ? "Sending..." : "Send Booking Request"}
               </Button>
             </div>

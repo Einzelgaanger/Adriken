@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 const HowItWorks = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
-    <div className="pt-16">
+    <div className="pt-20 sm:pt-24">
       <HowItWorksSection />
     </div>
     <Footer />

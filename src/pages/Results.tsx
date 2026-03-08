@@ -72,20 +72,20 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="mb-4">
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div className="container mx-auto max-w-3xl">
+          <Link to="/" className="inline-block mb-4">
+            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl">
               <ArrowLeft className="w-4 h-4 mr-1" /> Back
             </Button>
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
             <div className="flex items-center gap-2 text-sm text-primary mb-2 font-medium">
-              <Sparkles className="w-4 h-4" /> AI-powered results
+              <Sparkles className="w-4 h-4 shrink-0" /> AI-powered results
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">
-              Results for: "{query}"
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 break-words">
+              Results for: &ldquo;{query}&rdquo;
             </h1>
           </motion.div>
 
@@ -113,7 +113,7 @@ const Results = () => {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {listings.map((listing: any, i: number) => {
               const match = matchMap?.get(listing.id);
               const profile = listing.profiles;

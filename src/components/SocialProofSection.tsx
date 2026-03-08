@@ -36,9 +36,9 @@ const SocialProofSection = () => {
   return (
     <>
       {/* Stats */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
+      <section className="py-12 sm:py-16 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto">
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -46,13 +46,13 @@ const SocialProofSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="text-center"
+                className="text-center p-2"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <stat.icon className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                  <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div className="font-display text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                <div className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">{stat.value}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground mt-1">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -60,23 +60,23 @@ const SocialProofSection = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-secondary/30">
-        <div className="container mx-auto px-4">
+      <section className="py-16 sm:py-20 bg-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="text-center mb-10 sm:mb-14"
           >
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground mb-4">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">
               Loved by thousands
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-base sm:text-lg">
               Real stories from people who found exactly what they needed.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
             {testimonials.map((t, i) => (
               <motion.div
                 key={t.name}
@@ -84,7 +84,7 @@ const SocialProofSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="rounded-2xl bg-card border border-border p-6 shadow-soft"
+                className="rounded-2xl bg-card border border-border p-4 sm:p-6 shadow-soft"
               >
                 <div className="flex gap-1 mb-4">
                   {Array.from({ length: t.rating }).map((_, j) => (
