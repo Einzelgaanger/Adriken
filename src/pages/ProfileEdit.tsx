@@ -723,9 +723,8 @@ const ProfileEdit = () => {
               {reviews && reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map((r: any) => {
-                    const p = r.profiles as any;
-                    const name = p?.full_name || "Anonymous";
-                    const avatar = p?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
+                    const name = r.profile?.full_name || "Anonymous";
+                    const avatar = r.profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
                     return (
                       <div key={r.id} className="flex gap-3 p-3 rounded-xl bg-primary/[0.03] border border-primary/[0.06]">
                         <img src={avatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
