@@ -376,8 +376,8 @@ const ProfileEdit = () => {
     <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
       <div className="pt-44 sm:pt-52 pb-10 sm:pb-16 px-3 sm:px-6">
-        <div className="container mx-auto max-w-2xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+        <div className="container mx-auto max-w-2xl min-w-0">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 overflow-x-hidden">
 
             {/* Header */}
             <div className="text-center mb-2">
@@ -420,26 +420,32 @@ const ProfileEdit = () => {
             </div>
 
             {/* Basic Info */}
-            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft min-w-0">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Building2 className="w-4 h-4 text-primary" />
                 </div>
                 Basic Info
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
+                <div className="space-y-2 min-w-0">
                   <Label>Full Name</Label>
-                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" />
+                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" className="min-w-0 w-full" />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 min-w-0">
                   <Label>Business / Company Name</Label>
-                  <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Jane's Cleaning Co." />
+                  <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Jane's Cleaning Co." className="min-w-0 w-full" />
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0">
                 <Label>Bio</Label>
-                <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell people about yourself or your business..." rows={3} />
+                <Textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell people about yourself or your business..."
+                  rows={5}
+                  className="min-h-[120px] resize-y break-words overflow-auto"
+                />
               </div>
             </div>
 
