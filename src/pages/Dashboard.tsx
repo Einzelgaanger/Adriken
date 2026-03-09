@@ -95,14 +95,14 @@ const Dashboard = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
               <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+                <Link to="/profile/edit" className="flex-1 sm:flex-none">
+                  <Button variant="soft" size="sm" className="w-full h-11 rounded-xl"><User className="w-4 h-4 mr-1" /> My Profile</Button>
+                </Link>
                 <Link to="/messages" className="flex-1 sm:flex-none">
                   <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><MessageSquare className="w-4 h-4 mr-1" /> Messages</Button>
                 </Link>
                 <Link to="/history" className="flex-1 sm:flex-none">
                   <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><Eye className="w-4 h-4 mr-1" /> History</Button>
-                </Link>
-                <Link to="/profile/edit" className="flex-1 sm:flex-none">
-                  <Button variant="outline" size="sm" className="w-full h-11 rounded-xl">Edit Profile</Button>
                 </Link>
                 <Link to="/become-provider" className="flex-1 sm:flex-none">
                   <Button variant="hero" size="sm" className="w-full h-11 rounded-xl"><Plus className="w-4 h-4 mr-1" /> New Listing</Button>
