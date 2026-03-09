@@ -95,13 +95,35 @@ const ProfileEdit = () => {
         .eq("user_id", user!.id);
       if (!listings || listings.length === 0) return [];
       const listingIds = listings.map((l: any) => l.id);
-      const { data, error } = await supabase
+      const { data: reviewsData, error } = await supabase
         .from("reviews")
-        .select("*, profiles:reviewer_id(full_name, avatar_url)")
+        .select("*")
         .in("listing_id", listingIds)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      if (!reviewsData || reviewsData.length === 0) return [];
+
+      const reviewerIds = reviewsData
+        .map((r) => r.reviewer_id)
+        .filter((id): id is string => !!id);
+      
+      let profilesMap: Record<string, { full_name: string; avatar_url: string | null }> = {};
+      if (reviewerIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name, avatar_url")
+          .in("user_id", reviewerIds);
+        if (profiles) {
+          profilesMap = Object.fromEntries(
+            profiles.map((p) => [p.user_id, { full_name: p.full_name, avatar_url: p.avatar_url }])
+          );
+        }
+      }
+
+      return reviewsData.map((r) => ({
+        ...r,
+        profile: r.reviewer_id ? profilesMap[r.reviewer_id] || null : null,
+      }));
     },
     enabled: !!user,
   });
