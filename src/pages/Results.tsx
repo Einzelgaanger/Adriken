@@ -4,6 +4,7 @@ import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal, Map as MapIcon, List a
 import Navbar from "@/components/Navbar";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -52,6 +53,7 @@ const MapResizeHandler = () => {
 };
 
 const Results = () => {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
@@ -301,16 +303,24 @@ const Results = () => {
                 We didn&apos;t find any listings for &ldquo;{query}&rdquo; yet.
               </p>
               <p className="text-muted-foreground/80 text-xs sm:text-sm mb-6 max-w-sm mx-auto">
-                Be the first to offer this — sign up and create your profile.
+                {user ? "Add a listing from your profile, or try another search." : "Be the first to offer this — sign up and create your profile."}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
-                <Link to="/signup" className="block w-full sm:w-auto">
-                  <Button variant="hero" size="lg" className="rounded-xl w-full h-12 min-h-[44px] touch-manipulation">
-                    Sign Up & Create Your Profile
-                  </Button>
-                </Link>
-                <Link to="/" className="block w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="rounded-xl w-full h-12 min-h-[44px] touch-manipulation">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                {user ? (
+                  <Link to="/profile/edit">
+                    <Button variant="hero" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation">
+                      Go to My Profile
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/signup">
+                    <Button variant="hero" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation sm:w-auto">
+                      Sign Up & Create Your Profile
+                    </Button>
+                  </Link>
+                )}
+                <Link to="/">
+                  <Button variant="outline" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation sm:w-auto">
                     Try a Different Search
                   </Button>
                 </Link>
