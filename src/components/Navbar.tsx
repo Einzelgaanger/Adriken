@@ -40,10 +40,10 @@ const Navbar = () => {
       }`}
       aria-label="Main navigation"
     >
-      <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-[72px] flex items-center justify-between gap-6">
-        <Link to="/" className="flex items-center gap-2.5 font-display font-extrabold text-xl sm:text-[22px] shrink-0 text-foreground tracking-tight">
-          <img src={adrikenLogo} alt="Adriken" className="w-10 h-10 sm:w-11 sm:h-11" />
-          <span>Adriken</span>
+      <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-6">
+        <Link to="/" className="flex items-center gap-2.5 font-extrabold text-xl sm:text-[22px] shrink-0 text-foreground tracking-tight">
+          <img src={adrikenLogo} alt="Adriken" className="w-9 h-9 sm:w-10 sm:h-10" />
+          <span className="electrolize-regular">Adriken</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-0.5">

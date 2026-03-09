@@ -107,6 +107,7 @@
     -moz-osx-font-smoothing: grayscale;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    overflow-x: hidden;
   }
 
   body {
@@ -115,9 +116,13 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     letter-spacing: -0.01em;
-    overflow-x: clip;
+    overflow-x: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
+  }
+
+  #root {
+    overflow-x: hidden;
   }
 
   html::-webkit-scrollbar,
@@ -146,6 +151,18 @@
 }
 
 @layer utilities {
+  .neucha-regular {
+    font-family: "Neucha", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .electrolize-regular {
+    font-family: "Electrolize", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
   .touch-target {
     min-height: 44px;
     min-width: 44px;
@@ -269,8 +286,8 @@
   .marquee-row {
     position: relative;
     overflow: hidden;
-    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
   }
 
   .marquee-track {
@@ -278,12 +295,12 @@
     align-items: center;
     gap: 0.5rem;
     width: max-content;
-    animation: marquee-left 130s linear infinite;
+    animation: marquee-left 170s linear infinite;
   }
 
   .marquee-track-reverse {
     animation-name: marquee-right;
-    animation-duration: 145s;
+    animation-duration: 190s;
   }
 
   .marquee-row:hover .marquee-track {
@@ -312,6 +329,21 @@
     .marquee-track {
       animation: none;
     }
+  }
+
+  @keyframes hero-glow-slow {
+    0%, 100% {
+      opacity: 0.78;
+      transform: translate(-50%, -50%) scale(0.96);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+  }
+
+  .animate-hero-glow {
+    animation: hero-glow-slow 9.5s ease-in-out infinite;
   }
 
   /* Premium prose styling */
