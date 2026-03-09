@@ -45,7 +45,7 @@ const CTASection = () => {
                     </div>
                   ))}
                 </div>
-                <Link to="/become-provider">
+                <Link to="/profile/edit">
                   <Button size="lg" className="h-12 sm:h-13 rounded-xl bg-white text-foreground border-none hover:bg-white/90 font-bold shadow-lg px-8 text-base w-full sm:w-auto">
                     Start Earning Today <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>

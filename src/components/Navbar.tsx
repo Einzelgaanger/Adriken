@@ -35,7 +35,7 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: "Find Help" },
-    { to: "/become-provider", label: "Offer Services" },
+    { to: user ? "/profile/edit" : "/signup", label: "Offer Services" },
   ];
 
   const UnreadBadge = () =>
