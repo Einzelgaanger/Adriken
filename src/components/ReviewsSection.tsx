@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [anonName, setAnonName] = useState("");
 
   const { data: reviews, isLoading } = useQuery({
     queryKey: ["reviews", listingId],
@@ -34,27 +36,31 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
 
   const submitReview = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error("Must be signed in");
       if (rating === 0) throw new Error("Please select a rating");
-      const { error } = await supabase.from("reviews").insert({
+      const reviewData: Record<string, unknown> = {
         listing_id: listingId,
-        reviewer_id: user.id,
         rating,
         comment: comment.trim() || null,
-      });
+      };
+      if (user) {
+        reviewData.reviewer_id = user.id;
+      }
+      const { error } = await supabase.from("reviews").insert(reviewData as any);
       if (error) throw error;
     },
     onSuccess: () => {
       setRating(0);
       setComment("");
+      setAnonName("");
       queryClient.invalidateQueries({ queryKey: ["reviews", listingId] });
       toast.success("Review submitted!");
     },
     onError: (err: any) => toast.error(err.message || "Failed to submit review"),
   });
 
-  const canReview = user && user.id !== providerId;
-  const alreadyReviewed = reviews?.some((r: any) => r.reviewer_id === user?.id);
+  // Anyone can review except the provider themselves
+  const isOwnProfile = user?.id === providerId;
+  const alreadyReviewed = user && reviews?.some((r: any) => r.reviewer_id === user.id);
 
   return (
     <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
@@ -62,10 +68,12 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
         <Star className="w-5 h-5 text-primary" /> Reviews & Feedback
       </h2>
 
-      {/* Submit Review */}
-      {canReview && !alreadyReviewed && (
+      {/* Submit Review — available to everyone except the provider and those who already reviewed */}
+      {!isOwnProfile && !alreadyReviewed && (
         <div className="mb-6 p-4 rounded-xl bg-secondary/50 border border-border">
-          <p className="text-sm font-semibold text-foreground mb-3">Leave a review</p>
+          <p className="text-sm font-semibold text-foreground mb-3">
+            {user ? "Leave a review" : "Leave a review (anonymous)"}
+          </p>
           <div className="flex gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((s) => (
               <button

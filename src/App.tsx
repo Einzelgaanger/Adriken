@@ -15,7 +15,6 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
-import Messages from "./pages/Messages";
 import ViewingHistory from "./pages/ViewingHistory";
 import ProfileEdit from "./pages/ProfileEdit";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -36,14 +35,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/results" element={<Results />} />
             <Route path="/provider/:id" element={<ProviderDetail />} />
-            <Route path="/become-provider" element={<ProfileEdit />} />
             
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/messages" element={<Messages />} />
             <Route path="/history" element={<ViewingHistory />} />
             <Route path="/profile/edit" element={<ProfileEdit />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />

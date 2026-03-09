@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, LayoutDashboard, MessageSquare, Eye } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Eye, User } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { toast } from "sonner";
 
 const Navbar = () => {
@@ -13,7 +12,6 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const unreadCount = useUnreadMessages();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -34,16 +32,9 @@ const Navbar = () => {
   };
 
   const links = [
-    { to: "/", label: "Find Help" },
+    { to: "/", label: "Find Services" },
     { to: user ? "/profile/edit" : "/signup", label: "Offer Services" },
   ];
-
-  const UnreadBadge = () =>
-    unreadCount > 0 ? (
-      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center leading-none">
-        {unreadCount > 99 ? "99+" : unreadCount}
-      </span>
-    ) : null;
 
   return (
     <nav
@@ -62,7 +53,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-0.5">
           {links.map((link) => (
-            <Link key={link.to} to={link.to}>
+            <Link key={link.to + link.label} to={link.to}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">{link.label}</Button>
             </Link>
           ))}
@@ -76,11 +67,10 @@ const Navbar = () => {
                   <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                 </Button>
               </Link>
-              <Link to="/messages" className="relative">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground relative">
-                  <MessageSquare className="w-4 h-4" />
+              <Link to="/profile/edit">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <User className="w-4 h-4" />
                 </Button>
-                <UnreadBadge />
               </Link>
               <Link to="/history">
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
@@ -103,14 +93,8 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile: show unread badge on hamburger */}
+        {/* Mobile hamburger */}
         <div className="md:hidden flex items-center gap-1.5">
-          {user && (
-            <Link to="/messages" className="relative w-11 h-11 flex items-center justify-center rounded-xl text-foreground hover:bg-secondary transition-colors touch-manipulation">
-              <MessageSquare className="w-5 h-5" />
-              <UnreadBadge />
-            </Link>
-          )}
           <button
             type="button"
             className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-secondary active:bg-secondary/80 transition-colors w-11 h-11"
@@ -138,7 +122,7 @@ const Navbar = () => {
           >
             <div className="px-4 py-4 pb-6 flex flex-col gap-1">
               {links.map((link) => (
-                <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)} className="block">
+                <Link key={link.to + link.label} to={link.to} onClick={() => setMobileOpen(false)} className="block">
                   <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">{link.label}</Button>
                 </Link>
               ))}
@@ -150,19 +134,14 @@ const Navbar = () => {
                         <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                       </Button>
                     </Link>
-                    <Link to="/messages" onClick={() => setMobileOpen(false)} className="block">
+                    <Link to="/profile/edit" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
-                        <MessageSquare className="w-4 h-4 mr-1.5" /> Messages
-                        {unreadCount > 0 && (
-                          <span className="ml-auto min-w-[20px] h-[20px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center">
-                            {unreadCount > 99 ? "99+" : unreadCount}
-                          </span>
-                        )}
+                        <User className="w-4 h-4 mr-1.5" /> My Profile
                       </Button>
                     </Link>
                     <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
-                        <Eye className="w-4 h-4 mr-1.5" /> Viewing History
+                        <Eye className="w-4 h-4 mr-1.5" /> Businesses I Checked
                       </Button>
                     </Link>
                     <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground" onClick={() => { handleSignOut(); setMobileOpen(false); }}>

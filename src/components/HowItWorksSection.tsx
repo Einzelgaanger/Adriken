@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 const seekerSteps = [
   {
     icon: MessageSquare,
-    title: "Describe Your Need",
-    description: "Just type it naturally — no forms, no filters.",
+    title: "Search for What You Need",
+    description: "Just type it naturally — no account required. Search for businesses, services, or people.",
   },
   {
     icon: Brain,
@@ -16,8 +16,8 @@ const seekerSteps = [
   },
   {
     icon: UserCheck,
-    title: "Review & Book",
-    description: "Browse profiles, check ratings, and book instantly.",
+    title: "Contact & Review",
+    description: "View profiles, check ratings, contact via WhatsApp, and leave feedback.",
   },
 ];
 
@@ -25,12 +25,12 @@ const providerSteps = [
   {
     icon: UserCheck,
     title: "Create Your Profile",
-    description: "Sign up and tell us about your skills and services.",
+    description: "Sign up and set up your business — name, services, contact, portfolio.",
   },
   {
     icon: CalendarCheck,
-    title: "List Your Services",
-    description: "Set availability, rates, and let AI match you to clients.",
+    title: "Get Discovered",
+    description: "Set availability, rates, and let AI match you to customers.",
   },
   {
     icon: Brain,
@@ -56,7 +56,7 @@ const HowItWorksSection = () => {
             Simple for everyone
           </h2>
           <p className="text-muted-foreground text-[15px] sm:text-lg max-w-lg mx-auto">
-            Whether you're seeking help or offering services, we've got you.
+            Whether you're searching for help or offering your services, we've got you.
           </p>
         </motion.div>
 
@@ -72,7 +72,7 @@ const HowItWorksSection = () => {
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-primary" />
               </div>
-              <h3 className="font-display font-bold text-lg text-foreground">Looking for Help</h3>
+              <h3 className="font-display font-bold text-lg text-foreground">Looking for a Service</h3>
             </div>
             <div className="space-y-4">
               {seekerSteps.map((step, i) => (
@@ -89,7 +89,7 @@ const HowItWorksSection = () => {
             </div>
             <Link to="/" className="block mt-5">
               <Button variant="soft" size="sm" className="rounded-xl w-full sm:w-auto">
-                Find Help Now <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                Search Now <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>
           </motion.div>
@@ -120,9 +120,9 @@ const HowItWorksSection = () => {
                 </div>
               ))}
             </div>
-            <Link to="/become-provider" className="block mt-5">
+            <Link to="/signup" className="block mt-5">
               <Button variant="outline" size="sm" className="rounded-xl w-full sm:w-auto">
-                Start Earning <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                Get Started <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             </Link>
           </motion.div>

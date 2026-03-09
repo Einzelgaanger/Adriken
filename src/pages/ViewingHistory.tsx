@@ -18,12 +18,11 @@ const ViewingHistory = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profile_views")
-        .select("*, listings(title, location, hourly_rate, fixed_price, listing_type), profiles:provider_id(full_name, avatar_url)")
+        .select("*, listings(title, location, hourly_rate, fixed_price, listing_type), profiles:provider_id(full_name, business_name, avatar_url)")
         .eq("viewer_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      // Deduplicate by listing_id, keep latest
       const seen = new Set();
       return data.filter((v: any) => {
         if (seen.has(v.listing_id)) return false;
@@ -66,7 +65,7 @@ const ViewingHistory = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex items-center justify-between mb-6">
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
-                <Eye className="w-6 h-6 text-primary" /> Viewing History
+                <Eye className="w-6 h-6 text-primary" /> Businesses I Checked
               </h1>
               {views && views.length > 0 && (
                 <Button variant="ghost" size="sm" onClick={() => clearHistory.mutate()} className="text-muted-foreground hover:text-destructive">
@@ -82,14 +81,14 @@ const ViewingHistory = () => {
                 {views.map((v: any) => {
                   const profile = v.profiles as any;
                   const listing = v.listings as any;
-                  const name = profile?.full_name || "Provider";
+                  const name = profile?.business_name || profile?.full_name || "Business";
                   const avatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
                   return (
                     <Link key={v.id} to={`/provider/${v.listing_id}`} className="block">
                       <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
                         <img src={avatar} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-foreground truncate">{listing?.title || "Listing"}</p>
+                          <p className="font-semibold text-foreground truncate">{listing?.title || "Business"}</p>
                           <p className="text-sm text-muted-foreground truncate">by {name}</p>
                           {listing?.location && (
                             <p className="text-xs text-muted-foreground mt-0.5">{listing.location}</p>
@@ -110,7 +109,7 @@ const ViewingHistory = () => {
               <div className="rounded-xl bg-card border border-border p-12 text-center">
                 <Eye className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
                 <p className="text-muted-foreground">No viewing history yet</p>
-                <Link to="/"><Button variant="soft" className="mt-4">Browse Providers</Button></Link>
+                <Link to="/"><Button variant="soft" className="mt-4">Browse Services</Button></Link>
               </div>
             )}
           </motion.div>

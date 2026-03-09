@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Send } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +26,7 @@ const ProviderDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, avatar_url, location, bio, phone, whatsapp, instagram, tiktok, facebook, email_public, certifications, portfolio_images, portfolio_videos)")
+        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, bio, phone, whatsapp, instagram, tiktok, facebook, email_public, certifications, portfolio_images, portfolio_videos)")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -35,7 +35,7 @@ const ProviderDetail = () => {
     enabled: !!id,
   });
 
-  // Track profile view
+  // Track profile view (only for signed-in users)
   useEffect(() => {
     if (user && listing && user.id !== listing.user_id) {
       supabase.from("profile_views").insert({
@@ -45,29 +45,6 @@ const ProviderDetail = () => {
       }).then(() => {});
     }
   }, [user, listing]);
-
-  const handleStartChat = async () => {
-    if (!user) { toast.error("Please sign in first"); navigate("/login"); return; }
-    if (!listing) return;
-    // Check if conversation exists
-    const { data: existing } = await supabase
-      .from("conversations")
-      .select("id")
-      .or(`and(participant_1.eq.${user.id},participant_2.eq.${listing.user_id}),and(participant_1.eq.${listing.user_id},participant_2.eq.${user.id})`)
-      .eq("listing_id", listing.id)
-      .maybeSingle();
-    if (existing) {
-      navigate(`/messages?c=${existing.id}`);
-    } else {
-      const { data: newConvo, error } = await supabase
-        .from("conversations")
-        .insert({ participant_1: user.id, participant_2: listing.user_id, listing_id: listing.id })
-        .select("id")
-        .single();
-      if (error) { toast.error("Could not start conversation"); return; }
-      navigate(`/messages?c=${newConvo.id}`);
-    }
-  };
 
   const handleBook = async () => {
     if (!user) { toast.error("Please sign in to book"); navigate("/login"); return; }
@@ -95,7 +72,7 @@ const ProviderDetail = () => {
     return (
       <div className="min-h-screen bg-background"><Navbar />
         <div className="pt-24 container mx-auto px-4 text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">Listing not found</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground">Business not found</h1>
           <Link to="/"><Button variant="soft" className="mt-4">Go Home</Button></Link>
         </div>
       </div>
@@ -103,7 +80,7 @@ const ProviderDetail = () => {
   }
 
   const profile = listing.profiles as any;
-  const name = profile?.full_name || "Provider";
+  const name = profile?.business_name || profile?.full_name || "Business";
   const avatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
   const price = listing.hourly_rate || listing.fixed_price || 0;
   const priceLabel = listing.hourly_rate ? "/hour" : listing.fixed_price ? " fixed" : "";
@@ -134,6 +111,9 @@ const ProviderDetail = () => {
                     <h1 className="font-display text-2xl font-bold text-foreground">{name}</h1>
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-accent"><Shield className="w-3.5 h-3.5" /> Verified</span>
                   </div>
+                  {profile?.business_name && profile?.full_name && (
+                    <p className="text-sm text-muted-foreground mb-1">by {profile.full_name}</p>
+                  )}
                   <p className="text-muted-foreground mb-3">{listing.title}</p>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
@@ -201,7 +181,7 @@ const ProviderDetail = () => {
             {/* About */}
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
               <h2 className="font-display font-bold text-lg text-foreground mb-3 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-primary" /> About
+                <Building2 className="w-5 h-5 text-primary" /> About
               </h2>
               <p className="text-muted-foreground leading-relaxed">{listing.description}</p>
               {listing.services && listing.services.length > 0 && (
@@ -261,49 +241,42 @@ const ProviderDetail = () => {
               </div>
             )}
 
-            {/* Message Provider Button */}
-            {user && user.id !== listing.user_id && (
-              <div className="mb-4 sm:mb-6">
-                <Button variant="outline" size="lg" className="w-full rounded-xl" onClick={handleStartChat}>
-                  <Send className="w-4 h-4 mr-2" /> Message Provider
-                </Button>
-              </div>
-            )}
-
-            {/* Reviews */}
+            {/* Reviews — visible to everyone, anonymous can submit */}
             <div className="mb-4 sm:mb-6">
               <ReviewsSection listingId={listing.id} providerId={listing.user_id} />
             </div>
 
-            {/* Booking */}
-            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
-              <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary" /> Book This
-              </h2>
-              {listing.availability && listing.availability.length > 0 && (
-                <>
-                  <p className="text-sm text-muted-foreground mb-4">Select an available day:</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
-                      const available = listing.availability?.includes(day);
-                      return (
-                        <button key={day} type="button" disabled={!available} onClick={() => setSelectedDay(day)}
-                          className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 touch-manipulation ${
-                            selectedDay === day ? "bg-primary text-primary-foreground shadow-elevated"
-                            : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                            : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
-                          }`}
-                        >{day}</button>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-              <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Add a message to the provider (optional)..." rows={3} className="mb-4" />
-              <Button variant="hero" size="lg" className="w-full h-12 sm:h-11 rounded-xl text-base font-semibold touch-manipulation" onClick={handleBook} disabled={booking}>
-                {booking ? "Sending..." : "Send Booking Request"}
-              </Button>
-            </div>
+            {/* Booking — only for signed-in users */}
+            {user && user.id !== listing.user_id && (
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
+                <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" /> Book This
+                </h2>
+                {listing.availability && listing.availability.length > 0 && (
+                  <>
+                    <p className="text-sm text-muted-foreground mb-4">Select an available day:</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
+                        const available = listing.availability?.includes(day);
+                        return (
+                          <button key={day} type="button" disabled={!available} onClick={() => setSelectedDay(day)}
+                            className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 touch-manipulation ${
+                              selectedDay === day ? "bg-primary text-primary-foreground shadow-elevated"
+                              : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                              : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
+                            }`}
+                          >{day}</button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+                <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Add a message (optional)..." rows={3} className="mb-4" />
+                <Button variant="hero" size="lg" className="w-full h-12 sm:h-11 rounded-xl text-base font-semibold touch-manipulation" onClick={handleBook} disabled={booking}>
+                  {booking ? "Sending..." : "Send Booking Request"}
+                </Button>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

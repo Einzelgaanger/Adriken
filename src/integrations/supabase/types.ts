@@ -343,7 +343,7 @@ export type Database = {
           id: string
           listing_id: string
           rating: number
-          reviewer_id: string
+          reviewer_id: string | null
         }
         Insert: {
           booking_id?: string | null
@@ -352,7 +352,7 @@ export type Database = {
           id?: string
           listing_id: string
           rating: number
-          reviewer_id: string
+          reviewer_id?: string | null
         }
         Update: {
           booking_id?: string | null
@@ -361,7 +361,7 @@ export type Database = {
           id?: string
           listing_id?: string
           rating?: number
-          reviewer_id?: string
+          reviewer_id?: string | null
         }
         Relationships: [
           {
