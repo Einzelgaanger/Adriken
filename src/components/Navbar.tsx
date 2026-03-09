@@ -68,6 +68,16 @@ const Navbar = () => {
                   <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                 </Button>
               </Link>
+              <Link to="/messages">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <MessageSquare className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Link to="/history">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Eye className="w-4 h-4" />
+                </Button>
+              </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
                 <LogOut className="w-4 h-4 mr-1" /> Sign out
               </Button>
