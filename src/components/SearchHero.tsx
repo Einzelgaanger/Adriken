@@ -29,11 +29,12 @@ const SearchHero = () => {
 
   return (
     <section className="relative min-h-[92dvh] sm:min-h-[94vh] flex items-center justify-center overflow-hidden">
-      {/* Ambient background */}
+      {/* Warm ambient background */}
       <div className="absolute inset-0 bg-gradient-hero" />
-      <div className="absolute top-[15%] left-[10%] w-[500px] h-[500px] rounded-full bg-primary/[0.03] blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[5%] w-[400px] h-[400px] rounded-full bg-accent/[0.03] blur-[80px] pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+      <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[5%] right-[10%] w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px] pointer-events-none" />
+      <div className="absolute top-[40%] right-[30%] w-[300px] h-[300px] rounded-full bg-accent/[0.03] blur-[80px] pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
 
       <div className="container mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-16 sm:pb-20 relative z-10">
         <motion.div
@@ -46,7 +47,7 @@ const SearchHero = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/[0.07] text-primary mb-6 sm:mb-8 font-medium text-[13px] border border-primary/10"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/[0.1] text-primary mb-6 sm:mb-8 font-semibold text-[13px] border border-primary/15 shadow-xs"
           >
             <Sparkles className="w-3.5 h-3.5" />
             AI-Powered Matching · Find or Offer Services
@@ -61,31 +62,33 @@ const SearchHero = () => {
           </p>
 
           {/* Dual CTA pills */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 sm:mb-10"
-          >
-            <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-border/60 shadow-soft w-full sm:w-auto">
-              <div className="w-9 h-9 rounded-xl bg-primary/[0.08] flex items-center justify-center shrink-0">
-                <Users className="w-4.5 h-4.5 text-primary" />
+          {!user && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 sm:mb-10"
+            >
+              <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-full sm:w-auto">
+                <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
+                  <Users className="w-4.5 h-4.5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-bold text-foreground">Looking for a service?</p>
+                  <p className="text-xs text-muted-foreground">Search below — no account needed</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-sm font-bold text-foreground">Looking for a service?</p>
-                <p className="text-xs text-muted-foreground">Search below — no account needed</p>
+              <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-full sm:w-auto cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/signup")}>
+                <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
+                  <Briefcase className="w-4.5 h-4.5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-bold text-foreground">Got a business? Get found</p>
+                  <p className="text-xs text-muted-foreground">Sign up and create your profile</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-border/60 shadow-soft w-full sm:w-auto cursor-pointer hover:border-primary/20 transition-colors" onClick={() => navigate(user ? "/profile/edit" : "/signup")}>
-              <div className="w-9 h-9 rounded-xl bg-accent/[0.08] flex items-center justify-center shrink-0">
-                <Briefcase className="w-4.5 h-4.5 text-accent" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-bold text-foreground">Got a business? Get found</p>
-                <p className="text-xs text-muted-foreground">Sign up and create your profile</p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* Search box */}
           <motion.div
@@ -93,12 +96,12 @@ const SearchHero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             className={`relative max-w-2xl mx-auto rounded-2xl bg-card transition-all duration-300 ${
-              focused ? "shadow-glow border-2 border-primary/20" : "shadow-card border-2 border-transparent"
+              focused ? "shadow-glow border-2 border-primary/25" : "shadow-card border-2 border-primary/[0.08]"
             }`}
           >
             <div className="flex flex-col sm:flex-row sm:items-start p-2.5 sm:p-2 gap-2.5 sm:gap-0">
               <div className="flex-1 flex items-start gap-3 p-2 sm:p-3 min-w-0">
-                <Search className="w-5 h-5 text-muted-foreground/60 mt-0.5 shrink-0 hidden sm:block" aria-hidden />
+                <Search className="w-5 h-5 text-primary/50 mt-0.5 shrink-0 hidden sm:block" aria-hidden />
                 <textarea
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -126,7 +129,7 @@ const SearchHero = () => {
               </Button>
             </div>
 
-            <div className="px-4 sm:px-5 pb-3 flex items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground/60">
+            <div className="px-4 sm:px-5 pb-3 flex items-center justify-center sm:justify-start gap-2 text-xs text-primary/40 font-medium">
               <MapPin className="w-3 h-3 shrink-0" aria-hidden />
               <span>Results prioritized by your location</span>
             </div>
@@ -144,7 +147,7 @@ const SearchHero = () => {
                 key={s}
                 type="button"
                 onClick={() => handleSuggestion(s)}
-                className="px-3.5 py-2.5 sm:px-4 sm:py-2 rounded-full bg-card/80 border border-border/60 text-[12px] sm:text-[13px] text-muted-foreground hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-[0.98] transition-all duration-200 min-h-[44px] sm:min-h-0 inline-flex items-center touch-manipulation"
+                className="px-3.5 py-2.5 sm:px-4 sm:py-2 rounded-full bg-card/80 border border-primary/[0.08] text-[12px] sm:text-[13px] text-muted-foreground hover:border-primary/25 hover:text-primary hover:bg-primary/[0.04] hover:shadow-soft active:scale-[0.98] transition-all duration-200 min-h-[44px] sm:min-h-0 inline-flex items-center touch-manipulation"
               >
                 {s}
               </button>

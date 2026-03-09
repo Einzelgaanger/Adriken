@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Camera, Upload, X, Loader2, MapPin, Phone, Mail, MessageSquare,
-  Instagram, Facebook, Plus, Sparkles, Star, Building2, Briefcase
+  Instagram, Facebook, Plus, Sparkles, Star, Building2, Briefcase, Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const ProfileEdit = () => {
   const { user, loading: authLoading } = useAuth();
@@ -56,9 +54,7 @@ const ProfileEdit = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [serviceInput, setServiceInput] = useState("");
   const [services, setServices] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<string[]>([]);
   const [experience, setExperience] = useState("");
-  const [savingListing, setSavingListing] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -74,7 +70,6 @@ const ProfileEdit = () => {
     enabled: !!user,
   });
 
-  // Fetch existing listing
   const { data: existingListing } = useQuery({
     queryKey: ["my-listing", user?.id],
     queryFn: async () => {
@@ -91,11 +86,9 @@ const ProfileEdit = () => {
     enabled: !!user,
   });
 
-  // Fetch reviews for this user's listings
   const { data: reviews } = useQuery({
     queryKey: ["my-reviews", user?.id],
     queryFn: async () => {
-      // Get all listings by this user first
       const { data: listings } = await supabase
         .from("listings")
         .select("id")
@@ -112,6 +105,19 @@ const ProfileEdit = () => {
     },
     enabled: !!user,
   });
+
+  // Track initial state for dirty detection
+  const [initialState, setInitialState] = useState<string>("");
+
+  const currentState = useMemo(() => JSON.stringify({
+    fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
+    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+    listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience,
+  }), [fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
+    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+    listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience]);
+
+  const hasChanges = initialState !== "" && currentState !== initialState;
 
   useEffect(() => {
     if (profile) {
@@ -142,10 +148,24 @@ const ProfileEdit = () => {
       setFixedPrice(existingListing.fixed_price?.toString() || "");
       setSkills(existingListing.skills || []);
       setServices(existingListing.services || []);
-      setAvailability(existingListing.availability || []);
       setExperience(existingListing.experience || "");
     }
   }, [existingListing]);
+
+  // Set initial state once both profile and listing have loaded
+  useEffect(() => {
+    if (profile && !authLoading && !isLoading) {
+      // small delay to allow listing state to settle
+      const t = setTimeout(() => {
+        setInitialState(JSON.stringify({
+          fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
+          avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+          listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience,
+        }));
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [profile, existingListing, authLoading, isLoading]);
 
   const uploadFile = async (file: File, bucket: string): Promise<string | null> => {
     const ext = file.name.split(".").pop();
@@ -227,14 +247,12 @@ const ProfileEdit = () => {
     }
   };
 
-  const toggleDay = (day: string) => {
-    setAvailability(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
-  };
-
-  const handleSaveProfile = async () => {
+  const handleSaveAll = async () => {
     if (!user) return;
     setSaving(true);
-    const update: Record<string, unknown> = {
+
+    // Save profile
+    const profileUpdate: Record<string, unknown> = {
       full_name: fullName.trim(),
       business_name: businessName.trim(),
       bio: bio.trim(),
@@ -256,49 +274,42 @@ const ProfileEdit = () => {
         const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
           navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
         );
-        update.latitude = pos.coords.latitude;
-        update.longitude = pos.coords.longitude;
+        profileUpdate.latitude = pos.coords.latitude;
+        profileUpdate.longitude = pos.coords.longitude;
       } catch { /* ignore */ }
     }
-    const { error } = await supabase.from("profiles").update(update).eq("user_id", user.id);
+    const { error: profileError } = await supabase.from("profiles").update(profileUpdate).eq("user_id", user.id);
+
+    // Save listing if title exists
+    let listingError = null;
+    if (listingTitle.trim()) {
+      const listingData = {
+        user_id: user.id,
+        listing_type: listingType as "service" | "product" | "property" | "vehicle" | "other",
+        title: listingTitle.trim(),
+        description: listingDescription.trim(),
+        skills,
+        services,
+        hourly_rate: hourlyRate ? parseFloat(hourlyRate) : null,
+        fixed_price: fixedPrice ? parseFloat(fixedPrice) : null,
+        location: location.trim(),
+        experience,
+      };
+
+      if (existingListing) {
+        ({ error: listingError } = await supabase.from("listings").update(listingData).eq("id", existingListing.id));
+      } else {
+        ({ error: listingError } = await supabase.from("listings").insert(listingData));
+      }
+    }
+
     setSaving(false);
-    if (error) toast.error("Failed to save", { description: error.message });
-    else {
-      toast.success("Profile updated!");
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-    }
-  };
-
-  const handleSaveListing = async () => {
-    if (!user) return;
-    if (!listingTitle.trim()) { toast.error("Please add a title for your listing"); return; }
-    setSavingListing(true);
-
-    const listingData = {
-      user_id: user.id,
-      listing_type: listingType as "service" | "product" | "property" | "vehicle" | "other",
-      title: listingTitle.trim(),
-      description: listingDescription.trim(),
-      skills,
-      services,
-      hourly_rate: hourlyRate ? parseFloat(hourlyRate) : null,
-      fixed_price: fixedPrice ? parseFloat(fixedPrice) : null,
-      location: location.trim(),
-      availability,
-      experience,
-    };
-
-    let error;
-    if (existingListing) {
-      ({ error } = await supabase.from("listings").update(listingData).eq("id", existingListing.id));
+    if (profileError || listingError) {
+      toast.error("Failed to save", { description: (profileError || listingError)?.message });
     } else {
-      ({ error } = await supabase.from("listings").insert(listingData));
-    }
-
-    setSavingListing(false);
-    if (error) toast.error("Failed to save listing", { description: error.message });
-    else {
-      toast.success(existingListing ? "Listing updated!" : "Listing created!");
+      toast.success("Everything saved!");
+      setInitialState(currentState);
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["my-listing"] });
     }
   };
@@ -340,7 +351,7 @@ const ProfileEdit = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
       <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
         <div className="container mx-auto max-w-2xl">
@@ -348,19 +359,20 @@ const ProfileEdit = () => {
 
             {/* Header */}
             <div className="text-center mb-2">
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">My Profile</h1>
-              <p className="text-muted-foreground mt-1">Manage your identity, listings, and how people find you.</p>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/[0.08] text-primary text-sm font-medium mb-3 border border-primary/10">
+                <Sparkles className="w-3.5 h-3.5" /> My Profile
+              </div>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Manage Your Profile</h1>
+              <p className="text-muted-foreground mt-1">Update your identity, services, and how people find you.</p>
             </div>
 
-            {/* ==================== PROFILE SECTION ==================== */}
-
             {/* Avatar */}
-            <div className="rounded-2xl bg-card border border-border p-6 flex items-center gap-5">
+            <div className="rounded-2xl bg-card border border-border p-6 flex items-center gap-5 shadow-soft">
               <div className="relative">
                 <img
                   src={avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${fullName || "U"}`}
                   alt="Avatar"
-                  className="w-20 h-20 rounded-2xl object-cover border-2 border-border"
+                  className="w-20 h-20 rounded-2xl object-cover border-2 border-primary/20"
                 />
                 <button
                   type="button"
@@ -386,15 +398,20 @@ const ProfileEdit = () => {
             </div>
 
             {/* Basic Info */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-              <h2 className="font-display font-bold text-lg text-foreground">Basic Info</h2>
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Building2 className="w-4 h-4 text-primary" />
+                </div>
+                Basic Info
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Full Name</Label>
                   <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Business / Company Name</Label>
+                  <Label>Business / Company Name</Label>
                   <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Jane's Cleaning Co." />
                 </div>
               </div>
@@ -405,8 +422,13 @@ const ProfileEdit = () => {
             </div>
 
             {/* Location */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-              <h2 className="font-display font-bold text-lg text-foreground">Location</h2>
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-accent" />
+                </div>
+                Location
+              </h2>
               <div className="space-y-2">
                 <Label>Address / Area</Label>
                 <div className="flex gap-2">
@@ -429,8 +451,13 @@ const ProfileEdit = () => {
             </div>
 
             {/* Contact & Social */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-              <h2 className="font-display font-bold text-lg text-foreground">Contact & Social Links</h2>
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Phone className="w-4 h-4 text-primary" />
+                </div>
+                Contact & Social Links
+              </h2>
               <p className="text-sm text-muted-foreground">All optional. Visible on your profile so people can reach you.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -461,8 +488,13 @@ const ProfileEdit = () => {
             </div>
 
             {/* Portfolio */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-              <h2 className="font-display font-bold text-lg text-foreground">Portfolio — Work Samples</h2>
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <Upload className="w-4 h-4 text-accent" />
+                </div>
+                Portfolio — Work Samples
+              </h2>
               <p className="text-sm text-muted-foreground">Upload images or videos of your work (optional). Max 20MB each.</p>
               <Button type="button" variant="outline" onClick={() => portfolioInputRef.current?.click()} disabled={uploading === "portfolio"}>
                 {uploading === "portfolio" ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Upload className="w-4 h-4 mr-1" />}
@@ -499,7 +531,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Certifications */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground">Certifications</h2>
               <p className="text-sm text-muted-foreground">Upload any certificates or licenses (optional). PDF or images, max 10MB.</p>
               <Button type="button" variant="outline" onClick={() => certInputRef.current?.click()} disabled={uploading === "cert"}>
@@ -522,27 +554,27 @@ const ProfileEdit = () => {
               )}
             </div>
 
-            {/* Save Profile */}
-            <Button variant="hero" size="lg" className="w-full h-12 rounded-xl text-base font-semibold" onClick={handleSaveProfile} disabled={saving}>
-              {saving ? "Saving Profile..." : "Save Profile"}
-            </Button>
-
             {/* ==================== LISTING SECTION ==================== */}
 
             <div className="pt-4">
               <div className="flex items-center gap-3 mb-1">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm">
-                  <Briefcase className="w-4 h-4" /> {existingListing ? "My Listing" : "Create a Listing"}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm border border-primary/10">
+                  <Briefcase className="w-4 h-4" /> {existingListing ? "My Offering" : "Create an Offering"}
                 </div>
               </div>
               <p className="text-muted-foreground text-sm mb-5">
-                {existingListing ? "Update your listing so people can find you." : "Describe what you're offering — AI will match you with the right people."}
+                {existingListing ? "Update your offering so people can find you." : "Describe what you're offering — AI will match you with the right people."}
               </p>
             </div>
 
             {/* Type & Pricing */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-              <h2 className="font-display font-bold text-lg text-foreground">What are you offering?</h2>
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="w-4 h-4 text-primary" />
+                </div>
+                What are you offering?
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Type</Label>
@@ -583,7 +615,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Services / Features */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground">
                 {listingType === "service" ? "What can you do?" : "Key Features"}
               </h2>
@@ -597,7 +629,7 @@ const ProfileEdit = () => {
               {services.length > 0 && (
                 <div className="space-y-2">
                   {services.map((s) => (
-                    <div key={s} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary text-sm text-secondary-foreground">
+                    <div key={s} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/[0.05] border border-primary/10 text-sm text-foreground">
                       <span className="flex-1">{s}</span>
                       <button type="button" onClick={() => setServices(services.filter(x => x !== s))}><X className="w-4 h-4 text-muted-foreground hover:text-foreground" /></button>
                     </div>
@@ -607,7 +639,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Tags */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground">Tags & Keywords</h2>
               <div className="flex gap-2">
                 <Input value={skillInput} onChange={(e) => setSkillInput(e.target.value)}
@@ -618,7 +650,7 @@ const ProfileEdit = () => {
               {skills.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {skills.map((s) => (
-                    <span key={s} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    <span key={s} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/15">
                       {s}
                       <button type="button" onClick={() => setSkills(skills.filter(x => x !== s))}><X className="w-3 h-3" /></button>
                     </span>
@@ -627,35 +659,44 @@ const ProfileEdit = () => {
               )}
             </div>
 
-            {/* Availability */}
-            {listingType === "service" && (
-              <div className="rounded-2xl bg-card border border-border p-6 space-y-4">
-                <h2 className="font-display font-bold text-lg text-foreground">Availability</h2>
-                <div className="flex flex-wrap gap-2">
-                  {daysOfWeek.map((day) => (
-                    <button key={day} type="button" onClick={() => toggleDay(day)}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                        availability.includes(day)
-                          ? "bg-primary text-primary-foreground shadow-elevated"
-                          : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                      }`}>
-                      {day}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* ==================== SAVE ALL BUTTON ==================== */}
 
-            {/* Save Listing */}
-            <Button variant="hero" size="lg" className="w-full h-12 rounded-xl text-base font-semibold" onClick={handleSaveListing} disabled={savingListing}>
-              {savingListing ? "Saving..." : existingListing ? "Update Listing" : "Publish Listing"}
-            </Button>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="sticky bottom-4 z-20"
+            >
+              <Button
+                variant="hero"
+                size="lg"
+                className={`w-full h-14 rounded-2xl text-base font-semibold shadow-elevated transition-all duration-300 ${
+                  hasChanges ? "scale-100 opacity-100" : "scale-[0.98] opacity-70"
+                }`}
+                onClick={handleSaveAll}
+                disabled={saving || !hasChanges}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    Saving everything...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5 mr-2" />
+                    {hasChanges ? "Save All Changes" : "No changes to save"}
+                  </>
+                )}
+              </Button>
+            </motion.div>
 
             {/* ==================== REVIEWS / FEEDBACK ==================== */}
 
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 mt-4">
+            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
-                <Star className="w-5 h-5 text-primary" /> Reviews & Feedback
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-primary" />
+                </div>
+                Reviews & Feedback
               </h2>
               {reviews && reviews.length > 0 ? (
                 <div className="space-y-4">
@@ -664,7 +705,7 @@ const ProfileEdit = () => {
                     const name = p?.full_name || "Anonymous";
                     const avatar = p?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
                     return (
-                      <div key={r.id} className="flex gap-3">
+                      <div key={r.id} className="flex gap-3 p-3 rounded-xl bg-primary/[0.03] border border-primary/[0.06]">
                         <img src={avatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -685,7 +726,12 @@ const ProfileEdit = () => {
                   })}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No reviews yet. Once you get feedback, it will show up here.</p>
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/[0.06] flex items-center justify-center mx-auto mb-3">
+                    <Star className="w-6 h-6 text-primary/40" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">No reviews yet. Once you get feedback, it will show up here.</p>
+                </div>
               )}
             </div>
 

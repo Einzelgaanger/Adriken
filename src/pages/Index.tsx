@@ -10,10 +10,10 @@ import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
   const { user } = useAuth();
 
-  // Signed-in users see just the search (AI chat) section
+  // Signed-in users see just the search section with warm background
   if (user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-primary/[0.04] via-background to-background">
         <Navbar />
         <main>
           <SearchHero />
