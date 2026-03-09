@@ -57,16 +57,6 @@ const Dashboard = () => {
     enabled: !!user,
   });
 
-  const deleteListing = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("listings").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
-      toast.success("Listing deleted");
-    },
-  });
 
   const updateBookingStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
