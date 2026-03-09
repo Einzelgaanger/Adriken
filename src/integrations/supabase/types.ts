@@ -159,44 +159,74 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          certifications: string[] | null
+          consent_date: string | null
           created_at: string
+          data_consent: boolean | null
+          email_public: string | null
+          facebook: string | null
           full_name: string
           id: string
+          instagram: string | null
           latitude: number | null
           live_location_enabled: boolean | null
           location: string | null
           longitude: number | null
           phone: string | null
+          portfolio_images: string[] | null
+          portfolio_videos: string[] | null
+          tiktok: string | null
           updated_at: string
           user_id: string
+          whatsapp: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
+          consent_date?: string | null
           created_at?: string
+          data_consent?: boolean | null
+          email_public?: string | null
+          facebook?: string | null
           full_name?: string
           id?: string
+          instagram?: string | null
           latitude?: number | null
           live_location_enabled?: boolean | null
           location?: string | null
           longitude?: number | null
           phone?: string | null
+          portfolio_images?: string[] | null
+          portfolio_videos?: string[] | null
+          tiktok?: string | null
           updated_at?: string
           user_id: string
+          whatsapp?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string[] | null
+          consent_date?: string | null
           created_at?: string
+          data_consent?: boolean | null
+          email_public?: string | null
+          facebook?: string | null
           full_name?: string
           id?: string
+          instagram?: string | null
           latitude?: number | null
           live_location_enabled?: boolean | null
           location?: string | null
           longitude?: number | null
           phone?: string | null
+          portfolio_images?: string[] | null
+          portfolio_videos?: string[] | null
+          tiktok?: string | null
           updated_at?: string
           user_id?: string
+          whatsapp?: string | null
         }
         Relationships: []
       }
