@@ -16,6 +16,8 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
+import Messages from "./pages/Messages";
+import ViewingHistory from "./pages/ViewingHistory";
 import ProfileEdit from "./pages/ProfileEdit";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
