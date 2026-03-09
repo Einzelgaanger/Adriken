@@ -20,7 +20,6 @@ const Results = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["search", query],
     queryFn: async () => {
-      // Fetch all active listings with their provider profiles
       const { data: listings, error: dbError } = await supabase
         .from("listings")
         .select("*, profiles!listings_user_id_fkey(full_name, avatar_url, location)")
@@ -29,24 +28,14 @@ const Results = () => {
       if (dbError) throw dbError;
       if (!listings || listings.length === 0) return { listings: [], matches: [] };
 
-      // Call AI matching
       const { data: matchData, error: fnError } = await supabase.functions.invoke("match-listings", {
         body: {
           query,
           listings: listings.map((l) => ({
-            id: l.id,
-            title: l.title,
-            description: l.description,
-            type: l.listing_type,
-            skills: l.skills,
-            services: l.services,
-            location: l.location,
-            hourly_rate: l.hourly_rate,
-            fixed_price: l.fixed_price,
-            experience: l.experience,
-            rating: l.rating,
-            review_count: l.review_count,
-            availability: l.availability,
+            id: l.id, title: l.title, description: l.description, type: l.listing_type,
+            skills: l.skills, services: l.services, location: l.location,
+            hourly_rate: l.hourly_rate, fixed_price: l.fixed_price, experience: l.experience,
+            rating: l.rating, review_count: l.review_count, availability: l.availability,
           })),
         },
       });
@@ -54,8 +43,6 @@ const Results = () => {
       if (fnError) throw fnError;
 
       const aiMatches: AIMatch[] = matchData?.matches || [];
-
-      // Sort listings by AI match score
       const matchMap = new Map(aiMatches.map((m: AIMatch) => [m.id, m]));
       const sorted = [...listings]
         .filter((l) => matchMap.has(l.id))
@@ -72,43 +59,49 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+      <div className="pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
-          <Link to="/" className="inline-block mb-4">
-            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          <Link to="/" className="inline-block mb-5">
+            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
-            <div className="flex items-center gap-2 text-sm text-primary mb-2 font-medium">
-              <Sparkles className="w-4 h-4 shrink-0" /> AI-powered results
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 sm:mb-10">
+            <div className="inline-flex items-center gap-2 text-xs text-primary mb-3 font-semibold uppercase tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" /> AI-powered results
             </div>
-            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 break-words">
-              Results for: &ldquo;{query}&rdquo;
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight">
+              Results for "{query}"
             </h1>
+            {!isLoading && listings.length > 0 && (
+              <p className="text-sm text-muted-foreground mt-1">{listings.length} match{listings.length !== 1 ? "es" : ""} found</p>
+            )}
           </motion.div>
 
           {isLoading && (
-            <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
-              <p className="text-muted-foreground font-medium">AI is finding the best matches...</p>
+            <div className="flex flex-col items-center justify-center py-24">
+              <div className="w-16 h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-5">
+                <Loader2 className="w-7 h-7 text-primary animate-spin" />
+              </div>
+              <p className="text-muted-foreground font-semibold text-[15px]">AI is finding the best matches...</p>
+              <p className="text-sm text-muted-foreground/60 mt-1">This usually takes a few seconds</p>
             </div>
           )}
 
           {error && (
-            <div className="rounded-2xl bg-destructive/10 border border-destructive/20 p-6 text-center">
-              <p className="text-destructive font-medium">Something went wrong while searching.</p>
-              <p className="text-sm text-muted-foreground mt-1">Please try again.</p>
+            <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-8 text-center">
+              <p className="text-destructive font-semibold">Something went wrong while searching.</p>
+              <p className="text-sm text-muted-foreground mt-1.5">Please try again.</p>
             </div>
           )}
 
           {!isLoading && !error && listings.length === 0 && (
-            <div className="rounded-2xl bg-card border border-border p-10 text-center">
-              <p className="text-lg font-display font-semibold text-foreground mb-2">No listings yet</p>
-              <p className="text-muted-foreground mb-6">Be the first to offer what people are looking for!</p>
+            <div className="rounded-2xl bg-card border border-border/60 p-12 text-center shadow-soft">
+              <p className="text-lg font-display font-bold text-foreground mb-2">No listings yet</p>
+              <p className="text-muted-foreground mb-7 max-w-sm mx-auto">Be the first to offer what people are looking for!</p>
               <Link to="/become-provider">
-                <Button variant="hero">Create a Listing</Button>
+                <Button variant="hero" size="lg" className="rounded-xl">Create a Listing</Button>
               </Link>
             </div>
           )}
