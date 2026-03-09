@@ -40,6 +40,8 @@ const Results = () => {
             skills: l.skills, services: l.services, location: l.location,
             hourly_rate: l.hourly_rate, fixed_price: l.fixed_price, experience: l.experience,
             rating: l.rating, review_count: l.review_count, availability: l.availability,
+            business_name: (l as any).profiles?.business_name || "",
+            provider_name: (l as any).profiles?.full_name || "",
           })),
         },
       });

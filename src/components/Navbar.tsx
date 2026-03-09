@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, LayoutDashboard, Eye, User } from "lucide-react";
+import { Menu, X, LogOut, User, Eye } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,11 +31,6 @@ const Navbar = () => {
     navigate("/");
   };
 
-  const links = [
-    { to: "/", label: "Find Services" },
-    { to: user ? "/profile/edit" : "/signup", label: "Offer Services" },
-  ];
-
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
@@ -52,29 +47,25 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-0.5">
-          {links.map((link) => (
-            <Link key={link.to + link.label} to={link.to}>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">{link.label}</Button>
-            </Link>
-          ))}
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">Find Services</Button>
+          </Link>
+          <Link to={user ? "/profile/edit" : "/signup"}>
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">Offer Services</Button>
+          </Link>
         </div>
 
         <div className="hidden md:flex items-center gap-2.5">
           {user ? (
             <>
-              <Link to="/dashboard">
-                <Button variant="soft" size="sm" className="rounded-xl">
-                  <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
-                </Button>
-              </Link>
               <Link to="/profile/edit">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                  <User className="w-4 h-4" />
+                <Button variant="soft" size="sm" className="rounded-xl">
+                  <User className="w-4 h-4 mr-1.5" /> My Profile
                 </Button>
               </Link>
               <Link to="/history">
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4 mr-1" /> History
                 </Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
@@ -94,7 +85,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile hamburger */}
-        <div className="md:hidden flex items-center gap-1.5">
+        <div className="md:hidden">
           <button
             type="button"
             className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-secondary active:bg-secondary/80 transition-colors w-11 h-11"
@@ -121,21 +112,17 @@ const Navbar = () => {
             aria-label="Mobile menu"
           >
             <div className="px-4 py-4 pb-6 flex flex-col gap-1">
-              {links.map((link) => (
-                <Link key={link.to + link.label} to={link.to} onClick={() => setMobileOpen(false)} className="block">
-                  <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">{link.label}</Button>
-                </Link>
-              ))}
+              <Link to="/" onClick={() => setMobileOpen(false)} className="block">
+                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">Find Services</Button>
+              </Link>
+              <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
+                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">Offer Services</Button>
+              </Link>
               <div className="border-t border-border pt-3 mt-2 flex flex-col gap-1.5">
                 {user ? (
                   <>
-                    <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="soft" className="w-full h-12 text-base rounded-xl">
-                        <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
-                      </Button>
-                    </Link>
                     <Link to="/profile/edit" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
+                      <Button variant="soft" className="w-full h-12 text-base rounded-xl">
                         <User className="w-4 h-4 mr-1.5" /> My Profile
                       </Button>
                     </Link>
