@@ -144,9 +144,8 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
       ) : reviews && reviews.length > 0 ? (
         <div className="space-y-4">
           {reviews.map((r: any) => {
-            const profile = r.profiles as any;
-            const reviewerName = profile?.full_name || "Anonymous";
-            const reviewerAvatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${reviewerName}`;
+            const reviewerName = r.profile?.full_name || "Anonymous";
+            const reviewerAvatar = r.profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${reviewerName}`;
             return (
               <div key={r.id} className="flex gap-3">
                 <img src={reviewerAvatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
