@@ -1,14 +1,15 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import Navbar from "@/components/Navbar";
+import ReviewsSection from "@/components/ReviewsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const ProviderDetail = () => {
