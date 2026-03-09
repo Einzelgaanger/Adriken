@@ -132,6 +132,16 @@ const Navbar = () => {
                         <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                       </Button>
                     </Link>
+                    <Link to="/messages" onClick={() => setMobileOpen(false)} className="block">
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
+                        <MessageSquare className="w-4 h-4 mr-1.5" /> Messages
+                      </Button>
+                    </Link>
+                    <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
+                        <Eye className="w-4 h-4 mr-1.5" /> Viewing History
+                      </Button>
+                    </Link>
                     <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                       <LogOut className="w-4 h-4 mr-1.5" /> Sign out
                     </Button>
