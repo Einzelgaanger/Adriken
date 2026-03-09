@@ -7,7 +7,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
         <div className="sm:col-span-2 md:col-span-1">
           <Link to="/" className="inline-flex items-center gap-2 font-display font-bold text-lg sm:text-xl text-background py-2 -my-2">
-            <img src={adrikenLogo} alt="Adriken" className="w-7 h-7 sm:w-8 sm:h-8" />
+            <img src={adrikenLogo} alt="Adriken" className="w-10 h-10 sm:w-12 sm:h-12" />
             Adriken
           </Link>
           <p className="mt-4 text-sm text-background/60 leading-relaxed max-w-xs">
