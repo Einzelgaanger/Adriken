@@ -10,7 +10,7 @@ import Index from "./pages/Index";
 import Results from "./pages/Results";
 import ProviderDetail from "./pages/ProviderDetail";
 import BecomeProvider from "./pages/BecomeProvider";
-import HowItWorks from "./pages/HowItWorks";
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
