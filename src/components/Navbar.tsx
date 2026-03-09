@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, User, Eye } from "lucide-react";
+import { Menu, X, LogOut, User, Clock } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,8 +35,8 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
         scrolled
-          ? "bg-white/90 backdrop-blur-2xl border-b border-border/60 shadow-xs"
-          : "bg-white/70 backdrop-blur-xl"
+          ? "bg-card/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
+          : "bg-card/70 backdrop-blur-xl"
       }`}
       aria-label="Main navigation"
     >
@@ -48,10 +48,10 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-0.5">
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">Find Services</Button>
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
           </Link>
           <Link to={user ? "/profile/edit" : "/signup"}>
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">Offer Services</Button>
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Offer Services</Button>
           </Link>
         </div>
 
@@ -64,18 +64,18 @@ const Navbar = () => {
                 </Button>
               </Link>
               <Link to="/history">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                  <Eye className="w-4 h-4 mr-1" /> History
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                  <Clock className="w-4 h-4 mr-1" /> History
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="w-4 h-4 mr-1" /> Sign out
               </Button>
             </>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">Log in</Button>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Log in</Button>
               </Link>
               <Link to="/signup">
                 <Button variant="hero" size="sm" className="rounded-xl px-5">Get Started</Button>
@@ -88,7 +88,7 @@ const Navbar = () => {
         <div className="md:hidden">
           <button
             type="button"
-            className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-secondary active:bg-secondary/80 transition-colors w-11 h-11"
+            className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-primary/[0.06] active:bg-primary/10 transition-colors w-11 h-11"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
@@ -107,16 +107,16 @@ const Navbar = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="md:hidden overflow-hidden bg-white border-b border-border"
+            className="md:hidden overflow-hidden bg-card border-b border-border"
             role="dialog"
             aria-label="Mobile menu"
           >
             <div className="px-4 py-4 pb-6 flex flex-col gap-1">
               <Link to="/" onClick={() => setMobileOpen(false)} className="block">
-                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">Find Services</Button>
+                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
               </Link>
               <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
-                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium">Offer Services</Button>
+                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Offer Services</Button>
               </Link>
               <div className="border-t border-border pt-3 mt-2 flex flex-col gap-1.5">
                 {user ? (
@@ -127,11 +127,11 @@ const Navbar = () => {
                       </Button>
                     </Link>
                     <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
-                        <Eye className="w-4 h-4 mr-1.5" /> Businesses I Checked
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start hover:text-primary">
+                        <Clock className="w-4 h-4 mr-1.5" /> Businesses I Checked
                       </Button>
                     </Link>
-                    <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                    <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
                       <LogOut className="w-4 h-4 mr-1.5" /> Sign out
                     </Button>
                   </>
