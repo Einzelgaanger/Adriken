@@ -340,7 +340,7 @@ const ProfileEdit = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-24 flex items-center justify-center min-h-[60vh]">
+        <div className="pt-28 sm:pt-32 flex items-center justify-center min-h-[60vh]">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       </div>
@@ -351,7 +351,7 @@ const ProfileEdit = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-24 pb-16 flex items-center justify-center min-h-[70vh]">
+        <div className="pt-28 sm:pt-32 pb-16 flex items-center justify-center min-h-[70vh]">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-md px-4">
             <div className="inline-flex items-center gap-2 w-14 h-14 justify-center rounded-xl bg-gradient-warm mb-6">
               <Sparkles className="w-6 h-6 text-primary-foreground" />
@@ -375,7 +375,7 @@ const ProfileEdit = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
-      <div className="pt-18 sm:pt-24 pb-10 sm:pb-16 px-3 sm:px-6">
+      <div className="pt-28 sm:pt-32 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-2xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
 
