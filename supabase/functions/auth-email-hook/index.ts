@@ -45,7 +45,7 @@ const FROM_DOMAIN = "adriken.com" // Domain shown in From address (may be root o
 // The sample email uses a fixed placeholder (RFC 6761 .test TLD) so the Go backend
 // can always find-and-replace it with the actual recipient when sending test emails,
 // even if the project's domain has changed since the template was scaffolded.
-const SAMPLE_PROJECT_URL = "https://b056ba7c-ade3-45fb-b905-5bf2d62035c9.lovableproject.com"
+const SAMPLE_PROJECT_URL = "https://adriken.com"
 const SAMPLE_EMAIL = "user@example.test"
 const SAMPLE_DATA: Record<string, object> = {
   signup: {
