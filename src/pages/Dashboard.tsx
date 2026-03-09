@@ -86,7 +86,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+      <div className="pt-18 sm:pt-24 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
@@ -107,19 +107,19 @@ const Dashboard = () => {
                 <h2 className="font-display font-bold text-xl text-foreground mb-4 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" /> Incoming Booking Requests
                 </h2>
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {bookingsAsProvider.map((b: any) => {
                     const StatusIcon = statusIcons[b.status] || Clock;
                     return (
-                      <div key={b.id} className="rounded-xl bg-card border border-border p-4">
-                        <div className="flex items-center justify-between gap-4 mb-2">
+                      <div key={b.id} className="rounded-xl bg-card border border-border p-3.5 sm:p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-2">
                           <div>
                             <p className="font-semibold text-foreground">{b.profiles?.full_name || "Someone"} wants to book</p>
                             <p className="text-sm text-muted-foreground">{b.listings?.title}</p>
                             {b.scheduled_day && <p className="text-xs text-muted-foreground mt-1">Day: {b.scheduled_day}</p>}
                             {b.message && <p className="text-xs text-muted-foreground mt-1 italic">"{b.message}"</p>}
                           </div>
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[b.status]}`}>
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium w-fit ${statusColors[b.status]}`}>
                             <StatusIcon className="w-3 h-3" /> {b.status}
                           </span>
                         </div>
@@ -144,17 +144,17 @@ const Dashboard = () => {
             {bookingsAsSeeker && bookingsAsSeeker.length > 0 && (
               <section>
                 <h2 className="font-display font-bold text-xl text-foreground mb-4">My Booking Requests</h2>
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {bookingsAsSeeker.map((b: any) => {
                     const StatusIcon = statusIcons[b.status] || Clock;
                     return (
-                      <div key={b.id} className="rounded-xl bg-card border border-border p-4 flex items-center justify-between gap-4">
+                      <div key={b.id} className="rounded-xl bg-card border border-border p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
                         <div>
                           <p className="font-semibold text-foreground">{b.listings?.title}</p>
                           <p className="text-sm text-muted-foreground">with {b.profiles?.full_name || "Business"}</p>
                           {b.scheduled_day && <p className="text-xs text-muted-foreground mt-1">Day: {b.scheduled_day}</p>}
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[b.status]}`}>
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium w-fit ${statusColors[b.status]}`}>
                           <StatusIcon className="w-3 h-3" /> {b.status}
                         </span>
                       </div>

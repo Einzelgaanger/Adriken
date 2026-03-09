@@ -375,7 +375,7 @@ const ProfileEdit = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+      <div className="pt-18 sm:pt-24 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-2xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
 
@@ -389,12 +389,12 @@ const ProfileEdit = () => {
             </div>
 
             {/* Avatar */}
-            <div className="rounded-2xl bg-card border border-border p-6 flex items-center gap-5 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 flex items-center gap-4 sm:gap-5 shadow-soft">
               <div className="relative">
                 <img
                   src={avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${fullName || "U"}`}
                   alt="Avatar"
-                  className="w-20 h-20 rounded-2xl object-cover border-2 border-primary/20"
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-primary/20"
                 />
                 <button
                   type="button"
@@ -420,7 +420,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Basic Info */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Building2 className="w-4 h-4 text-primary" />
@@ -444,7 +444,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Location */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
                   <MapPin className="w-4 h-4 text-accent" />
@@ -453,12 +453,12 @@ const ProfileEdit = () => {
               </h2>
               <div className="space-y-2">
                 <Label>Address / Area</Label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative flex-1">
                     <MapPin className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                     <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Nairobi, Westlands" className="pl-9" />
                   </div>
-                  <Button type="button" variant="outline" onClick={handleGetLocation} className="shrink-0">
+                  <Button type="button" variant="outline" onClick={handleGetLocation} className="shrink-0 h-11">
                     <MapPin className="w-4 h-4 mr-1" /> Detect
                   </Button>
                 </div>
@@ -473,7 +473,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Contact & Social */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Phone className="w-4 h-4 text-primary" />
@@ -510,7 +510,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Portfolio */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
                   <Upload className="w-4 h-4 text-accent" />
@@ -553,7 +553,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Certifications */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground">Certifications</h2>
               <p className="text-sm text-muted-foreground">Upload any certificates or licenses (optional). PDF or images, max 10MB.</p>
               <Button type="button" variant="outline" onClick={() => certInputRef.current?.click()} disabled={uploading === "cert"}>
@@ -590,7 +590,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Type & Pricing */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Briefcase className="w-4 h-4 text-primary" />
@@ -637,7 +637,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Services / Features */}
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground">
                 {listingType === "service" ? "What can you do?" : "Key Features"}
               </h2>
@@ -686,12 +686,12 @@ const ProfileEdit = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="sticky bottom-4 z-20"
+              className="sticky bottom-2 sm:bottom-4 z-20 pb-[env(safe-area-inset-bottom)]"
             >
               <Button
                 variant="hero"
                 size="lg"
-                className={`w-full h-14 rounded-2xl text-base font-semibold shadow-elevated transition-all duration-300 ${
+                className={`w-full h-12 sm:h-14 rounded-2xl text-sm sm:text-base font-semibold shadow-elevated transition-all duration-300 ${
                   hasChanges ? "scale-100 opacity-100" : "scale-[0.98] opacity-70"
                 }`}
                 onClick={handleSaveAll}
@@ -713,7 +713,7 @@ const ProfileEdit = () => {
 
             {/* ==================== REVIEWS / FEEDBACK ==================== */}
 
-            <div className="rounded-2xl bg-card border border-border p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Star className="w-4 h-4 text-primary" />

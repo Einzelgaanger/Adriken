@@ -88,18 +88,18 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
   const alreadyReviewed = user && reviews?.some((r: any) => r.reviewer_id === user.id);
 
   return (
-    <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
+    <div className="rounded-2xl bg-card border border-border p-3.5 sm:p-6">
       <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
         <Star className="w-5 h-5 text-primary" /> Reviews & Feedback
       </h2>
 
       {/* Submit Review — available to everyone except the provider and those who already reviewed */}
       {!isOwnProfile && !alreadyReviewed && (
-        <div className="mb-6 p-4 rounded-xl bg-secondary/50 border border-border">
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl bg-secondary/50 border border-border">
           <p className="text-sm font-semibold text-foreground mb-3">
             {user ? "Leave a review" : "Leave a review (anonymous)"}
           </p>
-          <div className="flex gap-1 mb-3">
+          <div className="flex gap-0.5 sm:gap-1 mb-2.5 sm:mb-3">
             {[1, 2, 3, 4, 5].map((s) => (
               <button
                 key={s}
@@ -107,10 +107,10 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
                 onClick={() => setRating(s)}
                 onMouseEnter={() => setHoverRating(s)}
                 onMouseLeave={() => setHoverRating(0)}
-                className="p-0.5 touch-manipulation"
+                className="p-0.5 touch-manipulation min-h-[36px] min-w-[28px] flex items-center justify-center"
               >
                 <Star
-                  className={`w-7 h-7 transition-colors ${
+                  className={`w-6 h-6 sm:w-7 sm:h-7 transition-colors ${
                     s <= (hoverRating || rating)
                       ? "text-primary fill-primary"
                       : "text-muted-foreground/30"
@@ -123,9 +123,9 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Share your experience..."
-            rows={3}
+            rows={2}
             maxLength={500}
-            className="mb-3"
+            className="mb-2.5 sm:mb-3 text-sm"
           />
           <Button
             variant="hero"
@@ -143,17 +143,17 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
       {isLoading ? (
         <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 text-primary animate-spin" /></div>
       ) : reviews && reviews.length > 0 ? (
-        <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
           {reviews.map((r: any) => {
             const reviewerName = r.profile?.full_name || "Anonymous";
             const reviewerAvatar = r.profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${reviewerName}`;
             return (
-              <div key={r.id} className="flex gap-3">
-                <img src={reviewerAvatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+              <div key={r.id} className="flex gap-2.5 sm:gap-3">
+                <img src={reviewerAvatar} alt="" className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-sm text-foreground">{reviewerName}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-[13px] sm:text-sm text-foreground">{reviewerName}</span>
+                    <span className="text-[11px] sm:text-xs text-muted-foreground">
                       {new Date(r.created_at).toLocaleDateString()}
                     </span>
                   </div>
@@ -161,11 +161,11 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
-                        className={`w-3.5 h-3.5 ${s <= r.rating ? "text-primary fill-primary" : "text-muted-foreground/20"}`}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${s <= r.rating ? "text-primary fill-primary" : "text-muted-foreground/20"}`}
                       />
                     ))}
                   </div>
-                  {r.comment && <p className="text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
+                  {r.comment && <p className="text-[13px] sm:text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
                 </div>
               </div>
             );

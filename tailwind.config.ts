@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["'Plus Jakarta Sans'", "system-ui", "-apple-system", "sans-serif"],
-        body: ["'DM Sans'", "system-ui", "-apple-system", "sans-serif"],
+        display: ["'Cinzel'", "Georgia", "serif"],
+        body: ["'Manrope'", "system-ui", "-apple-system", "sans-serif"],
+        accent: ["'Syne'", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, User, Clock } from "lucide-react";
+import { LogOut, User, Clock } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,8 +35,8 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
         scrolled
-          ? "bg-card/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
-          : "bg-card/70 backdrop-blur-xl"
+          ? "bg-white/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
+          : "bg-white/90 backdrop-blur-xl"
       }`}
       aria-label="Main navigation"
     >
@@ -86,16 +86,34 @@ const Navbar = () => {
 
         {/* Mobile hamburger */}
         <div className="md:hidden">
-          <button
+          <motion.button
             type="button"
-            className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-primary/[0.06] active:bg-primary/10 transition-colors w-11 h-11"
+            className="touch-target flex items-center justify-center rounded-xl border border-border/80 bg-white/85 text-foreground shadow-xs hover:shadow-soft hover:border-primary/25 active:scale-[0.97] transition-all w-11 h-11"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            animate={{ rotate: mobileOpen ? 90 : 0 }}
+            transition={{ duration: 0.22, ease: "easeInOut" }}
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            <span className="relative w-[18px] h-[14px] block">
+              <motion.span
+                className="absolute left-0 top-0 h-[2px] w-full rounded-full bg-foreground"
+                animate={mobileOpen ? { top: 6, rotate: 45 } : { top: 0, rotate: 0 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              />
+              <motion.span
+                className="absolute left-0 top-[6px] h-[2px] w-full rounded-full bg-foreground"
+                animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+                transition={{ duration: 0.18, ease: "easeInOut" }}
+              />
+              <motion.span
+                className="absolute left-0 top-[12px] h-[2px] w-full rounded-full bg-foreground"
+                animate={mobileOpen ? { top: 6, rotate: -45 } : { top: 12, rotate: 0 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              />
+            </span>
+          </motion.button>
         </div>
       </div>
 
@@ -107,7 +125,7 @@ const Navbar = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="md:hidden overflow-hidden bg-card border-b border-border"
+            className="md:hidden overflow-hidden bg-white border-b border-border"
             role="dialog"
             aria-label="Mobile menu"
           >

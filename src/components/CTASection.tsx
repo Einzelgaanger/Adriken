@@ -33,7 +33,7 @@ const CTASection = () => {
                   Turn your skills into income
                 </h2>
                 <p className="text-white/60 text-[15px] sm:text-base mb-6 leading-relaxed">
-                  Whether you're a plumber, nanny, photographer, or consultant — list your services and let customers come to you. No hustle, just quality work.
+                  Whether you are a chef, tutor, photographer, security guard, secretary, artisan, or consultant - list your services and let customers come to you.
                 </p>
                 <div className="grid grid-cols-2 gap-3 mb-6">
                   {providerBenefits.map((b) => (
@@ -53,9 +53,11 @@ const CTASection = () => {
               </div>
               <div className="hidden md:flex flex-col gap-3">
                 {[
-                  { emoji: "🔧", title: "Plumber in Nairobi", earnings: "KSh 45,000/mo" },
+                  { emoji: "👨‍🍳", title: "Private Chef", earnings: "KSh 70,000/mo" },
+                  { emoji: "📚", title: "Math Tutor", earnings: "KSh 40,000/mo" },
                   { emoji: "📸", title: "Event Photographer", earnings: "KSh 80,000/mo" },
-                  { emoji: "👶", title: "Nanny & Childcare", earnings: "KSh 35,000/mo" },
+                  { emoji: "🛡️", title: "Security Guard", earnings: "KSh 45,000/mo" },
+                  { emoji: "🗂️", title: "Office Secretary", earnings: "KSh 38,000/mo" },
                 ].map((item) => (
                   <div key={item.title} className="flex items-center gap-4 px-5 py-4 rounded-xl bg-white/[0.06] border border-white/10">
                     <span className="text-2xl">{item.emoji}</span>

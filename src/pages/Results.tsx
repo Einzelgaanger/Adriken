@@ -77,7 +77,7 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6">
+      <div className="pt-18 sm:pt-24 pb-10 sm:pb-20 px-3 sm:px-6">
         <div className="container mx-auto max-w-3xl">
           <Link to="/" className="inline-block mb-4">
             <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation">
@@ -85,11 +85,11 @@ const Results = () => {
             </Button>
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-8">
             <div className="inline-flex items-center gap-2 text-xs text-primary mb-2.5 font-semibold uppercase tracking-wide">
               <Sparkles className="w-3.5 h-3.5 shrink-0" /> AI-powered results
             </div>
-            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight">
+            <h1 className="font-display text-lg sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
               Results for "{query}"
             </h1>
             {!isLoading && listings.length > 0 && (
@@ -102,7 +102,7 @@ const Results = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mb-4 flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide"
+              className="mb-3 flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               {([
@@ -114,7 +114,7 @@ const Results = () => {
                 <button
                   key={key}
                   onClick={() => setSortBy(key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shrink-0 min-h-[36px] touch-manipulation ${
+                  className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-colors shrink-0 min-h-[34px] touch-manipulation ${
                     sortBy === key
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -194,7 +194,7 @@ const Results = () => {
                   <div className="flex-1 h-px bg-border/60" />
                 </div>
               )}
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 {(showTopSeparately ? otherMatches : listings).map((listing: any, i: number) => {
                   const match = matchMap?.get(listing.id);
                   const profile = listing.profiles;
