@@ -50,6 +50,9 @@ const Navbar = () => {
           <Link to="/">
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
           </Link>
+          <Link to="/nearby">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">See businesses and people near you</Button>
+          </Link>
           <Link to={user ? "/profile/edit" : "/signup"}>
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Offer Services</Button>
           </Link>
@@ -135,6 +138,9 @@ const Navbar = () => {
               </Link>
               <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
                 <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Offer Services</Button>
+              </Link>
+              <Link to="/nearby" onClick={() => setMobileOpen(false)} className="block">
+                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">See businesses and people near you</Button>
               </Link>
               <div className="border-t border-border pt-3 mt-2 flex flex-col gap-1.5">
                 {user ? (

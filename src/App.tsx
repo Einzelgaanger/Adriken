@@ -9,6 +9,7 @@ import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index";
 import Results from "./pages/Results";
 import ProviderDetail from "./pages/ProviderDetail";
+import Nearby from "./pages/Nearby";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -34,6 +35,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/nearby" element={<Nearby />} />
             <Route path="/provider/:id" element={<ProviderDetail />} />
             
             <Route path="/login" element={<Login />} />

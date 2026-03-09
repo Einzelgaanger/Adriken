@@ -132,7 +132,7 @@ const Signup = () => {
                 <Label htmlFor="signup-password" className="text-foreground/80 font-medium text-sm">Password</Label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none" />
-                  <Input id="signup-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8+ chars, upper/lower, number, special" className="pl-10 pr-12 h-12 sm:h-11 rounded-xl border-border/60 bg-background" required minLength={8} />
+                  <Input id="signup-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="pl-10 pr-12 h-12 sm:h-11 rounded-xl border-border/60 bg-background" required minLength={8} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-secondary min-w-[40px] min-h-[40px] flex items-center justify-center touch-manipulation" aria-label={showPassword ? "Hide password" : "Show password"}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
