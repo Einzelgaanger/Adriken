@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, Home, CheckCircle2, XCircle } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Home, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,12 +38,6 @@ const Signup = () => {
   const navigate = useNavigate();
   const passwordStrength = checkPasswordStrength(password);
   const passwordsMatch = password === confirmPassword;
-  const strengthColor =
-    passwordStrength.strength === "weak"
-      ? "bg-red-500"
-      : passwordStrength.strength === "medium"
-        ? "bg-amber-500"
-        : "bg-emerald-500";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,38 +165,41 @@ const Signup = () => {
                       {passwordStrength.strength.toUpperCase()}
                     </span>
                   </div>
-                  <div className="grid grid-cols-4 gap-1">
+                  <div className="flex items-center gap-1.5">
                     {[1, 2, 3, 4].map((i) => (
-                      <span
+                      <div
                         key={i}
-                        className={`h-1.5 rounded-full ${passwordStrength.score >= i ? strengthColor : "bg-muted"}`}
+                        className={`h-1.5 w-8 rounded-full transition-colors ${
+                          passwordStrength.score >= i
+                            ? passwordStrength.score < 3
+                              ? "bg-rose-400"
+                              : passwordStrength.score < 4
+                                ? "bg-amber-400"
+                                : "bg-emerald-500"
+                            : "bg-slate-200 dark:bg-navy-600"
+                        }`}
                       />
                     ))}
                   </div>
-                  <div className="space-y-1.5 text-xs">
-                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.length ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {passwordStrength.checks.length ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      At least 8 characters
-                    </p>
-                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.uppercase ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {passwordStrength.checks.uppercase ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      At least one uppercase letter
-                    </p>
-                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.lowercase ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {passwordStrength.checks.lowercase ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      At least one lowercase letter
-                    </p>
-                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.number ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {passwordStrength.checks.number ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      At least one number
-                    </p>
-                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.special ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {passwordStrength.checks.special ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      At least one special character
-                    </p>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                    {Object.entries(passwordStrength.checks).map(([key, value]) => (
+                      <span
+                        key={key}
+                        className={`text-[11px] flex items-center gap-1 ${
+                          value ? "text-slate-600 dark:text-slate-300" : "text-slate-400 dark:text-navy-500"
+                        }`}
+                      >
+                        {value ? (
+                          <CheckCircle className="w-3 h-3 text-emerald-500 shrink-0" />
+                        ) : (
+                          <span className="w-3 h-3 rounded-full border border-slate-300 dark:border-navy-500 shrink-0" />
+                        )}
+                        {key === "length" ? "8+ characters" : key.charAt(0).toUpperCase() + key.slice(1)}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Data consent checkbox */}
               <div className="flex items-start gap-3 py-1">
