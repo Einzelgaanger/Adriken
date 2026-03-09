@@ -15,20 +15,22 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const DEFAULT_LOGO = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
+
 interface EmailChangeEmailProps {
   siteName: string
   email: string
   newEmail: string
   confirmationUrl: string
+  logoUrl?: string
 }
-
-const logoUrl = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
 
 export const EmailChangeEmail = ({
   siteName,
   email,
   newEmail,
   confirmationUrl,
+  logoUrl = DEFAULT_LOGO,
 }: EmailChangeEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

@@ -47,34 +47,42 @@ const FROM_DOMAIN = "adriken.com" // Domain shown in From address (may be root o
 // even if the project's domain has changed since the template was scaffolded.
 const SAMPLE_PROJECT_URL = "https://adriken.com/"
 const SAMPLE_EMAIL = "user@example.test"
+// Logo shown in emails: use your live site so it always loads (put logo at public/adriken-logo.png)
+const LOGO_URL = `https://${ROOT_DOMAIN}/adriken-logo.png`
 const SAMPLE_DATA: Record<string, object> = {
   signup: {
     siteName: SITE_NAME,
     siteUrl: SAMPLE_PROJECT_URL,
     recipient: SAMPLE_EMAIL,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    logoUrl: LOGO_URL,
   },
   magiclink: {
     siteName: SITE_NAME,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    logoUrl: LOGO_URL,
   },
   recovery: {
     siteName: SITE_NAME,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    logoUrl: LOGO_URL,
   },
   invite: {
     siteName: SITE_NAME,
     siteUrl: SAMPLE_PROJECT_URL,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    logoUrl: LOGO_URL,
   },
   email_change: {
     siteName: SITE_NAME,
     email: SAMPLE_EMAIL,
     newEmail: SAMPLE_EMAIL,
     confirmationUrl: SAMPLE_PROJECT_URL,
+    logoUrl: LOGO_URL,
   },
   reauthentication: {
     token: '123456',
+    logoUrl: LOGO_URL,
   },
 }
 
@@ -220,6 +228,7 @@ async function handleWebhook(req: Request): Promise<Response> {
   const templateProps = {
     siteName: SITE_NAME,
     siteUrl: `https://${ROOT_DOMAIN}/`,
+    logoUrl: LOGO_URL,
     recipient: payload.data.email,
     confirmationUrl: payload.data.url,
     token: payload.data.token,

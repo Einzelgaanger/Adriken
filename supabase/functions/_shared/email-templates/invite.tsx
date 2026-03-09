@@ -15,18 +15,20 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const DEFAULT_LOGO = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
+
 interface InviteEmailProps {
   siteName: string
   siteUrl: string
   confirmationUrl: string
+  logoUrl?: string
 }
-
-const logoUrl = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
 
 export const InviteEmail = ({
   siteName,
   siteUrl,
   confirmationUrl,
+  logoUrl = DEFAULT_LOGO,
 }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />

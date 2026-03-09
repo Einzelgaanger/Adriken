@@ -13,13 +13,14 @@ import {
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
+const DEFAULT_LOGO = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
+
 interface ReauthenticationEmailProps {
   token: string
+  logoUrl?: string
 }
 
-const logoUrl = 'https://wzppyqkgluskxiakdtiw.supabase.co/storage/v1/object/public/email-assets/adriken-logo.png'
-
-export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
+export const ReauthenticationEmail = ({ token, logoUrl = DEFAULT_LOGO }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
     <Preview>Your verification code for Adriken</Preview>
