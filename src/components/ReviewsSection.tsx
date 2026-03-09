@@ -1,3 +1,4 @@
+// Reviews component - v2
 import { useState } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
