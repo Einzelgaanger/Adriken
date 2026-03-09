@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
@@ -23,6 +24,41 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function RedirectDashboardToHome() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (location.pathname === "/dashboard") {
+      navigate("/", { replace: true });
+    }
+  }, [location.pathname, navigate]);
+  return null;
+}
+
+const AppRoutes = () => (
+  <>
+    <RedirectDashboardToHome />
+    <ScrollToTop />
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/results" element={<Results />} />
+      <Route path="/nearby" element={<Nearby />} />
+      <Route path="/provider/:id" element={<ProviderDetail />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/dashboard" element={<Navigate to="/" replace />} />
+      <Route path="/history" element={<ViewingHistory />} />
+      <Route path="/profile/edit" element={<ProfileEdit />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+    <CookieConsent />
+  </>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -30,25 +66,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/results" element={<Results />} />
-            <Route path="/nearby" element={<Nearby />} />
-            <Route path="/provider/:id" element={<ProviderDetail />} />
-            
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<Navigate to="/" replace />} />
-            <Route path="/history" element={<ViewingHistory />} />
-            <Route path="/profile/edit" element={<ProfileEdit />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <CookieConsent />
+          <AppRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
