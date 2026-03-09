@@ -66,6 +66,11 @@ const Login = () => {
                 {loading ? "Logging in..." : "Log in"}
               </Button>
             </form>
+            <div className="text-center mt-4">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 rounded">
+                Forgot your password?
+              </Link>
+            </div>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don&apos;t have an account? <Link to="/signup" className="text-primary font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 rounded">Sign up</Link>

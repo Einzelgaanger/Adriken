@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2 } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,13 +18,14 @@ const ProviderDetail = () => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [booking, setBooking] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, avatar_url, location, bio)")
+        .select("*, profiles!listings_user_id_fkey(full_name, avatar_url, location, bio, phone, whatsapp, instagram, tiktok, facebook, email_public, certifications, portfolio_images, portfolio_videos)")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -34,50 +35,30 @@ const ProviderDetail = () => {
   });
 
   const handleBook = async () => {
-    if (!user) {
-      toast.error("Please sign in to book");
-      navigate("/login");
-      return;
-    }
-    if (!selectedDay) {
-      toast.error("Please select a day first");
-      return;
-    }
+    if (!user) { toast.error("Please sign in to book"); navigate("/login"); return; }
+    if (!selectedDay) { toast.error("Please select a day first"); return; }
     if (!listing) return;
-
     setBooking(true);
     const { error } = await supabase.from("bookings").insert({
-      listing_id: listing.id,
-      seeker_id: user.id,
-      provider_id: listing.user_id,
-      scheduled_day: selectedDay,
-      message: message.trim(),
+      listing_id: listing.id, seeker_id: user.id, provider_id: listing.user_id,
+      scheduled_day: selectedDay, message: message.trim(),
     });
     setBooking(false);
-
-    if (error) {
-      toast.error("Booking failed", { description: error.message });
-    } else {
-      toast.success("Booking request sent!", { description: "The provider will confirm shortly." });
-      navigate("/dashboard");
-    }
+    if (error) { toast.error("Booking failed", { description: error.message }); }
+    else { toast.success("Booking request sent!"); navigate("/dashboard"); }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="pt-24 flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        </div>
+      <div className="min-h-screen bg-background"><Navbar />
+        <div className="pt-24 flex items-center justify-center min-h-[60vh]"><Loader2 className="w-8 h-8 text-primary animate-spin" /></div>
       </div>
     );
   }
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
+      <div className="min-h-screen bg-background"><Navbar />
         <div className="pt-24 container mx-auto px-4 text-center">
           <h1 className="font-display text-2xl font-bold text-foreground">Listing not found</h1>
           <Link to="/"><Button variant="soft" className="mt-4">Go Home</Button></Link>
@@ -91,6 +72,10 @@ const ProviderDetail = () => {
   const avatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
   const price = listing.hourly_rate || listing.fixed_price || 0;
   const priceLabel = listing.hourly_rate ? "/hour" : listing.fixed_price ? " fixed" : "";
+  const portfolioImages: string[] = profile?.portfolio_images || [];
+  const portfolioVideos: string[] = profile?.portfolio_videos || [];
+  const certifications: string[] = profile?.certifications || [];
+  const hasContact = profile?.phone || profile?.whatsapp || profile?.email_public || profile?.instagram || profile?.facebook || profile?.tiktok;
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,9 +83,7 @@ const ProviderDetail = () => {
       <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
           <button type="button" onClick={() => window.history.back()} className="mb-4 sm:mb-6">
-            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl">
-              <ArrowLeft className="w-4 h-4 mr-1" /> Back
-            </Button>
+            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
           </button>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -114,9 +97,7 @@ const ProviderDetail = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h1 className="font-display text-2xl font-bold text-foreground">{name}</h1>
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-accent">
-                      <Shield className="w-3.5 h-3.5" /> Verified
-                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-accent"><Shield className="w-3.5 h-3.5" /> Verified</span>
                   </div>
                   <p className="text-muted-foreground mb-3">{listing.title}</p>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -125,25 +106,62 @@ const ProviderDetail = () => {
                       <span className="font-semibold text-foreground">{Number(listing.rating).toFixed(1)}</span>
                       ({listing.review_count} reviews)
                     </span>
-                    {listing.location && (
-                      <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {listing.location}</span>
-                    )}
-                    {listing.response_time && (
-                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {listing.response_time}</span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <Briefcase className="w-4 h-4" /> {listing.completed_jobs} completed
-                    </span>
+                    {listing.location && <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {listing.location}</span>}
+                    {listing.response_time && <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {listing.response_time}</span>}
+                    <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" /> {listing.completed_jobs} completed</span>
                   </div>
                 </div>
                 {price > 0 && (
                   <div className="text-center sm:text-right">
-                    <div className="font-display text-3xl font-bold text-foreground">${Number(price)}</div>
+                    <div className="font-display text-3xl font-bold text-foreground">KSh {Number(price).toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">{priceLabel}</div>
                   </div>
                 )}
               </div>
             </div>
+
+            {/* Contact Info */}
+            {hasContact && (
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
+                <h2 className="font-display font-bold text-lg text-foreground mb-3">Contact</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {profile?.phone && (
+                    <a href={`tel:${profile.phone}`} className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      <Phone className="w-4 h-4 text-muted-foreground" /> {profile.phone}
+                    </a>
+                  )}
+                  {profile?.whatsapp && (
+                    <a href={`https://wa.me/${profile.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      <MessageSquare className="w-4 h-4 text-muted-foreground" /> WhatsApp
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  )}
+                  {profile?.email_public && (
+                    <a href={`mailto:${profile.email_public}`} className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      <Mail className="w-4 h-4 text-muted-foreground" /> {profile.email_public}
+                    </a>
+                  )}
+                  {profile?.instagram && (
+                    <a href={`https://instagram.com/${profile.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      <Instagram className="w-4 h-4 text-muted-foreground" /> {profile.instagram}
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  )}
+                  {profile?.facebook && (
+                    <a href={profile.facebook.startsWith("http") ? profile.facebook : `https://facebook.com/${profile.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      <Facebook className="w-4 h-4 text-muted-foreground" /> Facebook
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  )}
+                  {profile?.tiktok && (
+                    <a href={`https://tiktok.com/@${profile.tiktok.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary">
+                      🎵 {profile.tiktok}
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* About */}
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
@@ -170,6 +188,44 @@ const ProviderDetail = () => {
               )}
             </div>
 
+            {/* Portfolio */}
+            {(portfolioImages.length > 0 || portfolioVideos.length > 0) && (
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
+                <h2 className="font-display font-bold text-lg text-foreground mb-3 flex items-center gap-2">
+                  <Image className="w-5 h-5 text-primary" /> Work Portfolio
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {portfolioImages.map((url, i) => (
+                    <button key={i} type="button" onClick={() => setLightboxImg(url)} className="rounded-xl overflow-hidden border border-border aspect-square hover:opacity-90 transition-opacity">
+                      <img src={url} alt={`Work ${i + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                  {portfolioVideos.map((url, i) => (
+                    <div key={`v-${i}`} className="rounded-xl overflow-hidden border border-border aspect-square relative">
+                      <video src={url} controls className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Certifications */}
+            {certifications.length > 0 && (
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 mb-4 sm:mb-6">
+                <h2 className="font-display font-bold text-lg text-foreground mb-3 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-accent" /> Certifications
+                </h2>
+                <div className="space-y-2">
+                  {certifications.map((url, i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary text-sm text-foreground hover:text-primary transition-colors">
+                      📄 {url.split("/").pop()}
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Booking */}
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
               <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
@@ -182,31 +238,19 @@ const ProviderDetail = () => {
                     {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
                       const available = listing.availability?.includes(day);
                       return (
-                        <button
-                          key={day}
-                          type="button"
-                          disabled={!available}
-                          onClick={() => setSelectedDay(day)}
+                        <button key={day} type="button" disabled={!available} onClick={() => setSelectedDay(day)}
                           className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 touch-manipulation ${
                             selectedDay === day ? "bg-primary text-primary-foreground shadow-elevated"
-                            : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70"
+                            : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                             : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
                           }`}
-                        >
-                          {day}
-                        </button>
+                        >{day}</button>
                       );
                     })}
                   </div>
                 </>
               )}
-              <Textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Add a message to the provider (optional)..."
-                rows={3}
-                className="mb-4"
-              />
+              <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Add a message to the provider (optional)..." rows={3} className="mb-4" />
               <Button variant="hero" size="lg" className="w-full h-12 sm:h-11 rounded-xl text-base font-semibold touch-manipulation" onClick={handleBook} disabled={booking}>
                 {booking ? "Sending..." : "Send Booking Request"}
               </Button>
@@ -214,6 +258,13 @@ const ProviderDetail = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightboxImg && (
+        <div className="fixed inset-0 z-50 bg-foreground/80 flex items-center justify-center p-4" onClick={() => setLightboxImg(null)}>
+          <img src={lightboxImg} alt="Portfolio" className="max-w-full max-h-[90vh] rounded-2xl object-contain" />
+        </div>
+      )}
     </div>
   );
 };

@@ -78,7 +78,7 @@ const Signup = () => {
               </Button>
             </form>
             <p className="text-xs text-muted-foreground text-center mt-5">
-              By signing up, you agree to our <Link to="/" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 rounded">Terms</Link> and <Link to="/" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 rounded">Privacy Policy</Link>.
+              By signing up, you agree to our <Link to="/terms" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 rounded">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary/30 rounded">Privacy Policy</Link>. Your data is processed in accordance with the Kenya Data Protection Act and GDPR.
             </p>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-6">
