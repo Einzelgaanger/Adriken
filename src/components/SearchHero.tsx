@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Sparkles, MapPin, ArrowRight, Users, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const suggestions = [
   "I need a nanny for my 2 kids on weekdays",
@@ -15,6 +16,7 @@ const SearchHero = () => {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSearch = () => {
     if (query.trim()) navigate(`/results?q=${encodeURIComponent(query.trim())}`);
@@ -47,15 +49,15 @@ const SearchHero = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/[0.07] text-primary mb-6 sm:mb-8 font-medium text-[13px] border border-primary/10"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            AI-Powered Matching · Two-Sided Marketplace
+            AI-Powered Matching · Find or Offer Services
           </motion.div>
 
           <h1 className="font-display text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[4.25rem] font-extrabold leading-[1.08] mb-4 sm:mb-5 text-foreground tracking-tight">
-            Find help. <span className="text-gradient">Or offer it.</span>
+            Find services. <span className="text-gradient">Or offer yours.</span>
           </h1>
 
           <p className="text-[15px] sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed font-normal px-2">
-            Describe what you need and our AI matches you instantly. Or list your skills and let customers find you.
+            Search for any business or service — no account needed. Or sign up and let customers find you.
           </p>
 
           {/* Dual CTA pills */}
@@ -70,17 +72,17 @@ const SearchHero = () => {
                 <Users className="w-4.5 h-4.5 text-primary" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-foreground">Looking for help?</p>
-                <p className="text-xs text-muted-foreground">Search below — AI finds the best match</p>
+                <p className="text-sm font-bold text-foreground">Looking for a service?</p>
+                <p className="text-xs text-muted-foreground">Search below — no account needed</p>
               </div>
             </div>
-            <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-border/60 shadow-soft w-full sm:w-auto cursor-pointer hover:border-primary/20 transition-colors" onClick={() => navigate("/become-provider")}>
+            <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-border/60 shadow-soft w-full sm:w-auto cursor-pointer hover:border-primary/20 transition-colors" onClick={() => navigate(user ? "/profile/edit" : "/signup")}>
               <div className="w-9 h-9 rounded-xl bg-accent/[0.08] flex items-center justify-center shrink-0">
                 <Briefcase className="w-4.5 h-4.5 text-accent" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-foreground">Got skills? Earn money</p>
-                <p className="text-xs text-muted-foreground">List your services — customers come to you</p>
+                <p className="text-sm font-bold text-foreground">Got a business? Get found</p>
+                <p className="text-xs text-muted-foreground">Sign up and create your profile</p>
               </div>
             </div>
           </motion.div>
@@ -105,10 +107,10 @@ const SearchHero = () => {
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSearch(); }
                   }}
-                  placeholder="Describe what you need... e.g. 'I need a nanny for 2 kids on weekdays'"
+                  placeholder="Search for a business or service... e.g. 'plumber in Nairobi' or 'Jane's Cleaning Co.'"
                   className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground/50 text-[15px] sm:text-base min-h-[48px] sm:min-h-[28px] max-h-[120px] font-body py-1.5 sm:py-0 leading-relaxed"
                   rows={2}
-                  aria-label="Describe what you need"
+                  aria-label="Search for businesses and services"
                 />
               </div>
               <Button
@@ -117,7 +119,7 @@ const SearchHero = () => {
                 onClick={handleSearch}
                 className="rounded-xl w-full sm:w-auto sm:shrink-0 h-12 sm:h-11 px-7 sm:m-1"
                 disabled={!query.trim()}
-                aria-label="Search for providers"
+                aria-label="Search"
               >
                 <span className="sm:hidden font-semibold">Search</span>
                 <ArrowRight className="w-5 h-5 hidden sm:block" />

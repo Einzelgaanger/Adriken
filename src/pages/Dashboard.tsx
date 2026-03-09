@@ -1,8 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plus, Loader2, Calendar, CheckCircle2, XCircle, Clock, MessageSquare, Eye, User } from "lucide-react";
+import { Loader2, Calendar, CheckCircle2, XCircle, Clock, Eye, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +26,6 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
 
   const { data: bookingsAsSeeker } = useQuery({
     queryKey: ["bookings-seeker", user?.id],
@@ -56,7 +54,6 @@ const Dashboard = () => {
     },
     enabled: !!user,
   });
-
 
   const updateBookingStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
@@ -98,18 +95,11 @@ const Dashboard = () => {
                 <Link to="/profile/edit" className="flex-1 sm:flex-none">
                   <Button variant="soft" size="sm" className="w-full h-11 rounded-xl"><User className="w-4 h-4 mr-1" /> My Profile</Button>
                 </Link>
-                <Link to="/messages" className="flex-1 sm:flex-none">
-                  <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><MessageSquare className="w-4 h-4 mr-1" /> Messages</Button>
-                </Link>
                 <Link to="/history" className="flex-1 sm:flex-none">
-                  <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><Eye className="w-4 h-4 mr-1" /> History</Button>
-                </Link>
-                <Link to="/become-provider" className="flex-1 sm:flex-none">
-                  <Button variant="hero" size="sm" className="w-full h-11 rounded-xl"><Plus className="w-4 h-4 mr-1" /> New Listing</Button>
+                  <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><Eye className="w-4 h-4 mr-1" /> Businesses I Checked</Button>
                 </Link>
               </div>
             </div>
-
 
             {/* Incoming Bookings (as provider) */}
             {bookingsAsProvider && bookingsAsProvider.length > 0 && (
@@ -161,7 +151,7 @@ const Dashboard = () => {
                       <div key={b.id} className="rounded-xl bg-card border border-border p-4 flex items-center justify-between gap-4">
                         <div>
                           <p className="font-semibold text-foreground">{b.listings?.title}</p>
-                          <p className="text-sm text-muted-foreground">with {b.profiles?.full_name || "Provider"}</p>
+                          <p className="text-sm text-muted-foreground">with {b.profiles?.full_name || "Business"}</p>
                           {b.scheduled_day && <p className="text-xs text-muted-foreground mt-1">Day: {b.scheduled_day}</p>}
                         </div>
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusColors[b.status]}`}>

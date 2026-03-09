@@ -11,12 +11,12 @@ const Footer = () => (
             Adriken
           </Link>
           <p className="text-sm text-background/50 leading-relaxed max-w-[280px]">
-            The AI-powered marketplace where you describe what you need in your own words, and we match you instantly.
+            The AI-powered marketplace where you search for businesses and services in your own words, and we match you instantly.
           </p>
         </div>
         {[
-          { title: "Platform", links: [["Find Help", "/"], ["How It Works", "/how-it-works"], ["Create Listing", "/become-provider"]] },
-          { title: "Account", links: [["Dashboard", "/dashboard"], ["Edit Profile", "/profile/edit"], ["Sign Up", "/signup"]] },
+          { title: "Platform", links: [["Find Services", "/"], ["Sign Up", "/signup"], ["Log In", "/login"]] },
+          { title: "Account", links: [["Dashboard", "/dashboard"], ["My Profile", "/profile/edit"], ["Businesses I Checked", "/history"]] },
           { title: "Legal", links: [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]] },
         ].map((col, colIdx) => (
           <div key={col.title} className={colIdx === 0 ? "lg:col-span-3" : colIdx === 1 ? "lg:col-span-3" : "lg:col-span-2"}>

@@ -1,10 +1,9 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowLeft, Loader2, Filter, SlidersHorizontal } from "lucide-react";
+import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -27,7 +26,7 @@ const Results = () => {
     queryFn: async () => {
       const { data: listings, error: dbError } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, avatar_url, location)")
+        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location)")
         .eq("is_active", true);
 
       if (dbError) throw dbError;
@@ -61,7 +60,6 @@ const Results = () => {
   let listings = data?.listings || [];
   const matchMap = data?.matchMap as Map<string, AIMatch> | undefined;
 
-  // Client-side sorting
   if (sortBy === "rating") {
     listings = [...listings].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
   } else if (sortBy === "price-low") {
@@ -145,15 +143,15 @@ const Results = () => {
 
           {!isLoading && !error && listings.length === 0 && (
             <div className="rounded-2xl bg-card border border-border/60 p-10 sm:p-12 text-center shadow-soft">
-              <p className="text-lg font-display font-bold text-foreground mb-2">No listings yet</p>
+              <p className="text-lg font-display font-bold text-foreground mb-2">No businesses found</p>
               <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm">Be the first to offer what people are looking for!</p>
-              <Link to="/become-provider">
-                <Button variant="hero" size="lg" className="rounded-xl">Create a Listing</Button>
+              <Link to="/signup">
+                <Button variant="hero" size="lg" className="rounded-xl">Sign Up & Create Your Profile</Button>
               </Link>
             </div>
           )}
 
-          {/* Top Match - highlighted */}
+          {/* Top Match */}
           {showTopSeparately && topMatch && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2.5">
@@ -163,7 +161,7 @@ const Results = () => {
               <ProviderCard
                 provider={{
                   id: topMatch.id,
-                  name: (topMatch as any).profiles?.full_name || "Unknown",
+                  name: (topMatch as any).profiles?.business_name || (topMatch as any).profiles?.full_name || "Unknown",
                   avatar: (topMatch as any).profiles?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${(topMatch as any).profiles?.full_name || "U"}`,
                   title: topMatch.title,
                   skills: topMatch.skills || [],
@@ -203,7 +201,7 @@ const Results = () => {
                       key={listing.id}
                       provider={{
                         id: listing.id,
-                        name: profile?.full_name || "Unknown",
+                        name: profile?.business_name || profile?.full_name || "Unknown",
                         avatar: profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.full_name || "U"}`,
                         title: listing.title,
                         skills: listing.skills || [],
@@ -238,8 +236,8 @@ const Results = () => {
             >
               <p className="text-sm text-muted-foreground mb-3">Don't see what you need?</p>
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                <Link to="/become-provider">
-                  <Button variant="outline" size="sm" className="rounded-xl w-full sm:w-auto">Become a Provider</Button>
+                <Link to="/signup">
+                  <Button variant="outline" size="sm" className="rounded-xl w-full sm:w-auto">Sign Up & Offer Services</Button>
                 </Link>
                 <Link to="/">
                   <Button variant="soft" size="sm" className="rounded-xl w-full sm:w-auto">Try a Different Search</Button>
