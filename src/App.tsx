@@ -28,7 +28,7 @@ function RedirectDashboardToHome() {
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
-    if (location.pathname === "/dashboard") {
+    if (location.pathname === "/dashboard" || location.pathname.startsWith("/dashboard/")) {
       navigate("/", { replace: true });
     }
   }, [location.pathname, navigate]);
