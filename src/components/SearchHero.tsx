@@ -52,6 +52,7 @@ const suggestions = [
   "Need a makeup artist for a graduation shoot",
   "Find a sports coach for teenage football",
   "Looking for someone to practice spoken English",
+  "Looking for someone to go to a jazz date night and connect",
 ];
 
 const laptopIdeaCards = [
@@ -182,15 +183,15 @@ const laptopIdeaCards = [
     floatDelay: 1.8,
   },
   {
-    title: "Royal Match",
-    subtitle: "\"Looking for someone to go to a jazz date night and connect\"",
-    query: "Looking for someone to go to a jazz date night",
-    icon: Star,
-    className: "from-indigo-100 via-violet-50 to-purple-100 border-indigo-200/70",
-    iconWrap: "bg-indigo-500/15 text-indigo-700",
-    frameClass: "border-[2px] border-indigo-300/80 shadow-[0_12px_30px_-18px_rgba(79,70,229,0.52)]",
-    accentClass: "from-indigo-500/70 to-purple-400/70",
-    badge: "Date",
+    title: "Bakery Orders",
+    subtitle: "\"I need cupcakes for the weekend and a birthday cake for my colleague\"",
+    query: "I need cupcakes for the weekend or a birthday cake for my colleague",
+    icon: ChefHat,
+    className: "from-pink-100 via-rose-50 to-orange-100 border-rose-200/70",
+    iconWrap: "bg-rose-500/15 text-rose-700",
+    frameClass: "border-[2px] border-rose-300/80 shadow-[0_12px_30px_-18px_rgba(244,63,94,0.48)]",
+    accentClass: "from-rose-500/70 to-orange-400/70",
+    badge: "Bakery",
     tiltClass: "rotate-[7deg]",
     shapeClass: "rounded-[16px_16px_34px_34px]",
     floatDelay: 2,
