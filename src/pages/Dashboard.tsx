@@ -133,37 +133,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* My Listings */}
-            <section className="mb-10">
-              <h2 className="font-display font-bold text-xl text-foreground mb-4">My Listings</h2>
-              {listingsLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 text-primary animate-spin" /></div>
-              ) : listings && listings.length > 0 ? (
-                <div className="space-y-3">
-                  {listings.map((l) => (
-                    <div key={l.id} className="rounded-xl bg-card border border-border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                      <div className="flex-1 min-w-0">
-                        <Link to={`/provider/${l.id}`} className="font-display font-semibold text-foreground hover:text-primary truncate block focus:outline-none focus:ring-2 focus:ring-ring rounded">{l.title}</Link>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-muted-foreground mt-1">
-                          <Badge variant="secondary" className="text-xs capitalize">{l.listing_type}</Badge>
-                          {l.location && <span>{l.location}</span>}
-                          {l.hourly_rate && <span>${Number(l.hourly_rate)}/hr</span>}
-                          {l.fixed_price && <span>${Number(l.fixed_price)}</span>}
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="icon" onClick={() => deleteListing.mutate(l.id)} className="text-muted-foreground hover:text-destructive shrink-0 self-end sm:self-center min-w-[44px] min-h-[44px] rounded-xl" aria-label="Delete listing">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl bg-card border border-border p-8 text-center">
-                  <p className="text-muted-foreground mb-4">You haven't created any listings yet.</p>
-                  <Link to="/become-provider"><Button variant="soft">Create Your First Listing</Button></Link>
-                </div>
-              )}
-            </section>
 
             {/* Incoming Bookings (as provider) */}
             {bookingsAsProvider && bookingsAsProvider.length > 0 && (
