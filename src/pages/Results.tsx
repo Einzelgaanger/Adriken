@@ -307,20 +307,20 @@ const Results = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                 {user ? (
-                  <Link to="/profile/edit">
-                    <Button variant="hero" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation">
+                  <Link to="/profile/edit" className="inline-flex">
+                    <Button variant="hero" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm font-semibold touch-manipulation">
                       Go to My Profile
                     </Button>
                   </Link>
                 ) : (
-                  <Link to="/signup">
-                    <Button variant="hero" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation sm:w-auto">
+                  <Link to="/signup" className="inline-flex">
+                    <Button variant="hero" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm font-semibold touch-manipulation">
                       Sign Up & Create Your Profile
                     </Button>
                   </Link>
                 )}
-                <Link to="/">
-                  <Button variant="outline" size="default" className="rounded-xl h-11 min-h-[44px] px-5 touch-manipulation sm:w-auto">
+                <Link to="/" className="inline-flex">
+                  <Button variant="outline" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm touch-manipulation">
                     Try a Different Search
                   </Button>
                 </Link>
