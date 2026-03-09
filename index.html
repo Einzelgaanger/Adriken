@@ -2,6 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function(){
+        var p=window.location.pathname;
+        if(p==='/dashboard'||p==='/dashboard/'||p.lastIndexOf('/dashboard',0)===0){
+          window.location.replace(window.location.origin+'/'+(window.location.search||'')+(window.location.hash||''));
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#e07a5f" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -79,14 +87,6 @@
   </head>
 
   <body>
-    <script>
-      (function() {
-        var p = window.location.pathname;
-        if (p === '/dashboard' || p === '/dashboard/' || p.indexOf('/dashboard') === 0) {
-          window.location.replace('/' + (window.location.search || '') + (window.location.hash || ''));
-        }
-      })();
-    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
