@@ -21,11 +21,13 @@ For each match, provide:
 - matchReason: a brief, friendly explanation of why this is a good match
 
 Consider:
-1. How well the listing's title, description, skills, and services match the request
-2. Location proximity if mentioned
-3. Experience level and ratings
-4. Availability
-5. A "jack of all trades" who can partially fulfill should still get opportunities
+1. Business/company name — if the user searches for a specific business name, prioritize exact or close name matches (score 90+)
+2. How well the listing's title, description, skills, and services match the request
+3. Provider name and business name relevance
+4. Location proximity if mentioned
+5. Experience level and ratings
+6. Availability
+7. A "jack of all trades" who can partially fulfill should still get opportunities
 
 Return a JSON array of matches sorted by matchScore descending. Include ALL listings that have ANY relevance (score > 20). Return tool call with the matches.`;
 
