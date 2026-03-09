@@ -118,27 +118,27 @@ const Nearby = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-18 sm:pt-24 pb-10 sm:pb-20 px-3 sm:px-6">
+      <div className="pt-18 sm:pt-24 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
-          <Link to="/" className="inline-block mb-4">
-            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation">
+          <Link to="/" className="inline-block mb-3 sm:mb-4">
+            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>
           </Link>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-6">
-            <h1 className="font-display text-lg sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
               See businesses and people near you
             </h1>
-            <p className="text-sm text-muted-foreground">Discover services, goods sellers, and people around you without searching.</p>
+            <p className="text-[13px] sm:text-sm text-muted-foreground">Discover services, goods sellers, and people around you without searching.</p>
           </motion.div>
 
           {!userCoords && (
-            <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-8 text-center shadow-soft">
-              <MapPin className="w-7 h-7 text-primary mx-auto mb-2" />
-              <p className="text-foreground font-semibold mb-1">Enable live location to continue</p>
-              <p className="text-sm text-muted-foreground mb-4">{locationError || "We need your location to show who is around you."}</p>
-              <Button variant="hero" onClick={requestLocation} disabled={locating} className="rounded-xl">
+            <div className="rounded-2xl bg-card border border-border/60 p-4 sm:p-8 text-center shadow-soft">
+              <MapPin className="w-8 h-8 sm:w-7 sm:h-7 text-primary mx-auto mb-3 sm:mb-2" aria-hidden />
+              <p className="text-foreground font-semibold text-[15px] sm:text-base mb-1">Enable live location to continue</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4 max-w-[280px] mx-auto">{locationError || "We need your location to show who is around you."}</p>
+              <Button variant="hero" onClick={requestLocation} disabled={locating} className="rounded-xl h-12 min-h-[44px] px-6 touch-manipulation w-full sm:w-auto">
                 {locating ? "Getting location..." : "Use My Location"}
               </Button>
             </div>
@@ -146,53 +146,55 @@ const Nearby = () => {
 
           {userCoords && (
             <>
-              <div className="mb-3 space-y-2">
-                <div className="flex items-center gap-1.5 p-1 rounded-xl border border-border/60 bg-card w-fit">
+              <div className="mb-3 sm:mb-4">
+                <div className="flex items-stretch gap-1 p-1 rounded-xl border border-border/60 bg-card w-full sm:w-fit">
                   <button
+                    type="button"
                     onClick={() => setViewMode("list")}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                    className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[44px] sm:min-h-[34px] touch-manipulation ${
                       viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                     }`}
                   >
                     <ListIcon className="w-3.5 h-3.5" /> List
                   </button>
                   <button
+                    type="button"
                     onClick={() => setViewMode("map")}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                    className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[44px] sm:min-h-[34px] touch-manipulation ${
                       viewMode === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                     }`}
                   >
-                    <MapIcon className="w-3.5 h-3.5" /> Map View
+                    <MapIcon className="w-3.5 h-3.5" /> Map
                   </button>
                 </div>
               </div>
 
               {isLoading && (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-5">
-                    <Loader2 className="w-7 h-7 text-primary animate-spin" />
+                <div className="flex flex-col items-center justify-center py-12 sm:py-20">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-4 sm:mb-5">
+                    <Loader2 className="w-6 h-6 sm:w-7 sm:h-7 text-primary animate-spin" aria-hidden />
                   </div>
-                  <p className="text-muted-foreground font-semibold text-[15px]">Finding who is around you...</p>
+                  <p className="text-muted-foreground font-semibold text-[14px] sm:text-[15px]">Finding who is around you...</p>
                 </div>
               )}
 
               {error && (
-                <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-8 text-center">
-                  <p className="text-destructive font-semibold">Could not load nearby listings.</p>
-                  <p className="text-sm text-muted-foreground mt-1.5">Please try again.</p>
+                <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-5 sm:p-8 text-center">
+                  <p className="text-destructive font-semibold text-[15px] sm:text-base">Could not load nearby listings.</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1.5">Please try again.</p>
                 </div>
               )}
 
               {!isLoading && !error && nearbyListings && nearbyListings.length === 0 && (
-                <div className="rounded-2xl bg-card border border-border/60 p-8 text-center shadow-soft">
-                  <p className="text-foreground font-semibold mb-1">No nearby listings yet</p>
-                  <p className="text-sm text-muted-foreground">As more people add their location, they will appear here automatically.</p>
+                <div className="rounded-2xl bg-card border border-border/60 p-5 sm:p-8 text-center shadow-soft">
+                  <p className="text-foreground font-semibold text-[15px] sm:text-base mb-1">No nearby listings yet</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">As more people add their location, they will appear here automatically.</p>
                 </div>
               )}
 
               {viewMode === "map" && !isLoading && !error && nearbyListings && nearbyListings.length > 0 && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 rounded-2xl border border-border/60 bg-card p-2 sm:p-3 shadow-soft">
-                  <MapContainer center={mapCenter} zoom={12} scrollWheelZoom={true} className="h-[420px] sm:h-[520px] w-full rounded-xl">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 rounded-xl sm:rounded-2xl border border-border/60 bg-card p-1.5 sm:p-3 shadow-soft overflow-hidden">
+                  <MapContainer center={mapCenter} zoom={12} scrollWheelZoom={true} className="h-[280px] sm:h-[420px] md:h-[520px] w-full rounded-lg sm:rounded-xl">
                     <MapResizeHandler />
                     <TileLayer
                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -216,7 +218,7 @@ const Nearby = () => {
                               <p className="font-semibold text-sm">{label}</p>
                               <p className="text-xs text-muted-foreground">{listing.title}</p>
                               <p className="text-xs inline-flex items-center gap-1"><Navigation className="w-3 h-3" />{formatDistance(listing.distanceKm)}</p>
-                              <Link to={`/provider/${listing.id}`} className="text-xs font-medium text-primary">View profile</Link>
+                              <Link to={`/provider/${listing.id}`} className="inline-block mt-1 py-1.5 px-2 -mx-1 rounded text-xs font-medium text-primary hover:underline min-h-[32px] touch-manipulation">View profile</Link>
                             </div>
                           </Popup>
                         </CircleMarker>
@@ -227,7 +229,7 @@ const Nearby = () => {
               )}
 
               {viewMode === "list" && !isLoading && !error && nearbyListings && nearbyListings.length > 0 && (
-                <div className="space-y-2.5 sm:space-y-3">
+                <div className="space-y-3 sm:space-y-4">
                   {nearbyListings.map((listing: any, i: number) => {
                     const profile = listing.profiles;
                     return (
