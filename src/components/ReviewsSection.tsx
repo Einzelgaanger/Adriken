@@ -24,13 +24,37 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
   const { data: reviews, isLoading } = useQuery({
     queryKey: ["reviews", listingId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Fetch reviews
+      const { data: reviewsData, error } = await supabase
         .from("reviews")
-        .select("*, profiles:reviewer_id(full_name, avatar_url)")
+        .select("*")
         .eq("listing_id", listingId)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      if (!reviewsData || reviewsData.length === 0) return [];
+
+      // Fetch profile data for non-null reviewer_ids
+      const reviewerIds = reviewsData
+        .map((r) => r.reviewer_id)
+        .filter((id): id is string => !!id);
+      
+      let profilesMap: Record<string, { full_name: string; avatar_url: string | null }> = {};
+      if (reviewerIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name, avatar_url")
+          .in("user_id", reviewerIds);
+        if (profiles) {
+          profilesMap = Object.fromEntries(
+            profiles.map((p) => [p.user_id, { full_name: p.full_name, avatar_url: p.avatar_url }])
+          );
+        }
+      }
+
+      return reviewsData.map((r) => ({
+        ...r,
+        profile: r.reviewer_id ? profilesMap[r.reviewer_id] || null : null,
+      }));
     },
   });
 
@@ -120,9 +144,8 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
       ) : reviews && reviews.length > 0 ? (
         <div className="space-y-4">
           {reviews.map((r: any) => {
-            const profile = r.profiles as any;
-            const reviewerName = profile?.full_name || "Anonymous";
-            const reviewerAvatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${reviewerName}`;
+            const reviewerName = r.profile?.full_name || "Anonymous";
+            const reviewerAvatar = r.profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${reviewerName}`;
             return (
               <div key={r.id} className="flex gap-3">
                 <img src={reviewerAvatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />

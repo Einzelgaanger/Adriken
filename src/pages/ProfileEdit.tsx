@@ -95,13 +95,35 @@ const ProfileEdit = () => {
         .eq("user_id", user!.id);
       if (!listings || listings.length === 0) return [];
       const listingIds = listings.map((l: any) => l.id);
-      const { data, error } = await supabase
+      const { data: reviewsData, error } = await supabase
         .from("reviews")
-        .select("*, profiles:reviewer_id(full_name, avatar_url)")
+        .select("*")
         .in("listing_id", listingIds)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      if (!reviewsData || reviewsData.length === 0) return [];
+
+      const reviewerIds = reviewsData
+        .map((r) => r.reviewer_id)
+        .filter((id): id is string => !!id);
+      
+      let profilesMap: Record<string, { full_name: string; avatar_url: string | null }> = {};
+      if (reviewerIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name, avatar_url")
+          .in("user_id", reviewerIds);
+        if (profiles) {
+          profilesMap = Object.fromEntries(
+            profiles.map((p) => [p.user_id, { full_name: p.full_name, avatar_url: p.avatar_url }])
+          );
+        }
+      }
+
+      return reviewsData.map((r) => ({
+        ...r,
+        profile: r.reviewer_id ? profilesMap[r.reviewer_id] || null : null,
+      }));
     },
     enabled: !!user,
   });
@@ -701,9 +723,8 @@ const ProfileEdit = () => {
               {reviews && reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map((r: any) => {
-                    const p = r.profiles as any;
-                    const name = p?.full_name || "Anonymous";
-                    const avatar = p?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
+                    const name = r.profile?.full_name || "Anonymous";
+                    const avatar = r.profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
                     return (
                       <div key={r.id} className="flex gap-3 p-3 rounded-xl bg-primary/[0.03] border border-primary/[0.06]">
                         <img src={avatar} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
