@@ -31,7 +31,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]" aria-label="Main navigation">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-border pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]" aria-label="Main navigation">
       <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 font-display font-bold text-lg sm:text-xl shrink-0">
           <img src={adrikenLogo} alt="Adriken" className="w-10 h-10 sm:w-12 sm:h-12" />
