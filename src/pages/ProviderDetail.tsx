@@ -261,6 +261,20 @@ const ProviderDetail = () => {
               </div>
             )}
 
+            {/* Message Provider Button */}
+            {user && user.id !== listing.user_id && (
+              <div className="mb-4 sm:mb-6">
+                <Button variant="outline" size="lg" className="w-full rounded-xl" onClick={handleStartChat}>
+                  <Send className="w-4 h-4 mr-2" /> Message Provider
+                </Button>
+              </div>
+            )}
+
+            {/* Reviews */}
+            <div className="mb-4 sm:mb-6">
+              <ReviewsSection listingId={listing.id} providerId={listing.user_id} />
+            </div>
+
             {/* Booking */}
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
               <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
