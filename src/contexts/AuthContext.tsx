@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/login`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
     // Record consent date on the profile after creation
@@ -54,8 +54,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return { error: error as Error | null };
+
+    // Enforce confirmed email before allowing password login.
+    if (data?.user && !data.user.email_confirmed_at) {
+      await supabase.auth.signOut();
+      return { error: new Error("Please confirm your email first before logging in.") };
+    }
+
+    return { error: null };
   };
 
   const signOut = async () => {

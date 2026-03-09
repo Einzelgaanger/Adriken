@@ -37,7 +37,7 @@ const Footer = () => {
           <div className="lg:col-span-4">
             <Link to="/" className="inline-flex items-center gap-2.5 font-extrabold text-xl text-white mb-5">
               <img src={adrikenLogo} alt="Adriken" className="w-10 h-10 sm:w-11 sm:h-11" />
-              <span className="electrolize-regular">Adriken</span>
+              <span className="electrolize-regular text-[1.5rem] sm:text-[1.75rem] font-black leading-none">Adriken</span>
             </Link>
             <p className="text-sm text-zinc-300 leading-relaxed max-w-[280px]">
               The AI-powered marketplace where you search for businesses and services in your own words, and we match you instantly.

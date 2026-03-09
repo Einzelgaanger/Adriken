@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
+import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -34,17 +35,26 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Navbar />
-      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+      <BackgroundPathsLayer className="opacity-95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+      <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+      <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6 relative z-10">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-[420px] mx-auto">
-          <div className="text-center mb-8">
-            <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-5" />
-            <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Welcome back</h1>
-            <p className="text-muted-foreground text-sm">Log in to your Adriken account</p>
-          </div>
-          <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
+            <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+            <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+            <div className="pointer-events-none absolute -bottom-10 right-10 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="relative z-10 text-center mb-6">
+              <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+              <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
+              <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Welcome back</h1>
+              <p className="text-muted-foreground text-sm">Log in to your Adriken account</p>
+            </div>
+            <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="login-email" className="text-foreground/80 font-medium text-sm">Email</Label>
                 <div className="relative">
@@ -67,19 +77,19 @@ const Login = () => {
               </Button>
             </form>
 
-            <div className="relative my-5">
+            <div className="relative z-10 my-5">
               <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/50" /></div>
               <div className="relative flex justify-center text-xs"><span className="bg-card px-3 text-muted-foreground/60 font-medium">or continue with</span></div>
             </div>
 
             <Button
               variant="outline"
-              className="w-full h-12 rounded-xl text-sm font-semibold touch-manipulation"
+              className="relative z-10 w-full h-12 rounded-xl text-sm font-semibold touch-manipulation"
               type="button"
               onClick={async () => {
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: "google",
-                  options: { redirectTo: window.location.origin },
+                  options: { redirectTo: `${window.location.origin}/dashboard` },
                 });
                 if (error) toast.error("Google sign-in failed", { description: (error as Error).message });
               }}
@@ -93,10 +103,18 @@ const Login = () => {
                 Forgot your password?
               </Link>
             </div>
+
+            <div className="relative z-10 mt-5 pt-4 border-t border-border/50 space-y-3">
+              <p className="text-center text-sm text-muted-foreground">
+                Don&apos;t have an account? <Link to="/signup" className="text-primary font-semibold hover:underline">Sign up</Link>
+              </p>
+              <Link to="/" className="block">
+                <Button variant="soft" className="w-full h-11 rounded-xl">
+                  <Home className="w-4 h-4 mr-1.5" /> Home
+                </Button>
+              </Link>
+            </div>
           </div>
-          <p className="text-center text-sm text-muted-foreground mt-7">
-            Don&apos;t have an account? <Link to="/signup" className="text-primary font-semibold hover:underline">Sign up</Link>
-          </p>
         </motion.div>
       </div>
     </div>

@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
+import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import adrikenLogo from "@/assets/adriken-logo.png";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -31,19 +33,27 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 flex items-center justify-center min-h-[85vh] px-4 sm:px-6">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+      <BackgroundPathsLayer className="opacity-95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+      <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+      <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 flex items-center justify-center min-h-[85vh] px-4 sm:px-6 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md mx-auto">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Reset your password</h1>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              {sent ? "Check your inbox for a reset link." : "Enter your email and we'll send you a reset link."}
-            </p>
-          </div>
           {!sent ? (
-            <div className="rounded-2xl bg-card border border-border p-5 sm:p-6 shadow-card">
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative overflow-hidden rounded-2xl bg-card border border-border p-5 sm:p-6 shadow-card">
+              <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+              <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+              <div className="pointer-events-none absolute -bottom-10 right-10 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+              <div className="relative z-10 text-center mb-6">
+                <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+                <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
+                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Reset your password</h1>
+                <p className="text-muted-foreground text-sm sm:text-base">Enter your email and we'll send you a reset link.</p>
+              </div>
+              <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="reset-email">Email</Label>
                   <div className="relative">
@@ -55,18 +65,45 @@ const ForgotPassword = () => {
                   {loading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </form>
+
+              <div className="relative z-10 mt-5 pt-4 border-t border-border/50 space-y-3">
+                <p className="text-center text-sm text-muted-foreground">
+                  <Link to="/login" className="text-primary font-medium hover:underline inline-flex items-center gap-1">
+                    <ArrowLeft className="w-3 h-3" /> Back to login
+                  </Link>
+                </p>
+                <Link to="/" className="block">
+                  <Button variant="soft" className="w-full h-11 rounded-xl">
+                    <Home className="w-4 h-4 mr-1.5" /> Home
+                  </Button>
+                </Link>
+              </div>
             </div>
           ) : (
-            <div className="rounded-2xl bg-card border border-border p-6 text-center shadow-card">
-              <p className="text-foreground font-medium mb-2">Email sent!</p>
-              <p className="text-muted-foreground text-sm">If an account exists for {email}, you'll receive a password reset link shortly.</p>
+            <div className="relative overflow-hidden rounded-2xl bg-card border border-border p-6 text-center shadow-card">
+              <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+              <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+              <div className="pointer-events-none absolute -bottom-10 right-10 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+              <div className="relative z-10">
+                <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+                <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-3">Adriken</p>
+                <p className="text-foreground font-medium mb-2">Email sent!</p>
+                <p className="text-muted-foreground text-sm">If an account exists for {email}, you'll receive a password reset link shortly.</p>
+              </div>
+              <div className="relative z-10 mt-5 pt-4 border-t border-border/50 space-y-3">
+                <p className="text-center text-sm text-muted-foreground">
+                  <Link to="/login" className="text-primary font-medium hover:underline inline-flex items-center gap-1">
+                    <ArrowLeft className="w-3 h-3" /> Back to login
+                  </Link>
+                </p>
+                <Link to="/" className="block">
+                  <Button variant="soft" className="w-full h-11 rounded-xl">
+                    <Home className="w-4 h-4 mr-1.5" /> Home
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            <Link to="/login" className="text-primary font-medium hover:underline inline-flex items-center gap-1">
-              <ArrowLeft className="w-3 h-3" /> Back to login
-            </Link>
-          </p>
         </motion.div>
       </div>
     </div>

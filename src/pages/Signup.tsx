@@ -1,31 +1,62 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, CheckSquare } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Home, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
+import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
+const checkPasswordStrength = (password: string) => {
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  };
+
+  const score = Object.values(checks).filter(Boolean).length;
+  return { checks, score, strength: score < 3 ? "weak" : score < 4 ? "medium" : "strong" };
+};
+
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [consent, setConsent] = useState(false);
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const passwordStrength = checkPasswordStrength(password);
+  const passwordsMatch = password === confirmPassword;
+  const strengthColor =
+    passwordStrength.strength === "weak"
+      ? "bg-red-500"
+      : passwordStrength.strength === "medium"
+        ? "bg-amber-500"
+        : "bg-emerald-500";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || password.length < 6) {
-      toast.error("Please fill in all fields (password must be at least 6 characters)");
+    if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    if (passwordStrength.score < 3) {
+      toast.error("Password is too weak. Use at least 3 checks to continue.");
+      return;
+    }
+    if (!passwordsMatch) {
+      toast.error("Passwords do not match");
       return;
     }
     if (!consent) {
@@ -47,25 +78,34 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Navbar />
-      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+      <BackgroundPathsLayer className="opacity-95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+      <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+      <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6 relative z-10">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-[420px] mx-auto">
-          <div className="text-center mb-8">
-            <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-5" />
-            <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Create your account</h1>
-            <p className="text-muted-foreground text-sm">Join Adriken — find help or offer your services</p>
-          </div>
-          <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
+            <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+            <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+            <div className="pointer-events-none absolute -bottom-10 right-10 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="relative z-10 text-center mb-6">
+              <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+              <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
+              <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Create your account</h1>
+              <p className="text-muted-foreground text-sm">Join Adriken — find help or offer your services</p>
+            </div>
             {/* Google first for conversion */}
             <Button
               variant="outline"
-              className="w-full h-12 rounded-xl text-sm font-semibold touch-manipulation mb-5"
+              className="relative z-10 w-full h-12 rounded-xl text-sm font-semibold touch-manipulation mb-5"
               type="button"
               onClick={async () => {
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: "google",
-                  options: { redirectTo: window.location.origin },
+                  options: { redirectTo: `${window.location.origin}/dashboard` },
                 });
                 if (error) toast.error("Google sign-up failed", { description: (error as Error).message });
               }}
@@ -74,12 +114,12 @@ const Signup = () => {
               Continue with Google
             </Button>
 
-            <div className="relative mb-5">
+            <div className="relative z-10 mb-5">
               <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/50" /></div>
               <div className="relative flex justify-center text-xs"><span className="bg-card px-3 text-muted-foreground/60 font-medium">or sign up with email</span></div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="signup-name" className="text-foreground/80 font-medium text-sm">Full Name</Label>
                 <div className="relative">
@@ -98,10 +138,69 @@ const Signup = () => {
                 <Label htmlFor="signup-password" className="text-foreground/80 font-medium text-sm">Password</Label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none" />
-                  <Input id="signup-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" className="pl-10 pr-12 h-12 sm:h-11 rounded-xl border-border/60 bg-background" required minLength={6} />
+                  <Input id="signup-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8+ chars, upper/lower, number, special" className="pl-10 pr-12 h-12 sm:h-11 rounded-xl border-border/60 bg-background" required minLength={8} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-secondary min-w-[40px] min-h-[40px] flex items-center justify-center touch-manipulation" aria-label={showPassword ? "Hide password" : "Show password"}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signup-confirm-password" className="text-foreground/80 font-medium text-sm">Confirm Password</Label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none" />
+                  <Input id="signup-confirm-password" type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" className="pl-10 h-12 sm:h-11 rounded-xl border-border/60 bg-background" required minLength={8} />
+                </div>
+                {confirmPassword.length > 0 && !passwordsMatch && (
+                  <p className="text-xs text-red-500">Passwords do not match.</p>
+                )}
+              </div>
+
+              {password.length > 0 && (
+                <div className="rounded-xl border border-border/60 bg-background/80 p-3.5 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground font-medium">Password strength</span>
+                    <span
+                      className={`font-semibold ${
+                        passwordStrength.strength === "weak"
+                          ? "text-red-500"
+                          : passwordStrength.strength === "medium"
+                            ? "text-amber-500"
+                            : "text-emerald-600"
+                      }`}
+                    >
+                      {passwordStrength.strength.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-1">
+                    {[1, 2, 3, 4].map((i) => (
+                      <span
+                        key={i}
+                        className={`h-1.5 rounded-full ${passwordStrength.score >= i ? strengthColor : "bg-muted"}`}
+                      />
+                    ))}
+                  </div>
+                  <div className="space-y-1.5 text-xs">
+                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.length ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {passwordStrength.checks.length ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      At least 8 characters
+                    </p>
+                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.uppercase ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {passwordStrength.checks.uppercase ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      At least one uppercase letter
+                    </p>
+                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.lowercase ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {passwordStrength.checks.lowercase ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      At least one lowercase letter
+                    </p>
+                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.number ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {passwordStrength.checks.number ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      At least one number
+                    </p>
+                    <p className={`flex items-center gap-1.5 ${passwordStrength.checks.special ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {passwordStrength.checks.special ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      At least one special character
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -119,14 +218,27 @@ const Signup = () => {
                 </label>
               </div>
 
-              <Button variant="hero" className="w-full h-12 rounded-xl text-base font-bold touch-manipulation" type="submit" disabled={loading || !consent}>
+              <Button
+                variant="hero"
+                className="w-full h-12 rounded-xl text-base font-bold touch-manipulation"
+                type="submit"
+                disabled={loading || passwordStrength.score < 3 || !passwordsMatch}
+              >
                 {loading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
+
+            <div className="relative z-10 mt-5 pt-4 border-t border-border/50 space-y-3">
+              <p className="text-center text-sm text-muted-foreground">
+                Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
+              </p>
+              <Link to="/" className="block">
+                <Button variant="soft" className="w-full h-11 rounded-xl">
+                  <Home className="w-4 h-4 mr-1.5" /> Home
+                </Button>
+              </Link>
+            </div>
           </div>
-          <p className="text-center text-sm text-muted-foreground mt-7">
-            Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
-          </p>
         </motion.div>
       </div>
     </div>

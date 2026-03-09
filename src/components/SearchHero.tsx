@@ -139,11 +139,11 @@ const SearchHero = () => {
           <div className="hidden xl:block h-8 relative mb-3" />
 
           <div className="max-w-2xl mx-auto">
-            <h1 className="neucha-regular mt-4 sm:mt-6 text-[clamp(2.85rem,8.8vw,4.6rem)] leading-[1.08] mb-3 sm:mb-4 text-foreground tracking-tight">
+            <h1 className="neucha-regular font-black [text-shadow:0_0_0.8px_currentColor] mt-4 sm:mt-6 text-[clamp(2.85rem,8.8vw,4.6rem)] leading-[1.08] mb-3 sm:mb-4 text-foreground tracking-tight">
               Find services. <span className="text-gradient">Or offer yours.</span>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-5 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-normal px-2 xl:px-0">
+            <p className="text-base sm:text-lg md:text-xl text-foreground/85 mb-5 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-medium px-2 xl:px-0">
               Create an account, complete your profile details, and we will help show you to nearby clients for your services or goods, and even to people looking to connect as friends. You can also search for goods, service providers, or people near you.
             </p>
 
