@@ -16,7 +16,7 @@ const Footer = () => (
         </div>
         {[
           { title: "Platform", links: [["Find Services", "/"], ["Sign Up", "/signup"], ["Log In", "/login"]] },
-          { title: "Account", links: [["Dashboard", "/dashboard"], ["My Profile", "/profile/edit"], ["Businesses I Checked", "/history"]] },
+          { title: "Account", links: [["My Profile", "/profile/edit"], ["Businesses I Checked", "/history"]] },
           { title: "Legal", links: [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"]] },
         ].map((col, colIdx) => (
           <div key={col.title} className={colIdx === 0 ? "lg:col-span-3" : colIdx === 1 ? "lg:col-span-3" : "lg:col-span-2"}>

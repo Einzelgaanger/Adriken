@@ -29,7 +29,7 @@ const Login = () => {
       toast.error("Login failed", { description: error.message });
     } else {
       toast.success("Welcome back!");
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 
