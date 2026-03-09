@@ -1,24 +1,18 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Building2 } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import Navbar from "@/components/Navbar";
 import ReviewsSection from "@/components/ReviewsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
 
 const ProviderDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const [booking, setBooking] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const { data: listing, isLoading } = useQuery({
@@ -45,20 +39,6 @@ const ProviderDetail = () => {
       }).then(() => {});
     }
   }, [user, listing]);
-
-  const handleBook = async () => {
-    if (!user) { toast.error("Please sign in to book"); navigate("/login"); return; }
-    if (!selectedDay) { toast.error("Please select a day first"); return; }
-    if (!listing) return;
-    setBooking(true);
-    const { error } = await supabase.from("bookings").insert({
-      listing_id: listing.id, seeker_id: user.id, provider_id: listing.user_id,
-      scheduled_day: selectedDay, message: message.trim(),
-    });
-    setBooking(false);
-    if (error) { toast.error("Booking failed", { description: error.message }); }
-    else { toast.success("Booking request sent!"); navigate("/dashboard"); }
-  };
 
   if (isLoading) {
     return (
@@ -94,9 +74,9 @@ const ProviderDetail = () => {
       <Navbar />
       <div className="pt-18 sm:pt-24 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-3xl">
-          <button type="button" onClick={() => window.history.back()} className="mb-4 sm:mb-6">
-            <Button variant="ghost" size="sm" className="h-11 min-w-[44px] rounded-xl"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
-          </button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => window.history.back()} className="mb-4 sm:mb-6 h-11 min-w-[44px] rounded-xl">
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          </Button>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             {/* Header */}
@@ -123,7 +103,6 @@ const ProviderDetail = () => {
                     </span>
                     {listing.location && <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {listing.location}</span>}
                     {listing.response_time && <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {listing.response_time}</span>}
-                    <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" /> {listing.completed_jobs} completed</span>
                   </div>
                 </div>
                 {price > 0 && (
@@ -246,37 +225,6 @@ const ProviderDetail = () => {
               <ReviewsSection listingId={listing.id} providerId={listing.user_id} />
             </div>
 
-            {/* Booking — only for signed-in users */}
-            {user && user.id !== listing.user_id && (
-              <div className="rounded-2xl bg-card border border-border p-3.5 sm:p-6">
-                <h2 className="font-display font-bold text-lg text-foreground mb-4 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" /> Book This
-                </h2>
-                {listing.availability && listing.availability.length > 0 && (
-                  <>
-                    <p className="text-sm text-muted-foreground mb-4">Select an available day:</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => {
-                        const available = listing.availability?.includes(day);
-                        return (
-                          <button key={day} type="button" disabled={!available} onClick={() => setSelectedDay(day)}
-                            className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 touch-manipulation ${
-                              selectedDay === day ? "bg-primary text-primary-foreground shadow-elevated"
-                              : available ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                              : "bg-muted text-muted-foreground opacity-50 cursor-not-allowed"
-                            }`}
-                          >{day}</button>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-                <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Add a message (optional)..." rows={3} className="mb-4" />
-                <Button variant="hero" size="lg" className="w-full h-12 sm:h-11 rounded-xl text-base font-semibold touch-manipulation" onClick={handleBook} disabled={booking}>
-                  {booking ? "Sending..." : "Send Booking Request"}
-                </Button>
-              </div>
-            )}
           </motion.div>
         </div>
       </div>

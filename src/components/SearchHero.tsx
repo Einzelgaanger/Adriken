@@ -45,6 +45,7 @@ const SearchHero = () => {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(0);
+  const [showDesktopRobot, setShowDesktopRobot] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -68,6 +69,20 @@ const SearchHero = () => {
 
     return () => window.clearInterval(cycle);
   }, [liveSearchExamples.length]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1280px)");
+    const sync = () => setShowDesktopRobot(media.matches);
+    sync();
+
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", sync);
+      return () => media.removeEventListener("change", sync);
+    }
+
+    media.addListener(sync);
+    return () => media.removeListener(sync);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -104,29 +119,31 @@ const SearchHero = () => {
         </div>
       </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-0 sm:pb-2 relative z-10">
-        <div className="hidden xl:block absolute left-[-4%] top-[5%] h-[92%] w-[42%] z-20 pointer-events-none">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="absolute inset-[6%]"
-          />
-          <div className="absolute left-[34%] right-[24%] bottom-[-6%] h-1.5 rounded-full bg-black/95" />
-        </div>
+      <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-1 sm:pb-2 relative z-10">
+        {showDesktopRobot && (
+          <div className="absolute left-[-4%] top-[5%] h-[92%] w-[42%] z-20 pointer-events-none">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="absolute inset-[6%]"
+            />
+            <div className="absolute left-[34%] right-[24%] bottom-[-6%] h-1.5 rounded-full bg-black/95" />
+          </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-          className="max-w-3xl mx-auto xl:mr-0 xl:ml-auto text-center relative z-30 -mt-4 sm:-mt-2 xl:-mt-8"
+          className="max-w-3xl mx-auto xl:mr-0 xl:ml-auto text-center relative z-30 -mt-3 sm:-mt-2 xl:-mt-8"
         >
           <div className="hidden xl:block h-8 relative mb-3" />
 
           <div className="max-w-2xl mx-auto">
-            <h1 className="neucha-regular mt-4 sm:mt-6 text-[2.6rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.6rem] leading-[1.08] mb-3 sm:mb-4 text-foreground tracking-tight">
+            <h1 className="neucha-regular mt-4 sm:mt-6 text-[clamp(2.85rem,8.8vw,4.6rem)] leading-[1.08] mb-3 sm:mb-4 text-foreground tracking-tight">
               Find services. <span className="text-gradient">Or offer yours.</span>
             </h1>
 
-            <p className="text-[15px] sm:text-lg md:text-xl text-muted-foreground mb-5 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-normal px-2 xl:px-0">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-5 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-normal px-2 xl:px-0">
               Create an account, complete your profile details, and we will help show you to nearby clients for your services or goods, and even to people looking to connect as friends. You can also search for goods, service providers, or people near you.
             </p>
 
@@ -136,9 +153,9 @@ const SearchHero = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5 sm:mb-6"
+                className="flex flex-row flex-wrap items-center justify-center gap-3 mb-5 sm:mb-6"
               >
-                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-full sm:w-auto">
+                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full">
                   <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
                     <Users className="w-4.5 h-4.5 text-primary" />
                   </div>
@@ -147,9 +164,9 @@ const SearchHero = () => {
                     <p className="text-xs text-muted-foreground">Search below — no account needed</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-full sm:w-auto cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/signup")}>
-                  <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
-                    <Briefcase className="w-4.5 h-4.5 text-primary" />
+                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/signup")}>
+                  <div className="w-9 h-9 rounded-xl bg-accent/[0.12] flex items-center justify-center shrink-0">
+                    <Briefcase className="w-4.5 h-4.5 text-accent" />
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-bold text-foreground">Got a business or skill? Get found</p>
@@ -169,9 +186,9 @@ const SearchHero = () => {
               focused ? "shadow-glow border-2 border-primary/25" : "shadow-card border-2 border-primary/[0.08]"
             }`}
           >
-            <div className="flex flex-col sm:flex-row sm:items-start p-2 sm:p-1.5 gap-2 sm:gap-0">
-              <div className="flex-1 flex items-start gap-3 p-2 sm:p-2.5 min-w-0">
-                <Search className="w-5 h-5 text-primary/50 mt-0.5 shrink-0 hidden sm:block" aria-hidden />
+            <div className="flex flex-row items-start p-1.5 sm:p-1.5 gap-1.5 sm:gap-0">
+              <div className="flex-1 flex items-start gap-2.5 p-2.5 sm:p-2.5 min-w-0">
+                <Search className="w-5 h-5 text-primary/50 mt-0.5 shrink-0" aria-hidden />
                 <div className="relative w-full">
                   <textarea
                     value={query}
@@ -182,8 +199,8 @@ const SearchHero = () => {
                       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSearch(); }
                     }}
                     placeholder=""
-                    className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground/40 text-[15px] sm:text-base min-h-[42px] sm:min-h-[24px] max-h-[96px] font-body py-1 sm:py-0 leading-relaxed"
-                    rows={2}
+                    className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground/40 text-base sm:text-base min-h-[32px] sm:min-h-[24px] max-h-[96px] font-body py-0 leading-relaxed"
+                    rows={1}
                     aria-label="Search for businesses and services"
                   />
                   {!query.trim() && (
@@ -208,12 +225,11 @@ const SearchHero = () => {
                 variant="hero"
                 size="lg"
                 onClick={handleSearch}
-                className="rounded-xl w-full sm:w-auto sm:shrink-0 h-12 sm:h-11 px-7 sm:m-1"
+                className="rounded-xl w-auto shrink-0 h-11 px-5 m-1"
                 disabled={!query.trim()}
                 aria-label="Search"
               >
-                <span className="sm:hidden font-semibold">Search</span>
-                <ArrowRight className="w-5 h-5 hidden sm:block" />
+                <ArrowRight className="w-5 h-5" />
               </Button>
             </div>
 

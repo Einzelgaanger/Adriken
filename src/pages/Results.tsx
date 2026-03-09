@@ -1,12 +1,13 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal } from "lucide-react";
+import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal, Map as MapIcon, List as ListIcon, Navigation } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 
 interface AIMatch {
   id: string;
@@ -14,19 +15,114 @@ interface AIMatch {
   matchReason: string;
 }
 
-type SortOption = "relevance" | "rating" | "price-low" | "price-high";
+type SortOption = "relevance" | "rating" | "price-low" | "price-high" | "distance";
+type ViewMode = "list" | "map";
+
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+const toRad = (v: number) => (v * Math.PI) / 180;
+const haversineKm = (a: LatLng, b: LatLng) => {
+  const earthRadiusKm = 6371;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const s1 = Math.sin(dLat / 2) ** 2;
+  const s2 = Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * earthRadiusKm * Math.asin(Math.sqrt(s1 + s2));
+};
+
+const formatDistance = (km: number) => (km < 1 ? `${Math.round(km * 1000)} m away` : `${km < 10 ? km.toFixed(1) : Math.round(km)} km away`);
+
+const MapResizeHandler = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => map.invalidateSize(), 120);
+    const onResize = () => map.invalidateSize();
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [map]);
+
+  return null;
+};
 
 const Results = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [userCoords, setUserCoords] = useState<LatLng | null>(null);
+  const [mapRenderKey, setMapRenderKey] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const setCoords = (lat: number | null, lng: number | null) => {
+      if (cancelled || lat == null || lng == null) return;
+      setUserCoords({ lat, lng });
+    };
+
+    const fetchProfileCoords = async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData.user?.id;
+      if (!userId) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("latitude, longitude")
+        .eq("user_id", userId)
+        .maybeSingle();
+      setCoords(data?.latitude ?? null, data?.longitude ?? null);
+    };
+
+    const persistCoords = async (lat: number, lng: number) => {
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData.user?.id;
+      if (!userId) return;
+
+      await supabase
+        .from("profiles")
+        .update({
+          latitude: lat,
+          longitude: lng,
+          live_location_enabled: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId);
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords(pos.coords.latitude, pos.coords.longitude);
+          void persistCoords(pos.coords.latitude, pos.coords.longitude);
+        },
+        () => { void fetchProfileCoords(); },
+        { enableHighAccuracy: false, timeout: 7000, maximumAge: 60_000 },
+      );
+    } else {
+      void fetchProfileCoords();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "map") setMapRenderKey((prev) => prev + 1);
+  }, [viewMode, userCoords]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["search", query],
+    queryKey: ["search", query, userCoords?.lat, userCoords?.lng],
     queryFn: async () => {
       const { data: listings, error: dbError } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location)")
+        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, latitude, longitude, live_location_enabled)")
         .eq("is_active", true);
 
       if (dbError) throw dbError;
@@ -54,7 +150,16 @@ const Results = () => {
         .filter((l) => matchMap.has(l.id))
         .sort((a, b) => (matchMap.get(b.id)?.matchScore || 0) - (matchMap.get(a.id)?.matchScore || 0));
 
-      return { listings: sorted, matchMap };
+      const withDistance = sorted.map((listing: any) => {
+        const lat = listing.latitude ?? listing.profiles?.latitude;
+        const lng = listing.longitude ?? listing.profiles?.longitude;
+        const distanceKm = userCoords && lat != null && lng != null
+          ? haversineKm(userCoords, { lat, lng })
+          : null;
+        return { ...listing, distanceKm };
+      });
+
+      return { listings: withDistance, matchMap };
     },
     enabled: !!query,
   });
@@ -68,7 +173,21 @@ const Results = () => {
     listings = [...listings].sort((a, b) => (Number(a.hourly_rate || a.fixed_price) || 0) - (Number(b.hourly_rate || b.fixed_price) || 0));
   } else if (sortBy === "price-high") {
     listings = [...listings].sort((a, b) => (Number(b.hourly_rate || b.fixed_price) || 0) - (Number(a.hourly_rate || a.fixed_price) || 0));
+  } else if (sortBy === "distance") {
+    listings = [...listings].sort((a, b) => (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY));
   }
+
+  const mappableListings = useMemo(
+    () => listings.filter((l: any) => (l.latitude ?? l.profiles?.latitude) != null && (l.longitude ?? l.profiles?.longitude) != null),
+    [listings],
+  );
+
+  const mapCenter: [number, number] = useMemo(() => {
+    if (userCoords) return [userCoords.lat, userCoords.lng];
+    const first = mappableListings[0];
+    if (first) return [first.latitude ?? first.profiles?.latitude, first.longitude ?? first.profiles?.longitude];
+    return [-1.286389, 36.817223];
+  }, [mappableListings, userCoords]);
 
   const topMatch = listings[0];
   const otherMatches = sortBy === "relevance" ? listings.slice(1) : listings;
@@ -97,32 +216,58 @@ const Results = () => {
             )}
           </motion.div>
 
-          {/* Sort controls */}
-          {!isLoading && listings.length > 1 && (
+          {/* Controls */}
+          {!isLoading && listings.length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mb-3 flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide"
+              className="mb-3 space-y-2"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              {([
-                ["relevance", "Best Match"],
-                ["rating", "Top Rated"],
-                ["price-low", "Price: Low"],
-                ["price-high", "Price: High"],
-              ] as [SortOption, string][]).map(([key, label]) => (
+              <div className="flex items-center gap-1.5 p-1 rounded-xl border border-border/60 bg-card w-fit">
                 <button
-                  key={key}
-                  onClick={() => setSortBy(key)}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-colors shrink-0 min-h-[34px] touch-manipulation ${
-                    sortBy === key
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  onClick={() => setViewMode("list")}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                    viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                   }`}
                 >
-                  {label}
+                  <ListIcon className="w-3.5 h-3.5" /> List
                 </button>
-              ))}
+                <button
+                  onClick={() => setViewMode("map")}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                    viewMode === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
+                  }`}
+                >
+                  <MapIcon className="w-3.5 h-3.5" /> Map View
+                </button>
+              </div>
+
+              {viewMode === "list" && listings.length > 1 && (
+                <div className="flex flex-wrap items-center gap-2 pb-1">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  {([
+                    ["relevance", "Best Match"],
+                    ["rating", "Top Rated"],
+                    ["price-low", "Price: Low"],
+                    ["price-high", "Price: High"],
+                    ["distance", "Closest"],
+                  ] as [SortOption, string][])
+                    .filter(([key]) => key !== "distance" || !!userCoords)
+                    .map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setSortBy(key)}
+                        className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-colors shrink-0 min-h-[34px] touch-manipulation ${
+                          sortBy === key
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -153,8 +298,63 @@ const Results = () => {
             </div>
           )}
 
+          {viewMode === "map" && !isLoading && !error && listings.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 rounded-2xl border border-border/60 bg-card p-2 sm:p-3 shadow-soft">
+              {mappableListings.length > 0 ? (
+                <MapContainer
+                  key={`results-map-${mapRenderKey}`}
+                  center={mapCenter}
+                  zoom={12}
+                  scrollWheelZoom={true}
+                  className="h-[420px] sm:h-[520px] w-full rounded-xl"
+                >
+                  <MapResizeHandler />
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+
+                  {userCoords && (
+                    <CircleMarker center={[userCoords.lat, userCoords.lng]} radius={8} pathOptions={{ color: "#2563eb", fillColor: "#3b82f6", fillOpacity: 0.9 }}>
+                      <Popup>You are here</Popup>
+                    </CircleMarker>
+                  )}
+
+                  {mappableListings.map((listing: any) => {
+                    const lat = listing.latitude ?? listing.profiles?.latitude;
+                    const lng = listing.longitude ?? listing.profiles?.longitude;
+                    const label = listing.profiles?.business_name || listing.profiles?.full_name || "Provider";
+                    return (
+                      <CircleMarker
+                        key={listing.id}
+                        center={[lat, lng]}
+                        radius={7}
+                        pathOptions={{ color: "#ea580c", fillColor: "#f97316", fillOpacity: 0.9 }}
+                      >
+                        <Popup>
+                          <div className="space-y-1">
+                            <p className="font-semibold text-sm">{label}</p>
+                            <p className="text-xs text-muted-foreground">{listing.title}</p>
+                            {listing.distanceKm != null && (
+                              <p className="text-xs inline-flex items-center gap-1"><Navigation className="w-3 h-3" />{formatDistance(listing.distanceKm)}</p>
+                            )}
+                            <Link to={`/provider/${listing.id}`} className="text-xs font-medium text-primary">View profile</Link>
+                          </div>
+                        </Popup>
+                      </CircleMarker>
+                    );
+                  })}
+                </MapContainer>
+              ) : (
+                <div className="h-[280px] rounded-xl border border-dashed border-border/70 flex items-center justify-center text-sm text-muted-foreground">
+                  No providers with map coordinates found for this search.
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {/* Top Match */}
-          {showTopSeparately && topMatch && (
+          {viewMode === "list" && showTopSeparately && topMatch && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2.5">
                 <Sparkles className="w-3.5 h-3.5 text-primary" />
@@ -171,11 +371,10 @@ const Results = () => {
                   reviews: topMatch.review_count || 0,
                   hourlyRate: Number(topMatch.hourly_rate) || Number(topMatch.fixed_price) || 0,
                   location: topMatch.location || (topMatch as any).profiles?.location || "",
-                  distance: "",
+                  distance: topMatch.distanceKm != null ? formatDistance(topMatch.distanceKm) : "",
                   bio: topMatch.description,
                   experience: topMatch.experience || "",
                   availability: topMatch.availability || [],
-                  completedJobs: topMatch.completed_jobs || 0,
                   responseTime: topMatch.response_time || "~30 min",
                   verified: true,
                 }}
@@ -186,7 +385,7 @@ const Results = () => {
           )}
 
           {/* Other Matches */}
-          {((showTopSeparately && otherMatches.length > 0) || (!showTopSeparately && listings.length > 0)) && (
+          {viewMode === "list" && ((showTopSeparately && otherMatches.length > 0) || (!showTopSeparately && listings.length > 0)) && (
             <div>
               {showTopSeparately && (
                 <div className="flex items-center gap-2 mb-2.5 mt-6">
@@ -211,11 +410,10 @@ const Results = () => {
                         reviews: listing.review_count || 0,
                         hourlyRate: Number(listing.hourly_rate) || Number(listing.fixed_price) || 0,
                         location: listing.location || profile?.location || "",
-                        distance: "",
+                        distance: listing.distanceKm != null ? formatDistance(listing.distanceKm) : "",
                         bio: listing.description,
                         experience: listing.experience || "",
                         availability: listing.availability || [],
-                        completedJobs: listing.completed_jobs || 0,
                         responseTime: listing.response_time || "~30 min",
                         verified: true,
                       }}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, Zap, Briefcase } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, Zap, Navigation } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export interface Provider {
@@ -17,7 +17,6 @@ export interface Provider {
   bio: string;
   experience: string;
   availability: string[];
-  completedJobs: number;
   responseTime: string;
   verified: boolean;
 }
@@ -75,10 +74,12 @@ const ProviderCard = ({ provider, index, matchReason }: ProviderCardProps) => {
                     <span className="truncate max-w-[120px]">{provider.location}</span>
                   </span>
                 )}
-                <span className="flex items-center gap-1">
-                  <Briefcase className="w-3.5 h-3.5 shrink-0" />
-                  {provider.completedJobs} jobs
-                </span>
+                {provider.distance && (
+                  <span className="flex items-center gap-1">
+                    <Navigation className="w-3.5 h-3.5 shrink-0" />
+                    <span>{provider.distance}</span>
+                  </span>
+                )}
               </div>
             </div>
             {/* Price - stacked right */}
