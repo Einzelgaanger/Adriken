@@ -9,7 +9,6 @@ import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index";
 import Results from "./pages/Results";
 import ProviderDetail from "./pages/ProviderDetail";
-import BecomeProvider from "./pages/BecomeProvider";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -37,7 +36,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/results" element={<Results />} />
             <Route path="/provider/:id" element={<ProviderDetail />} />
-            <Route path="/become-provider" element={<BecomeProvider />} />
+            <Route path="/become-provider" element={<ProfileEdit />} />
             
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
