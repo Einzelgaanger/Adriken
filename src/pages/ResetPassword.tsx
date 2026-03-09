@@ -15,20 +15,41 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRecovery, setIsRecovery] = useState(false);
+  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Listen for PASSWORD_RECOVERY event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
         setIsRecovery(true);
+        setChecking(false);
       }
     });
-    // Check hash for recovery token
+
+    // Also check URL for recovery tokens (hash fragment or query params)
     const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(hash.replace("#", ""));
+
+    const hasRecoveryToken =
+      hash.includes("type=recovery") ||
+      hashParams.get("type") === "recovery" ||
+      searchParams.get("type") === "recovery" ||
+      hash.includes("access_token");
+
+    if (hasRecoveryToken) {
       setIsRecovery(true);
+      setChecking(false);
     }
-    return () => subscription.unsubscribe();
+
+    // Give the auth state change a moment to fire
+    const timeout = setTimeout(() => setChecking(false), 2000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,14 +73,25 @@ const ResetPassword = () => {
     }
   };
 
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="pt-24 flex items-center justify-center min-h-[70vh]">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
   if (!isRecovery) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="pt-24 flex items-center justify-center min-h-[70vh] px-4">
-          <div className="text-center">
+          <div className="text-center max-w-md">
             <h1 className="font-display text-2xl font-bold text-foreground mb-3">Invalid or expired link</h1>
-            <p className="text-muted-foreground mb-6">This password reset link is no longer valid.</p>
+            <p className="text-muted-foreground mb-6">This password reset link is no longer valid or has expired.</p>
             <Button variant="hero" onClick={() => navigate("/forgot-password")}>Request a new link</Button>
           </div>
         </div>

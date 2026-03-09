@@ -35,14 +35,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
+    // Record consent date on the profile after creation
+    if (!error && data.user) {
+      await supabase.from("profiles").update({
+        data_consent: true,
+        consent_date: new Date().toISOString(),
+      }).eq("user_id", data.user.id);
+    }
     return { error: error as Error | null };
   };
 

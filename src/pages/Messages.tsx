@@ -85,6 +85,17 @@ const Messages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Mark messages as read when viewing conversation
+  useEffect(() => {
+    if (!activeConvoId || !user || !messages) return;
+    const unreadIds = messages
+      .filter((m: any) => m.sender_id !== user.id && !m.read)
+      .map((m: any) => m.id);
+    if (unreadIds.length > 0) {
+      supabase.from("messages").update({ read: true }).in("id", unreadIds).then(() => {});
+    }
+  }, [activeConvoId, user, messages]);
+
   const sendMessage = useMutation({
     mutationFn: async () => {
       if (!newMessage.trim() || !activeConvoId || !user) return;

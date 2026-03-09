@@ -5,6 +5,7 @@ import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { toast } from "sonner";
 
 const Navbar = () => {
@@ -12,6 +13,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const unreadCount = useUnreadMessages();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -36,6 +38,13 @@ const Navbar = () => {
     { to: "/become-provider", label: "Offer Services" },
     { to: "/how-it-works", label: "How It Works" },
   ];
+
+  const UnreadBadge = () =>
+    unreadCount > 0 ? (
+      <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center leading-none">
+        {unreadCount > 99 ? "99+" : unreadCount}
+      </span>
+    ) : null;
 
   return (
     <nav
@@ -68,10 +77,11 @@ const Navbar = () => {
                   <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                 </Button>
               </Link>
-              <Link to="/messages">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+              <Link to="/messages" className="relative">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground relative">
                   <MessageSquare className="w-4 h-4" />
                 </Button>
+                <UnreadBadge />
               </Link>
               <Link to="/history">
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
@@ -94,16 +104,25 @@ const Navbar = () => {
           )}
         </div>
 
-        <button
-          type="button"
-          className="md:hidden touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-secondary active:bg-secondary/80 transition-colors -mr-1 w-11 h-11"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-menu"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile: show unread badge on hamburger */}
+        <div className="md:hidden flex items-center gap-1.5">
+          {user && (
+            <Link to="/messages" className="relative w-11 h-11 flex items-center justify-center rounded-xl text-foreground hover:bg-secondary transition-colors touch-manipulation">
+              <MessageSquare className="w-5 h-5" />
+              <UnreadBadge />
+            </Link>
+          )}
+          <button
+            type="button"
+            className="touch-target flex items-center justify-center rounded-xl text-foreground hover:bg-secondary active:bg-secondary/80 transition-colors w-11 h-11"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -135,6 +154,11 @@ const Navbar = () => {
                     <Link to="/messages" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
                         <MessageSquare className="w-4 h-4 mr-1.5" /> Messages
+                        {unreadCount > 0 && (
+                          <span className="ml-auto min-w-[20px] h-[20px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
                       </Button>
                     </Link>
                     <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
