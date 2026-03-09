@@ -1,6 +1,6 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal, Map as MapIcon, List as ListIcon, Navigation } from "lucide-react";
+import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal, Map as MapIcon, List as ListIcon, Navigation, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
@@ -196,20 +196,20 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-18 sm:pt-24 pb-10 sm:pb-20 px-3 sm:px-6">
+      <div className="pt-44 sm:pt-52 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
-          <Link to="/" className="inline-block mb-4">
-            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation">
+          <Link to="/" className="inline-block mb-3 sm:mb-4">
+            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>
           </Link>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-8">
-            <div className="inline-flex items-center gap-2 text-xs text-primary mb-2.5 font-semibold uppercase tracking-wide">
+            <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs text-primary mb-2.5 font-semibold uppercase tracking-wide">
               <Sparkles className="w-3.5 h-3.5 shrink-0" /> AI-powered results
             </div>
-            <h1 className="font-display text-lg sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
-              Results for "{query}"
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
+              Results for &ldquo;{query}&rdquo;
             </h1>
             {!isLoading && listings.length > 0 && (
               <p className="text-sm text-muted-foreground mt-1">{listings.length} match{listings.length !== 1 ? "es" : ""} found</p>
@@ -223,22 +223,24 @@ const Results = () => {
               animate={{ opacity: 1 }}
               className="mb-3 space-y-2"
             >
-              <div className="flex items-center gap-1.5 p-1 rounded-xl border border-border/60 bg-card w-fit">
+              <div className="flex items-stretch gap-1 p-1 rounded-xl border border-border/60 bg-card w-full sm:w-fit">
                 <button
+                  type="button"
                   onClick={() => setViewMode("list")}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                  className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[44px] sm:min-h-[34px] touch-manipulation ${
                     viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                   }`}
                 >
                   <ListIcon className="w-3.5 h-3.5" /> List
                 </button>
                 <button
+                  type="button"
                   onClick={() => setViewMode("map")}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[34px] touch-manipulation ${
+                  className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors min-h-[44px] sm:min-h-[34px] touch-manipulation ${
                     viewMode === "map" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
                   }`}
                 >
-                  <MapIcon className="w-3.5 h-3.5" /> Map View
+                  <MapIcon className="w-3.5 h-3.5" /> Map
                 </button>
               </div>
 
@@ -256,8 +258,9 @@ const Results = () => {
                     .map(([key, label]) => (
                       <button
                         key={key}
+                        type="button"
                         onClick={() => setSortBy(key)}
-                        className={`px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-colors shrink-0 min-h-[34px] touch-manipulation ${
+                        className={`px-3 py-2 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-medium transition-colors shrink-0 min-h-[40px] sm:min-h-[34px] touch-manipulation ${
                           sortBy === key
                             ? "bg-primary text-primary-foreground"
                             : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -272,41 +275,58 @@ const Results = () => {
           )}
 
           {isLoading && (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-16 h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-5">
-                <Loader2 className="w-7 h-7 text-primary animate-spin" />
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-4 sm:mb-5">
+                <Loader2 className="w-6 h-6 sm:w-7 sm:h-7 text-primary animate-spin" aria-hidden />
               </div>
-              <p className="text-muted-foreground font-semibold text-[15px]">AI is finding the best matches...</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">This usually takes a few seconds</p>
+              <p className="text-muted-foreground font-semibold text-[14px] sm:text-[15px]">AI is finding the best matches...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground/60 mt-1">This usually takes a few seconds</p>
             </div>
           )}
 
           {error && (
-            <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-8 text-center">
-              <p className="text-destructive font-semibold">Something went wrong while searching.</p>
-              <p className="text-sm text-muted-foreground mt-1.5">Please try again.</p>
+            <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-5 sm:p-8 text-center">
+              <p className="text-destructive font-semibold text-[15px] sm:text-base">Something went wrong while searching.</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1.5">Please try again.</p>
             </div>
           )}
 
           {!isLoading && !error && listings.length === 0 && (
-            <div className="rounded-2xl bg-card border border-border/60 p-10 sm:p-12 text-center shadow-soft">
-              <p className="text-lg font-display font-bold text-foreground mb-2">No businesses found</p>
-              <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm">Be the first to offer what people are looking for!</p>
-              <Link to="/signup">
-                <Button variant="hero" size="lg" className="rounded-xl">Sign Up & Create Your Profile</Button>
-              </Link>
+            <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-12 text-center shadow-soft">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-muted/60 flex items-center justify-center mx-auto mb-4">
+                <Search className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" aria-hidden />
+              </div>
+              <p className="text-base sm:text-lg font-display font-bold text-foreground mb-1">No businesses found</p>
+              <p className="text-muted-foreground text-[13px] sm:text-sm mb-2 max-w-sm mx-auto">
+                We didn&apos;t find any listings for &ldquo;{query}&rdquo; yet.
+              </p>
+              <p className="text-muted-foreground/80 text-xs sm:text-sm mb-6 max-w-sm mx-auto">
+                Be the first to offer this — sign up and create your profile.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
+                <Link to="/signup" className="block w-full sm:w-auto">
+                  <Button variant="hero" size="lg" className="rounded-xl w-full h-12 min-h-[44px] touch-manipulation">
+                    Sign Up & Create Your Profile
+                  </Button>
+                </Link>
+                <Link to="/" className="block w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="rounded-xl w-full h-12 min-h-[44px] touch-manipulation">
+                    Try a Different Search
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
 
           {viewMode === "map" && !isLoading && !error && listings.length > 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 rounded-2xl border border-border/60 bg-card p-2 sm:p-3 shadow-soft">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 rounded-xl sm:rounded-2xl border border-border/60 bg-card p-1.5 sm:p-3 shadow-soft overflow-hidden">
               {mappableListings.length > 0 ? (
                 <MapContainer
                   key={`results-map-${mapRenderKey}`}
                   center={mapCenter}
                   zoom={12}
                   scrollWheelZoom={true}
-                  className="h-[420px] sm:h-[520px] w-full rounded-xl"
+                  className="h-[280px] sm:h-[420px] md:h-[520px] w-full rounded-lg sm:rounded-xl"
                 >
                   <MapResizeHandler />
                   <TileLayer
@@ -432,15 +452,15 @@ const Results = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="mt-8 rounded-2xl bg-card border border-border/60 p-6 text-center"
+              className="mt-6 sm:mt-8 rounded-2xl bg-card border border-border/60 p-4 sm:p-6 text-center"
             >
-              <p className="text-sm text-muted-foreground mb-3">Don't see what you need?</p>
-              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                <Link to="/signup">
-                  <Button variant="outline" size="sm" className="rounded-xl w-full sm:w-auto">Sign Up & Offer Services</Button>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3">Don&apos;t see what you need?</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/signup" className="block w-full sm:w-auto">
+                  <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Sign Up & Offer Services</Button>
                 </Link>
-                <Link to="/">
-                  <Button variant="soft" size="sm" className="rounded-xl w-full sm:w-auto">Try a Different Search</Button>
+                <Link to="/" className="block w-full sm:w-auto">
+                  <Button variant="soft" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Try a Different Search</Button>
                 </Link>
               </div>
             </motion.div>
