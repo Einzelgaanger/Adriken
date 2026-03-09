@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, CheckSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable/index";
@@ -17,6 +18,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [consent, setConsent] = useState(false);
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -26,13 +28,20 @@ const Signup = () => {
       toast.error("Please fill in all fields (password must be at least 6 characters)");
       return;
     }
+    if (!consent) {
+      toast.error("Please agree to the Terms of Service and Privacy Policy to continue");
+      return;
+    }
     setLoading(true);
     const { error } = await signUp(email.trim(), password, name.trim());
     setLoading(false);
     if (error) {
       toast.error("Signup failed", { description: error.message });
     } else {
-      toast.success("Account created!", { description: "Check your email to confirm, then log in." });
+      toast.success("Account created!", {
+        description: "We've sent a confirmation email. Please check your inbox and click the link to verify your account before logging in.",
+        duration: 8000,
+      });
       navigate("/login");
     }
   };
@@ -45,7 +54,7 @@ const Signup = () => {
           <div className="text-center mb-8">
             <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-5" />
             <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Create your account</h1>
-            <p className="text-muted-foreground text-sm">Join Adriken and start connecting</p>
+            <p className="text-muted-foreground text-sm">Join Adriken — find help or offer your services</p>
           </div>
           <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
             {/* Google first for conversion */}
@@ -92,13 +101,25 @@ const Signup = () => {
                   </button>
                 </div>
               </div>
-              <Button variant="hero" className="w-full h-12 rounded-xl text-base font-bold touch-manipulation" type="submit" disabled={loading}>
+
+              {/* Data consent checkbox */}
+              <div className="flex items-start gap-3 py-1">
+                <Checkbox
+                  id="consent"
+                  checked={consent}
+                  onCheckedChange={(checked) => setConsent(checked === true)}
+                  className="mt-0.5"
+                />
+                <label htmlFor="consent" className="text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed cursor-pointer">
+                  I agree to the <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>. I consent to my data being collected and processed in accordance with the Kenya Data Protection Act (2019) and GDPR.
+                </label>
+              </div>
+
+              <Button variant="hero" className="w-full h-12 rounded-xl text-base font-bold touch-manipulation" type="submit" disabled={loading || !consent}>
                 {loading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
-            <p className="text-[11px] text-muted-foreground/60 text-center mt-5 leading-relaxed">
-              By signing up, you agree to our <Link to="/terms" className="text-primary/80 hover:underline">Terms</Link> and <Link to="/privacy" className="text-primary/80 hover:underline">Privacy Policy</Link>. Data processed per Kenya DPA & GDPR.
-            </p>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-7">
             Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
