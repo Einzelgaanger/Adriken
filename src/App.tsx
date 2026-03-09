@@ -9,7 +9,6 @@ import CookieConsent from "@/components/CookieConsent";
 import Index from "./pages/Index";
 import Results from "./pages/Results";
 import ProviderDetail from "./pages/ProviderDetail";
-import ProfileEdit from "./pages/ProfileEdit";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
