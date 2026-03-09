@@ -165,8 +165,8 @@ const SearchHero = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/signup")}>
-                  <div className="w-9 h-9 rounded-xl bg-accent/[0.12] flex items-center justify-center shrink-0">
-                    <Briefcase className="w-4.5 h-4.5 text-accent" />
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+                    <Briefcase className="w-4.5 h-4.5 text-emerald-600" />
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-bold text-foreground">Got a business or skill? Get found</p>
