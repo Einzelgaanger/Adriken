@@ -36,7 +36,6 @@ const Navbar = () => {
   const links = [
     { to: "/", label: "Find Help" },
     { to: "/become-provider", label: "Offer Services" },
-    { to: "/how-it-works", label: "How It Works" },
   ];
 
   const UnreadBadge = () =>

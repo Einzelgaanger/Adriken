@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plus, Loader2, Calendar, CheckCircle2, XCircle, Clock, Trash2, MessageSquare, Eye } from "lucide-react";
+import { Plus, Loader2, Calendar, CheckCircle2, XCircle, Clock, MessageSquare, Eye, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
@@ -28,19 +28,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: listings, isLoading: listingsLoading } = useQuery({
-    queryKey: ["my-listings", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("user_id", user!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
 
   const { data: bookingsAsSeeker } = useQuery({
     queryKey: ["bookings-seeker", user?.id],
@@ -70,16 +57,6 @@ const Dashboard = () => {
     enabled: !!user,
   });
 
-  const deleteListing = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("listings").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
-      toast.success("Listing deleted");
-    },
-  });
 
   const updateBookingStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
@@ -118,14 +95,14 @@ const Dashboard = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
               <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+                <Link to="/profile/edit" className="flex-1 sm:flex-none">
+                  <Button variant="soft" size="sm" className="w-full h-11 rounded-xl"><User className="w-4 h-4 mr-1" /> My Profile</Button>
+                </Link>
                 <Link to="/messages" className="flex-1 sm:flex-none">
                   <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><MessageSquare className="w-4 h-4 mr-1" /> Messages</Button>
                 </Link>
                 <Link to="/history" className="flex-1 sm:flex-none">
                   <Button variant="outline" size="sm" className="w-full h-11 rounded-xl"><Eye className="w-4 h-4 mr-1" /> History</Button>
-                </Link>
-                <Link to="/profile/edit" className="flex-1 sm:flex-none">
-                  <Button variant="outline" size="sm" className="w-full h-11 rounded-xl">Edit Profile</Button>
                 </Link>
                 <Link to="/become-provider" className="flex-1 sm:flex-none">
                   <Button variant="hero" size="sm" className="w-full h-11 rounded-xl"><Plus className="w-4 h-4 mr-1" /> New Listing</Button>
@@ -133,37 +110,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* My Listings */}
-            <section className="mb-10">
-              <h2 className="font-display font-bold text-xl text-foreground mb-4">My Listings</h2>
-              {listingsLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 text-primary animate-spin" /></div>
-              ) : listings && listings.length > 0 ? (
-                <div className="space-y-3">
-                  {listings.map((l) => (
-                    <div key={l.id} className="rounded-xl bg-card border border-border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                      <div className="flex-1 min-w-0">
-                        <Link to={`/provider/${l.id}`} className="font-display font-semibold text-foreground hover:text-primary truncate block focus:outline-none focus:ring-2 focus:ring-ring rounded">{l.title}</Link>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-muted-foreground mt-1">
-                          <Badge variant="secondary" className="text-xs capitalize">{l.listing_type}</Badge>
-                          {l.location && <span>{l.location}</span>}
-                          {l.hourly_rate && <span>${Number(l.hourly_rate)}/hr</span>}
-                          {l.fixed_price && <span>${Number(l.fixed_price)}</span>}
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="icon" onClick={() => deleteListing.mutate(l.id)} className="text-muted-foreground hover:text-destructive shrink-0 self-end sm:self-center min-w-[44px] min-h-[44px] rounded-xl" aria-label="Delete listing">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-xl bg-card border border-border p-8 text-center">
-                  <p className="text-muted-foreground mb-4">You haven't created any listings yet.</p>
-                  <Link to="/become-provider"><Button variant="soft">Create Your First Listing</Button></Link>
-                </div>
-              )}
-            </section>
 
             {/* Incoming Bookings (as provider) */}
             {bookingsAsProvider && bookingsAsProvider.length > 0 && (
