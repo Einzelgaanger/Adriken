@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Plus, Loader2, Calendar, CheckCircle2, XCircle, Clock, Trash2, MessageSquare, Eye } from "lucide-react";
+import { Plus, Loader2, Calendar, CheckCircle2, XCircle, Clock, MessageSquare, Eye, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
