@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, MessageSquare, Eye } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -68,6 +68,16 @@ const Navbar = () => {
                   <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
                 </Button>
               </Link>
+              <Link to="/messages">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <MessageSquare className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Link to="/history">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Eye className="w-4 h-4" />
+                </Button>
+              </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
                 <LogOut className="w-4 h-4 mr-1" /> Sign out
               </Button>
@@ -120,6 +130,16 @@ const Navbar = () => {
                     <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="soft" className="w-full h-12 text-base rounded-xl">
                         <LayoutDashboard className="w-4 h-4 mr-1.5" /> Dashboard
+                      </Button>
+                    </Link>
+                    <Link to="/messages" onClick={() => setMobileOpen(false)} className="block">
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
+                        <MessageSquare className="w-4 h-4 mr-1.5" /> Messages
+                      </Button>
+                    </Link>
+                    <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start">
+                        <Eye className="w-4 h-4 mr-1.5" /> Viewing History
                       </Button>
                     </Link>
                     <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground" onClick={() => { handleSignOut(); setMobileOpen(false); }}>

@@ -1,14 +1,15 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, Calendar, Briefcase, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import Navbar from "@/components/Navbar";
+import ReviewsSection from "@/components/ReviewsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const ProviderDetail = () => {
@@ -33,6 +34,40 @@ const ProviderDetail = () => {
     },
     enabled: !!id,
   });
+
+  // Track profile view
+  useEffect(() => {
+    if (user && listing && user.id !== listing.user_id) {
+      supabase.from("profile_views").insert({
+        viewer_id: user.id,
+        listing_id: listing.id,
+        provider_id: listing.user_id,
+      }).then(() => {});
+    }
+  }, [user, listing]);
+
+  const handleStartChat = async () => {
+    if (!user) { toast.error("Please sign in first"); navigate("/login"); return; }
+    if (!listing) return;
+    // Check if conversation exists
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .or(`and(participant_1.eq.${user.id},participant_2.eq.${listing.user_id}),and(participant_1.eq.${listing.user_id},participant_2.eq.${user.id})`)
+      .eq("listing_id", listing.id)
+      .maybeSingle();
+    if (existing) {
+      navigate(`/messages?c=${existing.id}`);
+    } else {
+      const { data: newConvo, error } = await supabase
+        .from("conversations")
+        .insert({ participant_1: user.id, participant_2: listing.user_id, listing_id: listing.id })
+        .select("id")
+        .single();
+      if (error) { toast.error("Could not start conversation"); return; }
+      navigate(`/messages?c=${newConvo.id}`);
+    }
+  };
 
   const handleBook = async () => {
     if (!user) { toast.error("Please sign in to book"); navigate("/login"); return; }
@@ -225,6 +260,20 @@ const ProviderDetail = () => {
                 </div>
               </div>
             )}
+
+            {/* Message Provider Button */}
+            {user && user.id !== listing.user_id && (
+              <div className="mb-4 sm:mb-6">
+                <Button variant="outline" size="lg" className="w-full rounded-xl" onClick={handleStartChat}>
+                  <Send className="w-4 h-4 mr-2" /> Message Provider
+                </Button>
+              </div>
+            )}
+
+            {/* Reviews */}
+            <div className="mb-4 sm:mb-6">
+              <ReviewsSection listingId={listing.id} providerId={listing.user_id} />
+            </div>
 
             {/* Booking */}
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-6">
