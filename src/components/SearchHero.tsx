@@ -119,7 +119,7 @@ const SearchHero = () => {
         </div>
       </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-1 sm:pb-2 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-0 sm:pb-2 relative z-10">
         {showDesktopRobot && (
           <div className="absolute left-[-4%] top-[5%] h-[92%] w-[42%] z-20 pointer-events-none">
             <SplineScene

@@ -18,17 +18,35 @@ const ViewingHistory = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profile_views")
-        .select("*, listings(title, location, hourly_rate, fixed_price, listing_type), profiles:provider_id(full_name, business_name, avatar_url)")
+        .select("*, listings(title, location, hourly_rate, fixed_price, listing_type)")
         .eq("viewer_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      const seen = new Set();
-      return data.filter((v: any) => {
+
+      const seen = new Set<string>();
+      const deduped = (data || []).filter((v: any) => {
         if (seen.has(v.listing_id)) return false;
         seen.add(v.listing_id);
         return true;
       });
+
+      const providerIds = Array.from(new Set(deduped.map((v: any) => v.provider_id).filter(Boolean)));
+      let profilesByUserId = new Map<string, any>();
+
+      if (providerIds.length > 0) {
+        const { data: profiles, error: profilesError } = await supabase
+          .from("profiles")
+          .select("user_id, full_name, business_name, avatar_url")
+          .in("user_id", providerIds);
+        if (profilesError) throw profilesError;
+        profilesByUserId = new Map((profiles || []).map((p: any) => [p.user_id, p]));
+      }
+
+      return deduped.map((v: any) => ({
+        ...v,
+        profiles: profilesByUserId.get(v.provider_id) || null,
+      }));
     },
     enabled: !!user,
   });

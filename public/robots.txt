@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://adriken.onrender.com/sitemap.xml
+Sitemap: https://adriken.com/sitemap.xml

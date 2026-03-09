@@ -8,9 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: ["adriken.com", "www.adriken.com"],
     hmr: {
       overlay: false,
     },
+  },
+  preview: {
+    host: "::",
+    allowedHosts: ["adriken.com", "www.adriken.com"],
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

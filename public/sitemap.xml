@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://adriken.onrender.com/</loc>
+    <loc>https://adriken.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://adriken.onrender.com/signup</loc>
+    <loc>https://adriken.com/signup</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://adriken.onrender.com/login</loc>
+    <loc>https://adriken.com/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://adriken.onrender.com/how-it-works</loc>
+    <loc>https://adriken.com/how-it-works</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://adriken.onrender.com/become-provider</loc>
+    <loc>https://adriken.com/become-provider</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
