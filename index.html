@@ -79,6 +79,14 @@
   </head>
 
   <body>
+    <script>
+      (function() {
+        var p = window.location.pathname;
+        if (p === '/dashboard' || p === '/dashboard/') {
+          window.location.replace('/' + (window.location.search || '') + (window.location.hash || ''));
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
