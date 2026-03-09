@@ -28,19 +28,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: listings, isLoading: listingsLoading } = useQuery({
-    queryKey: ["my-listings", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("listings")
-        .select("*")
-        .eq("user_id", user!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
 
   const { data: bookingsAsSeeker } = useQuery({
     queryKey: ["bookings-seeker", user?.id],
