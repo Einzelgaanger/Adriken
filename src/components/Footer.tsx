@@ -16,8 +16,8 @@ const Footer = () => (
         </div>
         {[
           { title: "For Seekers", links: [["Find Help", "/"], ["How It Works", "/how-it-works"], ["Categories", "/"]] },
-          { title: "For Providers", links: [["Offer Services", "/become-provider"], ["Pricing", "/"], ["Success Stories", "/"]] },
-          { title: "Company", links: [["About", "/"], ["Contact", "/"], ["Privacy", "/"], ["Terms", "/"]] },
+          { title: "For Providers", links: [["Offer Services", "/become-provider"], ["Dashboard", "/dashboard"], ["Edit Profile", "/profile/edit"]] },
+          { title: "Legal", links: [["Privacy Policy", "/privacy"], ["Terms of Service", "/terms"], ["Contact", "/"]] },
         ].map((col) => (
           <div key={col.title}>
             <h4 className="font-display font-semibold text-background mb-3 sm:mb-4 text-sm sm:text-base">{col.title}</h4>
