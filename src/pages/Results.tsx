@@ -469,7 +469,7 @@ const Results = () => {
                 <Link to="/signup" className="block w-full sm:w-auto">
                   <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Sign Up & Offer Services</Button>
                 </Link>
-                <Link to="/" className="block w-full sm:w-auto">
+                <Link to="/dashboard" className="block w-full sm:w-auto">
                   <Button variant="soft" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Try a Different Search</Button>
                 </Link>
               </div>

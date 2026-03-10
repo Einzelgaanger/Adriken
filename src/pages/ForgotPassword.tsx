@@ -96,7 +96,7 @@ const ForgotPassword = () => {
                     <ArrowLeft className="w-3 h-3" /> Back to login
                   </Link>
                 </p>
-                <Link to="/" className="block">
+                <Link to="/dashboard" className="block">
                   <Button variant="soft" className="w-full h-11 rounded-xl">
                     <Home className="w-4 h-4 mr-1.5" /> Home
                   </Button>
