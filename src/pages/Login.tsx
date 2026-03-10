@@ -17,7 +17,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { user, signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,7 +107,7 @@ const Login = () => {
               <p className="text-center text-sm text-muted-foreground">
                 Don&apos;t have an account? <Link to="/signup" className="text-primary font-semibold hover:underline">Sign up</Link>
               </p>
-              <Link to="/" className="block">
+              <Link to={user ? "/dashboard" : "/"} className="block">
                 <Button variant="soft" className="w-full h-11 rounded-xl">
                   <Home className="w-4 h-4 mr-1.5" /> Home
                 </Button>

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, DollarSign, Users, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const providerBenefits = [
   { icon: DollarSign, text: "Set your own rates" },
@@ -11,6 +12,7 @@ const providerBenefits = [
 ];
 
 const CTASection = () => {
+  const { user } = useAuth();
   return (
     <section className="py-16 sm:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 space-y-8 sm:space-y-12">
@@ -93,7 +95,7 @@ const CTASection = () => {
             <p className="text-primary-foreground/75 text-[15px] sm:text-lg mb-8 max-w-lg mx-auto leading-relaxed">
               Describe what you need in plain language. Our AI finds the perfect match in seconds.
             </p>
-            <Link to="/">
+            <Link to={user ? "/dashboard" : "/"}>
               <Button size="lg" className="h-12 sm:h-13 rounded-xl bg-white text-foreground border-none hover:bg-white/90 font-bold shadow-lg px-8 text-base w-full sm:w-auto">
                 <Sparkles className="w-4 h-4 mr-2" /> Find Help Now
               </Button>

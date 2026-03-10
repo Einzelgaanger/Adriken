@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { MessageSquare, Brain, UserCheck, CalendarCheck, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const seekerSteps = [
   {
@@ -40,6 +41,7 @@ const providerSteps = [
 ];
 
 const HowItWorksSection = () => {
+  const { user } = useAuth();
   return (
     <section className="py-14 sm:py-20 md:py-24 bg-background relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-radial from-primary/[0.02] to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -87,7 +89,7 @@ const HowItWorksSection = () => {
                 </div>
               ))}
             </div>
-            <Link to="/" className="block mt-5">
+            <Link to={user ? "/dashboard" : "/"} className="block mt-5">
               <Button variant="soft" size="sm" className="rounded-xl w-full sm:w-auto">
                 Search Now <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>

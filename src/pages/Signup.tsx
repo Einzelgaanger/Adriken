@@ -34,7 +34,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [consent, setConsent] = useState(false);
-  const { signUp } = useAuth();
+  const { user, signUp } = useAuth();
   const navigate = useNavigate();
   const passwordStrength = checkPasswordStrength(password);
   const passwordsMatch = password === confirmPassword;
@@ -228,7 +228,7 @@ const Signup = () => {
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
               </p>
-              <Link to="/" className="block">
+              <Link to={user ? "/dashboard" : "/"} className="block">
                 <Button variant="soft" className="w-full h-11 rounded-xl">
                   <Home className="w-4 h-4 mr-1.5" /> Home
                 </Button>

@@ -8,6 +8,7 @@ import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ViewMode = "list" | "map";
 type LatLng = { lat: number; lng: number };
@@ -39,6 +40,7 @@ const MapResizeHandler = () => {
 };
 
 const Nearby = () => {
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [userCoords, setUserCoords] = useState<LatLng | null>(null);
   const [locating, setLocating] = useState(false);
@@ -120,7 +122,7 @@ const Nearby = () => {
       <Navbar />
       <div className="pt-44 sm:pt-52 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
-          <Link to="/" className="inline-block mb-3 sm:mb-4">
+          <Link to={user ? "/dashboard" : "/"} className="inline-block mb-3 sm:mb-4">
             <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>

@@ -10,8 +10,10 @@ import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ForgotPassword = () => {
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -72,7 +74,7 @@ const ForgotPassword = () => {
                     <ArrowLeft className="w-3 h-3" /> Back to login
                   </Link>
                 </p>
-                <Link to="/" className="block">
+                <Link to={user ? "/dashboard" : "/"} className="block">
                   <Button variant="soft" className="w-full h-11 rounded-xl">
                     <Home className="w-4 h-4 mr-1.5" /> Home
                   </Button>
@@ -96,7 +98,7 @@ const ForgotPassword = () => {
                     <ArrowLeft className="w-3 h-3" /> Back to login
                   </Link>
                 </p>
-                <Link to="/" className="block">
+                <Link to={user ? "/dashboard" : "/"} className="block">
                   <Button variant="soft" className="w-full h-11 rounded-xl">
                     <Home className="w-4 h-4 mr-1.5" /> Home
                   </Button>

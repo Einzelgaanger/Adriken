@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlowButton } from "@/components/ui/flow-button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const containerVariants = {
   hidden: {
@@ -99,6 +100,7 @@ const ghostVariants = {
 };
 
 export function Ghost404Page() {
+  const { user } = useAuth();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <AnimatePresence mode="wait">
@@ -166,7 +168,7 @@ export function Ghost404Page() {
             }}
             className="flex items-center justify-center"
           >
-            <Link to="/">
+            <Link to={user ? "/dashboard" : "/"}>
               <FlowButton text="Find shelter" />
             </Link>
           </motion.div>

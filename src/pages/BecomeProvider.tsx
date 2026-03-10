@@ -103,7 +103,7 @@ const BecomeProvider = () => {
       toast.error("Failed to create listing", { description: error.message });
     } else {
       toast.success("Listing created!", { description: "You're now visible to people looking for what you offer." });
-      navigate("/");
+      navigate(user ? "/dashboard" : "/");
     }
   };
 
