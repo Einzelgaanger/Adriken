@@ -319,7 +319,7 @@ const Results = () => {
                     </Button>
                   </Link>
                 )}
-                <Link to="/" className="inline-flex">
+                <Link to="/dashboard" className="inline-flex">
                   <Button variant="outline" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm touch-manipulation">
                     Try a Different Search
                   </Button>
