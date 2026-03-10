@@ -87,7 +87,7 @@ const HowItWorksSection = () => {
                 </div>
               ))}
             </div>
-            <Link to="/dashboard" className="block mt-5">
+            <Link to="/" className="block mt-5">
               <Button variant="soft" size="sm" className="rounded-xl w-full sm:w-auto">
                 Search Now <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>

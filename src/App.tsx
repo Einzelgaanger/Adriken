@@ -28,8 +28,8 @@ const AppRoutes = () => (
   <>
     <ScrollToTop />
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="/dashboard" element={<Index />} />
+      <Route path="/" element={<Index />} />
+      <Route path="/dashboard" element={<Navigate to="/" replace />} />
       <Route path="/results" element={<Results />} />
       <Route path="/nearby" element={<Nearby />} />
       <Route path="/provider/:id" element={<ProviderDetail />} />

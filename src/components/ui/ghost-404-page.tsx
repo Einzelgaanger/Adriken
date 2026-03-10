@@ -166,7 +166,7 @@ export function Ghost404Page() {
             }}
             className="flex items-center justify-center"
           >
-            <Link to="/dashboard">
+            <Link to="/">
               <FlowButton text="Find shelter" />
             </Link>
           </motion.div>

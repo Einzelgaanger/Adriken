@@ -35,7 +35,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12 sm:mb-16">
           <div className="lg:col-span-4">
-            <Link to="/dashboard" className="inline-flex items-center gap-2.5 font-extrabold text-xl text-white mb-5">
+            <Link to="/" className="inline-flex items-center gap-2.5 font-extrabold text-xl text-white mb-5">
               <img src={adrikenLogo} alt="Adriken" className="w-10 h-10 sm:w-11 sm:h-11" />
               <span className="electrolize-regular text-[1.5rem] sm:text-[1.75rem] font-black leading-none">Adriken</span>
             </Link>

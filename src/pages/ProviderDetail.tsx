@@ -53,7 +53,7 @@ const ProviderDetail = () => {
       <div className="min-h-screen bg-background"><Navbar />
         <div className="pt-24 container mx-auto px-4 text-center">
           <h1 className="font-display text-2xl font-bold text-foreground">Business not found</h1>
-          <Link to="/dashboard"><Button variant="soft" className="mt-4">Go Home</Button></Link>
+          <Link to="/"><Button variant="soft" className="mt-4">Go Home</Button></Link>
         </div>
       </div>
     );

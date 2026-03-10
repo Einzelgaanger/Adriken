@@ -30,7 +30,7 @@ const Login = () => {
       toast.error("Login failed", { description: error.message });
     } else {
       toast.success("Welcome back!");
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 
@@ -107,7 +107,7 @@ const Login = () => {
               <p className="text-center text-sm text-muted-foreground">
                 Don&apos;t have an account? <Link to="/signup" className="text-primary font-semibold hover:underline">Sign up</Link>
               </p>
-              <Link to="/dashboard" className="block">
+              <Link to="/" className="block">
                 <Button variant="soft" className="w-full h-11 rounded-xl">
                   <Home className="w-4 h-4 mr-1.5" /> Home
                 </Button>

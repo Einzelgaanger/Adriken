@@ -200,7 +200,7 @@ const Results = () => {
       <Navbar />
       <div className="pt-44 sm:pt-52 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
-          <Link to="/dashboard" className="inline-block mb-3 sm:mb-4">
+          <Link to="/" className="inline-block mb-3 sm:mb-4">
             <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>
@@ -319,7 +319,7 @@ const Results = () => {
                     </Button>
                   </Link>
                 )}
-                <Link to="/dashboard" className="inline-flex">
+                <Link to="/" className="inline-flex">
                   <Button variant="outline" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm touch-manipulation">
                     Try a Different Search
                   </Button>
@@ -469,7 +469,7 @@ const Results = () => {
                 <Link to="/signup" className="block w-full sm:w-auto">
                   <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Sign Up & Offer Services</Button>
                 </Link>
-                <Link to="/dashboard" className="block w-full sm:w-auto">
+                <Link to="/" className="block w-full sm:w-auto">
                   <Button variant="soft" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Try a Different Search</Button>
                 </Link>
               </div>
