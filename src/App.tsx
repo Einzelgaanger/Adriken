@@ -27,7 +27,6 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => (
   <>
-    <RedirectDashboardToHome />
     <ScrollToTop />
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
