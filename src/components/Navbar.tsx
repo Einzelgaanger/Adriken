@@ -133,7 +133,7 @@ const Navbar = () => {
             aria-label="Mobile menu"
           >
             <div className="px-4 py-4 pb-6 flex flex-col gap-1">
-              <Link to="/" onClick={() => setMobileOpen(false)} className="block">
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block">
                 <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
               </Link>
               <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">

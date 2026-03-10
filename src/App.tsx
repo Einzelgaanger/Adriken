@@ -40,7 +40,8 @@ const AppRoutes = () => (
     <RedirectDashboardToHome />
     <ScrollToTop />
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/dashboard" element={<Index />} />
       <Route path="/results" element={<Results />} />
       <Route path="/nearby" element={<Nearby />} />
       <Route path="/provider/:id" element={<ProviderDetail />} />
@@ -48,7 +49,6 @@ const AppRoutes = () => (
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/dashboard" element={<Navigate to="/" replace />} />
       <Route path="/history" element={<ViewingHistory />} />
       <Route path="/profile/edit" element={<ProfileEdit />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
