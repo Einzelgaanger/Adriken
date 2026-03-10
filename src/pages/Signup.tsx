@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Navbar from "@/components/Navbar";
 import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
