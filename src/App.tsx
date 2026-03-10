@@ -24,16 +24,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function RedirectDashboardToHome() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (location.pathname === "/dashboard" || location.pathname.startsWith("/dashboard/")) {
-      navigate("/", { replace: true });
-    }
-  }, [location.pathname, navigate]);
-  return null;
-}
 
 const AppRoutes = () => (
   <>
