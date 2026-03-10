@@ -47,7 +47,7 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-0.5">
-          <Link to="/">
+          <Link to="/dashboard">
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
           </Link>
           <Link to="/nearby">
