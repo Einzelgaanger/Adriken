@@ -100,7 +100,7 @@ const ResetPassword = () => {
       toast.error("Failed to reset password", { description: error.message });
     } else {
       toast.success("Password updated!", { description: "You can now log in with your new password." });
-      navigate("/");
+      navigate("/login");
     }
   };
 

@@ -30,7 +30,7 @@ const Login = () => {
       toast.error("Login failed", { description: error.message });
     } else {
       toast.success("Welcome back!");
-      navigate("/");
+      navigate("/dashboard");
     }
   };
 
@@ -88,7 +88,7 @@ const Login = () => {
               type="button"
               onClick={async () => {
                 const { error } = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
+                  redirect_uri: `${window.location.origin}/dashboard`,
                 });
                 if (error) toast.error("Google sign-in failed", { description: error instanceof Error ? error.message : "Something went wrong" });
               }}
