@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
+import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import adrikenLogo from "@/assets/adriken-logo.png";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -75,9 +77,14 @@ const ResetPassword = () => {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background overflow-hidden">
         <Navbar />
-        <div className="pt-24 flex items-center justify-center min-h-[70vh]">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+        <BackgroundPathsLayer className="opacity-95" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+        <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+        <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+        <div className="pt-24 sm:pt-28 flex items-center justify-center min-h-[70vh] relative z-10">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
@@ -86,48 +93,71 @@ const ResetPassword = () => {
 
   if (!isRecovery) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background overflow-hidden">
         <Navbar />
-        <div className="pt-24 flex items-center justify-center min-h-[70vh] px-4">
-          <div className="text-center max-w-md">
-            <h1 className="font-display text-2xl font-bold text-foreground mb-3">Invalid or expired link</h1>
-            <p className="text-muted-foreground mb-6">This password reset link is no longer valid or has expired.</p>
-            <Button variant="hero" onClick={() => navigate("/forgot-password")}>Request a new link</Button>
-          </div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+        <BackgroundPathsLayer className="opacity-95" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+        <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+        <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+        <div className="pt-24 sm:pt-28 pb-16 flex items-center justify-center min-h-[70vh] px-4 sm:px-6 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-[420px] mx-auto">
+            <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
+              <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+              <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+              <div className="relative z-10 text-center">
+                <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+                <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
+                <h1 className="font-display text-2xl font-bold text-foreground mb-3">Invalid or expired link</h1>
+                <p className="text-muted-foreground text-sm mb-6">This password reset link is no longer valid or has expired.</p>
+                <Button variant="hero" className="rounded-xl h-12 min-h-[44px] touch-manipulation" onClick={() => navigate("/forgot-password")}>Request a new link</Button>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 flex items-center justify-center min-h-[85vh] px-4 sm:px-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md mx-auto">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Set new password</h1>
-            <p className="text-muted-foreground text-sm sm:text-base">Enter your new password below.</p>
-          </div>
-          <div className="rounded-2xl bg-card border border-border p-5 sm:p-6 shadow-card">
-            <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
+      <BackgroundPathsLayer className="opacity-95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
+      <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
+      <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6 relative z-10">
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-[420px] mx-auto">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
+            <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />
+            <div className="pointer-events-none absolute top-20 -left-10 w-28 h-28 rounded-full bg-orange-400/20 blur-xl" />
+            <div className="pointer-events-none absolute -bottom-10 right-10 w-32 h-32 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="relative z-10 text-center mb-6">
+              <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
+              <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
+              <h1 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight mb-1.5">Set new password</h1>
+              <p className="text-muted-foreground text-sm">Enter your new password below.</p>
+            </div>
+            <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
+                <Label htmlFor="new-password" className="text-foreground/80 font-medium text-sm">New Password</Label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                  <Input id="new-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" className="pl-9 pr-12 h-12 sm:h-10 rounded-xl" required minLength={6} />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation">
+                  <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none" />
+                  <Input id="new-password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 characters" className="pl-10 pr-12 h-12 sm:h-11 rounded-xl border-border/60 bg-background focus:border-primary/30" required minLength={6} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-secondary min-w-[40px] min-h-[40px] flex items-center justify-center touch-manipulation" aria-label={showPassword ? "Hide password" : "Show password"}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password" className="text-foreground/80 font-medium text-sm">Confirm Password</Label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                  <Input id="confirm-password" type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat password" className="pl-9 h-12 sm:h-10 rounded-xl" required minLength={6} />
+                  <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none" />
+                  <Input id="confirm-password" type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat password" className="pl-10 h-12 sm:h-11 rounded-xl border-border/60 bg-background focus:border-primary/30" required minLength={6} />
                 </div>
               </div>
-              <Button variant="hero" className="w-full h-12 rounded-xl text-base font-semibold touch-manipulation" type="submit" disabled={loading}>
+              <Button variant="hero" className="w-full h-12 rounded-xl text-base font-bold touch-manipulation" type="submit" disabled={loading}>
                 {loading ? "Updating..." : "Update Password"}
               </Button>
             </form>
