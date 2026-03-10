@@ -93,7 +93,7 @@ const CTASection = () => {
             <p className="text-primary-foreground/75 text-[15px] sm:text-lg mb-8 max-w-lg mx-auto leading-relaxed">
               Describe what you need in plain language. Our AI finds the perfect match in seconds.
             </p>
-            <Link to="/">
+            <Link to="/dashboard">
               <Button size="lg" className="h-12 sm:h-13 rounded-xl bg-white text-foreground border-none hover:bg-white/90 font-bold shadow-lg px-8 text-base w-full sm:w-auto">
                 <Sparkles className="w-4 h-4 mr-2" /> Find Help Now
               </Button>

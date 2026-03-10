@@ -127,7 +127,7 @@ const ViewingHistory = () => {
               <div className="rounded-xl bg-card border border-border p-12 text-center">
                 <Eye className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
                 <p className="text-muted-foreground">No viewing history yet</p>
-                <Link to="/"><Button variant="soft" className="mt-4">Browse Services</Button></Link>
+                <Link to="/dashboard"><Button variant="soft" className="mt-4">Browse Services</Button></Link>
               </div>
             )}
           </motion.div>

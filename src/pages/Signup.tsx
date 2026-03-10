@@ -228,7 +228,7 @@ const Signup = () => {
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
               </p>
-              <Link to="/" className="block">
+              <Link to="/dashboard" className="block">
                 <Button variant="soft" className="w-full h-11 rounded-xl">
                   <Home className="w-4 h-4 mr-1.5" /> Home
                 </Button>

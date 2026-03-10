@@ -2,8 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
@@ -24,23 +23,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function RedirectDashboardToHome() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (location.pathname === "/dashboard" || location.pathname.startsWith("/dashboard/")) {
-      navigate("/", { replace: true });
-    }
-  }, [location.pathname, navigate]);
-  return null;
-}
 
 const AppRoutes = () => (
   <>
-    <RedirectDashboardToHome />
     <ScrollToTop />
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/dashboard" element={<Index />} />
       <Route path="/results" element={<Results />} />
       <Route path="/nearby" element={<Nearby />} />
       <Route path="/provider/:id" element={<ProviderDetail />} />
@@ -48,7 +37,6 @@ const AppRoutes = () => (
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/dashboard" element={<Navigate to="/" replace />} />
       <Route path="/history" element={<ViewingHistory />} />
       <Route path="/profile/edit" element={<ProfileEdit />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />

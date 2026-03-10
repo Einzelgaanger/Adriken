@@ -1,14 +1,4 @@
-# Redirect /dashboard to Find Services (/) before SPA
-[[redirects]]
-  from = "/dashboard"
-  to = "/"
-  status = 302
-  force = true
-[[redirects]]
-  from = "/dashboard/*"
-  to = "/"
-  status = 302
-  force = true
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
