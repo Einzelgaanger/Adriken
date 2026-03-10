@@ -11,14 +11,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
+// Capture hash at module load so we don't lose it when Supabase client consumes it before our effect runs
+const getInitialRecoveryFromUrl = () => {
+  if (typeof window === "undefined") return { hash: false, code: false };
+  const h = window.location.hash;
+  const q = new URLSearchParams(window.location.search);
+  const hasHash =
+    h.includes("type=recovery") || h.includes("access_token");
+  const hasCode = !!q.get("code");
+  return { hash: hasHash, code: hasCode };
+};
+const initialUrl = getInitialRecoveryFromUrl();
+
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isRecovery, setIsRecovery] = useState(false);
-  const [checking, setChecking] = useState(true);
-  const [hadCodeInUrl, setHadCodeInUrl] = useState(false);
+  const [isRecovery, setIsRecovery] = useState(initialUrl.hash);
+  const [checking, setChecking] = useState(!initialUrl.hash);
+  const [hadCodeInUrl, setHadCodeInUrl] = useState(initialUrl.code);
   const navigate = useNavigate();
 
   useEffect(() => {
