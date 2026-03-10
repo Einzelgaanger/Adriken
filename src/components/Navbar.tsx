@@ -41,7 +41,7 @@ const Navbar = () => {
       aria-label="Main navigation"
     >
       <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-6">
-        <Link to="/" className="flex items-center gap-2.5 font-extrabold text-xl sm:text-[22px] shrink-0 text-foreground tracking-tight">
+        <Link to="/dashboard" className="flex items-center gap-2.5 font-extrabold text-xl sm:text-[22px] shrink-0 text-foreground tracking-tight">
           <img src={adrikenLogo} alt="Adriken" className="w-9 h-9 sm:w-10 sm:h-10" />
           <span className="electrolize-regular text-[1.5rem] sm:text-[1.75rem] font-black leading-none">Adriken</span>
         </Link>
