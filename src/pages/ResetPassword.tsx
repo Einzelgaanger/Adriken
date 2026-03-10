@@ -31,6 +31,7 @@ const ResetPassword = () => {
   const [isRecovery, setIsRecovery] = useState(initialUrl.hash);
   const [checking, setChecking] = useState(!initialUrl.hash);
   const [hadCodeInUrl, setHadCodeInUrl] = useState(initialUrl.code);
+  const [hasValidSession, setHasValidSession] = useState<boolean | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,6 +73,16 @@ const ResetPassword = () => {
     };
   }, []);
 
+  // Once we think we're in recovery, confirm we have a session (or form submit will fail)
+  useEffect(() => {
+    if (!isRecovery || checking) return;
+    let cancelled = false;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!cancelled) setHasValidSession(!!user);
+    });
+    return () => { cancelled = true; };
+  }, [isRecovery, checking]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) {
@@ -109,10 +120,12 @@ const ResetPassword = () => {
     );
   }
 
-  if (!isRecovery) {
+  // No recovery flow, or recovery flow but no valid session (e.g. landed with empty #)
+  if (!isRecovery || (hasValidSession === false)) {
     const hash = window.location.hash.replace("#", "").trim();
     const hasNoToken = !hash || (!hash.includes("access_token") && !hash.includes("type=recovery"));
     const sameBrowserHint = hadCodeInUrl;
+    const noSessionHint = hasValidSession === false;
     return (
       <div className="relative min-h-screen bg-background overflow-hidden">
         <Navbar />
@@ -130,13 +143,13 @@ const ResetPassword = () => {
                 <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
                 <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
                 <h1 className="font-display text-2xl font-bold text-foreground mb-3">
-                  {sameBrowserHint ? "Open link in the same browser" : hasNoToken ? "Reset link didn’t open correctly" : "Invalid or expired link"}
+                  {sameBrowserHint ? "Open link in the same browser" : (hasNoToken || noSessionHint) ? "Reset link didn’t open correctly" : "Invalid or expired link"}
                 </h1>
                 <p className="text-muted-foreground text-sm mb-6">
                   {sameBrowserHint
                     ? "This reset link must be opened in the same browser where you requested the password reset. Request a new link and open the email on that device."
-                    : hasNoToken
-                      ? "The link from the email may have been shortened. Copy the full link from the email and paste it into your browser’s address bar, or open the email on your computer and click the link there. Then request a new link if needed."
+                    : (hasNoToken || noSessionHint)
+                      ? "The link from the email often loses its data when opened from some email apps. Request a new link, then open the email on your computer and click the link in Chrome or Safari—or copy the full link and paste it into the browser bar. Use the same browser where you requested the reset."
                       : "This password reset link is no longer valid or has expired."}
                 </p>
                 <Button variant="hero" className="rounded-xl h-12 min-h-[44px] touch-manipulation" onClick={() => navigate("/forgot-password")}>
