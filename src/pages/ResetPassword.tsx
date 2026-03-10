@@ -92,6 +92,8 @@ const ResetPassword = () => {
   }
 
   if (!isRecovery) {
+    const hash = window.location.hash.replace("#", "").trim();
+    const hasNoToken = !hash || (!hash.includes("access_token") && !hash.includes("type=recovery"));
     return (
       <div className="relative min-h-screen bg-background overflow-hidden">
         <Navbar />
@@ -108,9 +110,17 @@ const ResetPassword = () => {
               <div className="relative z-10 text-center">
                 <img src={adrikenLogo} alt="Adriken" className="w-14 h-14 mx-auto mb-4" />
                 <p className="electrolize-regular text-[1.45rem] font-black text-foreground leading-none mb-2">Adriken</p>
-                <h1 className="font-display text-2xl font-bold text-foreground mb-3">Invalid or expired link</h1>
-                <p className="text-muted-foreground text-sm mb-6">This password reset link is no longer valid or has expired.</p>
-                <Button variant="hero" className="rounded-xl h-12 min-h-[44px] touch-manipulation" onClick={() => navigate("/forgot-password")}>Request a new link</Button>
+                <h1 className="font-display text-2xl font-bold text-foreground mb-3">
+                  {hasNoToken ? "Reset link didn’t open correctly" : "Invalid or expired link"}
+                </h1>
+                <p className="text-muted-foreground text-sm mb-6">
+                  {hasNoToken
+                    ? "The link from the email may have been shortened. Copy the full link from the email and paste it into your browser’s address bar, or open the email on your computer and click the link there. Then request a new link if needed."
+                    : "This password reset link is no longer valid or has expired."}
+                </p>
+                <Button variant="hero" className="rounded-xl h-12 min-h-[44px] touch-manipulation" onClick={() => navigate("/forgot-password")}>
+                  {hasNoToken ? "Request a new link" : "Request a new link"}
+                </Button>
               </div>
             </div>
           </motion.div>
