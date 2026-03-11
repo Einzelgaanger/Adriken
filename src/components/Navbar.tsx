@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Clock } from "lucide-react";
+import { LogOut, User, Clock, Search, MapPin, LogIn, Sparkles } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,7 +35,24 @@ const Navbar = () => {
   };
 
   return (
-    <nav
+    <>
+      {/* Mobile menu backdrop: blur rest of screen and close on tap */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.button
+            type="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 md:hidden bg-black/25 backdrop-blur-md touch-none cursor-default"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          />
+        )}
+      </AnimatePresence>
+
+      <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
         scrolled
           ? "bg-white/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
@@ -52,10 +69,14 @@ const Navbar = () => {
         {user && (
           <div className="hidden md:flex items-center gap-0.5">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
+                <Search className="w-3.5 h-3.5 shrink-0" /> Search for goods, services or people
+              </Button>
             </Link>
             <Link to="/nearby">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">See businesses and people near you</Button>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 shrink-0" /> Nearby goods, services and people
+              </Button>
             </Link>
           </div>
         )}
@@ -64,26 +85,30 @@ const Navbar = () => {
           {user ? (
             <>
               <Link to="/profile/edit">
-                <Button variant="soft" size="sm" className="rounded-xl">
-                  <User className="w-4 h-4 mr-1.5" /> Who I am & what I offer
+                <Button variant="soft" size="sm" className="rounded-xl inline-flex items-center gap-1.5">
+                  <User className="w-4 h-4 shrink-0" /> Who I am & what I offer
                 </Button>
               </Link>
               <Link to="/history">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
-                  <Clock className="w-4 h-4 mr-1" /> History
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary inline-flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 shrink-0" /> History
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
-                <LogOut className="w-4 h-4 mr-1" /> Sign out
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive inline-flex items-center gap-1.5">
+                <LogOut className="w-4 h-4 shrink-0" /> Sign out
               </Button>
             </>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Log in</Button>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
+                  <LogIn className="w-4 h-4 shrink-0" /> Log in
+                </Button>
               </Link>
               <Link to="/signup">
-                <Button variant="hero" size="sm" className="rounded-xl px-5">Get Started</Button>
+                <Button variant="hero" size="sm" className="rounded-xl px-5 inline-flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 shrink-0" /> Get Started
+                </Button>
               </Link>
             </>
           )}
@@ -138,10 +163,14 @@ const Navbar = () => {
               {!isHomepageGuest && (
                 <>
                   <Link to={user ? "/dashboard" : "/"} onClick={() => setMobileOpen(false)} className="block">
-                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
+                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary gap-2">
+                      <Search className="w-4 h-4 shrink-0" /> Search for goods, services or people
+                    </Button>
                   </Link>
                   <Link to="/nearby" onClick={() => setMobileOpen(false)} className="block">
-                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">See businesses and people near you</Button>
+                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary gap-2">
+                      <MapPin className="w-4 h-4 shrink-0" /> Nearby goods, services and people
+                    </Button>
                   </Link>
                 </>
               )}
@@ -149,26 +178,30 @@ const Navbar = () => {
                 {user ? (
                   <>
                     <Link to="/profile/edit" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="soft" className="w-full h-12 text-base rounded-xl">
-                        <User className="w-4 h-4 mr-1.5" /> Who I am & what I offer
+                      <Button variant="soft" className="w-full h-12 text-base rounded-xl justify-start gap-2">
+                        <User className="w-4 h-4 shrink-0" /> Who I am & what I offer
                       </Button>
                     </Link>
                     <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start hover:text-primary">
-                        <Clock className="w-4 h-4 mr-1.5" /> Businesses I Checked
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start hover:text-primary gap-2">
+                        <Clock className="w-4 h-4 shrink-0" /> History
                       </Button>
                     </Link>
-                    <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground hover:text-destructive" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
-                      <LogOut className="w-4 h-4 mr-1.5" /> Sign out
+                    <Button variant="ghost" className="w-full h-12 text-base rounded-xl justify-start text-muted-foreground hover:text-destructive gap-2" onClick={() => { handleSignOut(); setMobileOpen(false); }}>
+                      <LogOut className="w-4 h-4 shrink-0" /> Sign out
                     </Button>
                   </>
                 ) : (
                   <>
                     <Link to="/login" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl font-medium">Log in</Button>
+                      <Button variant="ghost" className="w-full h-12 text-base rounded-xl font-medium justify-start gap-2">
+                        <LogIn className="w-4 h-4 shrink-0" /> Log in
+                      </Button>
                     </Link>
                     <Link to="/signup" onClick={() => setMobileOpen(false)} className="block">
-                      <Button variant="hero" className="w-full h-12 text-base rounded-xl">Get Started</Button>
+                      <Button variant="hero" className="w-full h-12 text-base rounded-xl justify-start gap-2">
+                        <Sparkles className="w-4 h-4 shrink-0" /> Get Started
+                      </Button>
                     </Link>
                   </>
                 )}
@@ -178,6 +211,7 @@ const Navbar = () => {
         )}
       </AnimatePresence>
     </nav>
+    </>
   );
 };
 
