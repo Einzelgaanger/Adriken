@@ -15,6 +15,7 @@ const Navbar = () => {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
   const isHomepageGuest = !user && isHomepage;
+  const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -81,40 +82,43 @@ const Navbar = () => {
           </div>
         )}
 
-        <div className="hidden md:flex items-center gap-2.5">
-          {user ? (
-            <>
-              <Link to="/profile/edit">
-                <Button variant="soft" size="sm" className="rounded-xl inline-flex items-center gap-1.5">
-                  <User className="w-4 h-4 shrink-0" /> Who I am & what I offer
+        {!isAuthPage && (
+          <div className="hidden md:flex items-center gap-2.5">
+            {user ? (
+              <>
+                <Link to="/profile/edit">
+                  <Button variant="soft" size="sm" className="rounded-xl inline-flex items-center gap-1.5">
+                    <User className="w-4 h-4 shrink-0" /> Who I am & what I offer
+                  </Button>
+                </Link>
+                <Link to="/history">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary inline-flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 shrink-0" /> History
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive inline-flex items-center gap-1.5">
+                  <LogOut className="w-4 h-4 shrink-0" /> Sign out
                 </Button>
-              </Link>
-              <Link to="/history">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary inline-flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 shrink-0" /> History
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive inline-flex items-center gap-1.5">
-                <LogOut className="w-4 h-4 shrink-0" /> Sign out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
-                  <LogIn className="w-4 h-4 shrink-0" /> Log in
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button variant="hero" size="sm" className="rounded-xl px-5 inline-flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 shrink-0" /> Get Started
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
+                    <LogIn className="w-4 h-4 shrink-0" /> Log in
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="hero" size="sm" className="rounded-xl px-5 inline-flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 shrink-0" /> Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        )}
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger — hidden on auth pages */}
+        {!isAuthPage && (
         <div className="md:hidden">
           <motion.button
             type="button"
@@ -145,6 +149,7 @@ const Navbar = () => {
             </span>
           </motion.button>
         </div>
+        )}
       </div>
 
       <AnimatePresence>
