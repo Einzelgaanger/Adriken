@@ -57,9 +57,6 @@ const Navbar = () => {
             <Link to="/nearby">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">See businesses and people near you</Button>
             </Link>
-            <Link to="/profile/edit">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Offer Services</Button>
-            </Link>
           </div>
         )}
 
@@ -68,7 +65,7 @@ const Navbar = () => {
             <>
               <Link to="/profile/edit">
                 <Button variant="soft" size="sm" className="rounded-xl">
-                  <User className="w-4 h-4 mr-1.5" /> My Profile
+                  <User className="w-4 h-4 mr-1.5" /> Who I am & what I offer
                 </Button>
               </Link>
               <Link to="/history">
@@ -143,9 +140,6 @@ const Navbar = () => {
                   <Link to={user ? "/dashboard" : "/"} onClick={() => setMobileOpen(false)} className="block">
                     <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
                   </Link>
-                  <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
-                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Offer Services</Button>
-                  </Link>
                   <Link to="/nearby" onClick={() => setMobileOpen(false)} className="block">
                     <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">See businesses and people near you</Button>
                   </Link>
@@ -156,7 +150,7 @@ const Navbar = () => {
                   <>
                     <Link to="/profile/edit" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="soft" className="w-full h-12 text-base rounded-xl">
-                        <User className="w-4 h-4 mr-1.5" /> My Profile
+                        <User className="w-4 h-4 mr-1.5" /> Who I am & what I offer
                       </Button>
                     </Link>
                     <Link to="/history" onClick={() => setMobileOpen(false)} className="block">
