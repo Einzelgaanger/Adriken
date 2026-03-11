@@ -99,8 +99,8 @@ const ResetPassword = () => {
     if (error) {
       toast.error("Failed to reset password", { description: error.message });
     } else {
-      toast.success("Password updated!", { description: "You can now log in with your new password." });
-      navigate("/login");
+      toast.success("Password updated!", { description: "You're all set." });
+      navigate("/dashboard");
     }
   };
 
