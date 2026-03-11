@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Clock } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
@@ -12,6 +12,9 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomepage = location.pathname === "/";
+  const isHomepageGuest = !user && isHomepage;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -133,16 +136,20 @@ const Navbar = () => {
             aria-label="Mobile menu"
           >
             <div className="px-4 py-4 pb-6 flex flex-col gap-1">
-              <Link to={user ? "/dashboard" : "/"} onClick={() => setMobileOpen(false)} className="block">
-                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
-              </Link>
-              <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
-                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Offer Services</Button>
-              </Link>
-              <Link to="/nearby" onClick={() => setMobileOpen(false)} className="block">
-                <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">See businesses and people near you</Button>
-              </Link>
-              <div className="border-t border-border pt-3 mt-2 flex flex-col gap-1.5">
+              {!isHomepageGuest && (
+                <>
+                  <Link to={user ? "/dashboard" : "/"} onClick={() => setMobileOpen(false)} className="block">
+                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Find Services</Button>
+                  </Link>
+                  <Link to={user ? "/profile/edit" : "/signup"} onClick={() => setMobileOpen(false)} className="block">
+                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">Offer Services</Button>
+                  </Link>
+                  <Link to="/nearby" onClick={() => setMobileOpen(false)} className="block">
+                    <Button variant="ghost" className="w-full justify-start h-12 text-base rounded-xl font-medium hover:text-primary">See businesses and people near you</Button>
+                  </Link>
+                </>
+              )}
+              <div className={`flex flex-col gap-1.5 ${!isHomepageGuest ? "border-t border-border pt-3 mt-2" : ""}`}>
                 {user ? (
                   <>
                     <Link to="/profile/edit" onClick={() => setMobileOpen(false)} className="block">

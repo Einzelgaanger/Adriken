@@ -192,7 +192,7 @@ const SearchHero = () => {
                     <Users className="w-4.5 h-4.5 text-primary" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-bold text-foreground">Looking for a service or goods?</p>
+                    <p className="text-sm font-bold text-foreground">Want to get people to hangout with,a service or goods around you?</p>
                     <p className="text-xs text-muted-foreground">Sign up or log in to search</p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ const SearchHero = () => {
                     <Briefcase className="w-4.5 h-4.5 text-emerald-600" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-bold text-foreground">Got a business or skill? Get found</p>
+                    <p className="text-sm font-bold text-foreground">Got a business or skill or want to get new friends reach out? Get found</p>
                     <p className="text-xs text-muted-foreground">Sign up and create your profile</p>
                   </div>
                 </div>
