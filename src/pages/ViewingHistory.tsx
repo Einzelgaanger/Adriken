@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, Loader2, Trash2, Eye } from "lucide-react";
@@ -12,6 +13,10 @@ const ViewingHistory = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate("/login");
+  }, [authLoading, user, navigate]);
 
   const { data: views, isLoading } = useQuery({
     queryKey: ["profile-views", user?.id],
@@ -73,7 +78,7 @@ const ViewingHistory = () => {
     );
   }
 
-  if (!user) { navigate("/login"); return null; }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background">

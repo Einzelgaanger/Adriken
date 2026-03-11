@@ -63,11 +63,7 @@ const Signup = () => {
     if (error) {
       toast.error("Signup failed", { description: error.message });
     } else {
-      toast.success("Account created!", {
-        description: "We've sent a confirmation email. Please check your inbox and click the link to verify your account before logging in.",
-        duration: 8000,
-      });
-      navigate("/login");
+      navigate("/check-email", { state: { email: email.trim() }, replace: true });
     }
   };
 
@@ -218,7 +214,14 @@ const Signup = () => {
                 variant="hero"
                 className="w-full h-12 rounded-xl text-base font-bold touch-manipulation"
                 type="submit"
-                disabled={loading || passwordStrength.score < 3 || !passwordsMatch}
+                disabled={
+                  loading ||
+                  !name.trim() ||
+                  !email.trim() ||
+                  passwordStrength.score < 3 ||
+                  !passwordsMatch ||
+                  !consent
+                }
               >
                 {loading ? "Creating account..." : "Create Account"}
               </Button>

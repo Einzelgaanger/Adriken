@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Clock, Search, MapPin, LogIn, Sparkles } from "lucide-react";
+import { LogOut, User, Clock, Search, MapPin, KeyRound, Rocket } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,7 +15,7 @@ const Navbar = () => {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
   const isHomepageGuest = !user && isHomepage;
-  const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(location.pathname);
+  const isAuthPage = ["/login", "/signup", "/check-email", "/forgot-password", "/reset-password"].includes(location.pathname);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -104,12 +104,12 @@ const Navbar = () => {
               <>
                 <Link to="/login">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium inline-flex items-center gap-1.5">
-                    <LogIn className="w-4 h-4 shrink-0" /> Log in
+                    <KeyRound className="w-4 h-4 shrink-0" /> Log in
                   </Button>
                 </Link>
                 <Link to="/signup">
                   <Button variant="hero" size="sm" className="rounded-xl px-5 inline-flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 shrink-0" /> Get Started
+                    <Rocket className="w-4 h-4 shrink-0" /> Get Started
                   </Button>
                 </Link>
               </>
@@ -200,12 +200,12 @@ const Navbar = () => {
                   <>
                     <Link to="/login" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="ghost" className="w-full h-12 text-base rounded-xl font-medium justify-start gap-2">
-                        <LogIn className="w-4 h-4 shrink-0" /> Log in
+                        <KeyRound className="w-4 h-4 shrink-0" /> Log in
                       </Button>
                     </Link>
                     <Link to="/signup" onClick={() => setMobileOpen(false)} className="block">
                       <Button variant="hero" className="w-full h-12 text-base rounded-xl justify-start gap-2">
-                        <Sparkles className="w-4 h-4 shrink-0" /> Get Started
+                        <Rocket className="w-4 h-4 shrink-0" /> Get Started
                       </Button>
                     </Link>
                   </>

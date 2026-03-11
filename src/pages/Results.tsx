@@ -198,23 +198,30 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-44 sm:pt-52 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
-        <div className="container mx-auto max-w-3xl">
-          <Link to={user ? "/dashboard" : "/"} className="inline-block mb-3 sm:mb-4">
-            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
+      {/* Subtle warm gradient strip behind header */}
+      <div className="absolute top-0 left-0 right-0 h-[180px] sm:h-[200px] pointer-events-none bg-[linear-gradient(180deg,hsl(28_35%_98.5%)_0%,hsl(26_30%_98%)_50%,transparent_100%)]" aria-hidden />
+      <div className="relative pt-20 sm:pt-24 pb-10 sm:pb-20 px-4 sm:px-6 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+        <div className="container mx-auto max-w-3xl lg:max-w-4xl">
+          <Link to={user ? "/dashboard" : "/"} className="inline-block mb-2 sm:mb-3">
+            <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-primary/[0.06] h-9 min-h-[40px] touch-manipulation px-3 -ml-1">
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
             </Button>
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-8">
-            <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs text-primary mb-2.5 font-semibold uppercase tracking-wide">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
+            className="mb-4 sm:mb-5"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/[0.08] px-3 py-1.5 text-[11px] sm:text-xs text-primary mb-2 font-semibold uppercase tracking-wide">
               <Sparkles className="w-3.5 h-3.5 shrink-0" /> AI-powered results
             </div>
-            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-extrabold text-foreground mb-1 break-words tracking-tight leading-tight">
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground break-words tracking-tight leading-tight">
               Results for &ldquo;{query}&rdquo;
             </h1>
             {!isLoading && listings.length > 0 && (
-              <p className="text-sm text-muted-foreground mt-1">{listings.length} match{listings.length !== 1 ? "es" : ""} found</p>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1.5">{listings.length} match{listings.length !== 1 ? "es" : ""} found</p>
             )}
           </motion.div>
 
@@ -277,55 +284,77 @@ const Results = () => {
           )}
 
           {isLoading && (
-            <div className="flex flex-col items-center justify-center py-12 sm:py-20">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/[0.06] flex items-center justify-center mb-4 sm:mb-5">
-                <Loader2 className="w-6 h-6 sm:w-7 sm:h-7 text-primary animate-spin" aria-hidden />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-16 sm:py-24"
+            >
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/[0.08] flex items-center justify-center mb-5">
+                <Loader2 className="w-7 h-7 sm:w-8 sm:h-8 text-primary animate-spin" aria-hidden />
               </div>
-              <p className="text-muted-foreground font-semibold text-[14px] sm:text-[15px]">AI is finding the best matches...</p>
-              <p className="text-xs sm:text-sm text-muted-foreground/60 mt-1">This usually takes a few seconds</p>
-            </div>
+              <p className="text-foreground/90 font-semibold text-[15px] sm:text-base">Finding the best matches...</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1.5">This usually takes a few seconds</p>
+            </motion.div>
           )}
 
           {error && (
-            <div className="rounded-2xl bg-destructive/[0.05] border border-destructive/15 p-5 sm:p-8 text-center">
-              <p className="text-destructive font-semibold text-[15px] sm:text-base">Something went wrong while searching.</p>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1.5">Please try again.</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl bg-destructive/[0.06] border border-destructive/20 p-6 sm:p-10 text-center"
+            >
+              <p className="text-destructive font-semibold text-[15px] sm:text-base">Something went wrong while searching</p>
+              <p className="text-sm text-muted-foreground mt-2">Please try again or go back and search with different words.</p>
+            </motion.div>
           )}
 
           {!isLoading && !error && listings.length === 0 && (
-            <div className="rounded-2xl bg-card border border-border/60 p-6 sm:p-12 text-center shadow-soft">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-muted/60 flex items-center justify-center mx-auto mb-4">
-                <Search className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" aria-hidden />
-              </div>
-              <p className="text-base sm:text-lg font-display font-bold text-foreground mb-1">No businesses found</p>
-              <p className="text-muted-foreground text-[13px] sm:text-sm mb-2 max-w-sm mx-auto">
-                We didn&apos;t find any listings for &ldquo;{query}&rdquo; yet.
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: [0.25, 0.4, 0.25, 1] }}
+              className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-sm border border-primary/[0.1] p-8 sm:p-12 md:p-14 text-center shadow-[0_4px_24px_-6px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.04)]"
+            >
+              <motion.div
+                initial={{ scale: 0.92, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.35 }}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/[0.08] flex items-center justify-center mx-auto mb-5 sm:mb-6"
+              >
+                <Search className="w-8 h-8 sm:w-9 sm:h-9 text-primary/70" aria-hidden />
+              </motion.div>
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-2">
+                No matches yet for this search
+              </h2>
+              <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto mb-1">
+                We didn&apos;t find any listings for &ldquo;{query}&rdquo; right now.
               </p>
-              <p className="text-muted-foreground/80 text-xs sm:text-sm mb-6 max-w-sm mx-auto">
-                {user ? "Add a listing from your profile, or try another search." : "Be the first to offer this — sign up and create your profile."}
+              <p className="text-muted-foreground/90 text-xs sm:text-sm max-w-md mx-auto mb-8 sm:mb-10">
+                {user
+                  ? "You can add a listing from your profile, or try a different search."
+                  : "Sign up and create your profile to offer this — or try another search."}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
                 {user ? (
-                  <Link to="/profile/edit" className="inline-flex">
-                    <Button variant="hero" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm font-semibold touch-manipulation">
-                      Go to My Profile
+                  <Link to="/profile/edit" className="inline-flex sm:shrink-0">
+                    <Button variant="hero" size="lg" className="rounded-xl h-12 min-h-[48px] px-6 text-sm font-semibold touch-manipulation w-full sm:w-auto shadow-[0_2px_12px_-2px_hsl(12_76%_56%_/_0.25)]">
+                      Who I am & what I offer
                     </Button>
                   </Link>
                 ) : (
-                  <Link to="/signup" className="inline-flex">
-                    <Button variant="hero" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm font-semibold touch-manipulation">
-                      Sign Up & Create Your Profile
+                  <Link to="/signup" className="inline-flex sm:shrink-0">
+                    <Button variant="hero" size="lg" className="rounded-xl h-12 min-h-[48px] px-6 text-sm font-semibold touch-manipulation w-full sm:w-auto shadow-[0_2px_12px_-2px_hsl(12_76%_56%_/_0.25)]">
+                      Sign up & create your profile
                     </Button>
                   </Link>
                 )}
-                <Link to={user ? "/dashboard" : "/"} className="inline-flex">
-                  <Button variant="outline" size="sm" className="rounded-xl h-10 min-h-[44px] px-4 text-sm touch-manipulation">
-                    Try a Different Search
+                <Link to={user ? "/dashboard" : "/"} className="inline-flex sm:shrink-0">
+                  <Button variant="outline" size="lg" className="rounded-xl h-12 min-h-[48px] px-6 text-sm touch-manipulation w-full sm:w-auto border-primary/[0.2] hover:bg-primary/[0.06]">
+                    Try a different search
                   </Button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {viewMode === "map" && !isLoading && !error && listings.length > 0 && (
@@ -466,11 +495,17 @@ const Results = () => {
             >
               <p className="text-xs sm:text-sm text-muted-foreground mb-3">Don&apos;t see what you need?</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/signup" className="block w-full sm:w-auto">
-                  <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Sign Up & Offer Services</Button>
-                </Link>
+                {user ? (
+                  <Link to="/profile/edit" className="block w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Who I am & what I offer</Button>
+                  </Link>
+                ) : (
+                  <Link to="/signup" className="block w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Sign up & offer services</Button>
+                  </Link>
+                )}
                 <Link to={user ? "/dashboard" : "/"} className="block w-full sm:w-auto">
-                  <Button variant="soft" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Try a Different Search</Button>
+                  <Button variant="soft" size="sm" className="rounded-xl w-full h-11 min-h-[44px] touch-manipulation">Try a different search</Button>
                 </Link>
               </div>
             </motion.div>

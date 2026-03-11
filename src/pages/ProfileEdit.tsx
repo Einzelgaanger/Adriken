@@ -340,7 +340,7 @@ const ProfileEdit = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-44 sm:pt-52 flex items-center justify-center min-h-[60vh]">
+        <div className="pt-20 sm:pt-28 flex items-center justify-center min-h-[60vh]">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       </div>
@@ -351,7 +351,7 @@ const ProfileEdit = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-44 sm:pt-52 pb-16 flex items-center justify-center min-h-[70vh]">
+        <div className="pt-20 sm:pt-28 pb-16 flex items-center justify-center min-h-[70vh]">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-md px-4">
             <div className="inline-flex items-center gap-2 w-14 h-14 justify-center rounded-xl bg-gradient-warm mb-6">
               <Sparkles className="w-6 h-6 text-primary-foreground" />
@@ -375,15 +375,12 @@ const ProfileEdit = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
-      <div className="pt-44 sm:pt-52 pb-10 sm:pb-16 px-3 sm:px-6">
+      <div className="pt-20 sm:pt-28 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-2xl min-w-0">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 overflow-x-hidden">
 
             {/* Header */}
             <div className="text-center mb-2">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/[0.08] text-primary text-sm font-medium mb-3 border border-primary/10">
-                <Sparkles className="w-3.5 h-3.5" /> My Profile
-              </div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">Manage Your Profile</h1>
               <p className="text-muted-foreground mt-1">Update your identity, services, and how people find you.</p>
             </div>

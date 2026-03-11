@@ -120,7 +120,7 @@ const Nearby = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-44 sm:pt-52 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
+      <div className="pt-20 sm:pt-28 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
           <Link to={user ? "/dashboard" : "/"} className="inline-block mb-3 sm:mb-4">
             <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground h-10 min-h-[44px] touch-manipulation px-3">
