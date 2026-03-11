@@ -94,7 +94,7 @@ const SearchHero = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100dvh] h-[100dvh] md:min-h-screen md:h-auto flex flex-col md:flex-row md:items-center md:justify-center overflow-hidden">
       {/* Orange warmth focused at center */}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
       <BackgroundPathsLayer className="opacity-100" />
@@ -133,7 +133,7 @@ const SearchHero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
-        className="absolute bottom-4 sm:bottom-6 inset-x-0 px-2 sm:px-4 z-30"
+        className="absolute bottom-2 sm:bottom-6 inset-x-0 px-2 sm:px-4 z-30"
       >
         <div className="marquee-row">
           <div className="marquee-track marquee-track-reverse">
@@ -151,7 +151,7 @@ const SearchHero = () => {
         </div>
       </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-0 sm:pb-2 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 pt-6 sm:pt-14 pb-0 sm:pb-2 relative z-10 flex-1 min-h-0 flex flex-col md:flex-none md:block justify-center">
         {showDesktopRobot && (
           <div className="absolute left-[-4%] top-[5%] h-[92%] w-[42%] z-20 pointer-events-none">
             <SplineScene
@@ -171,11 +171,11 @@ const SearchHero = () => {
           <div className="hidden xl:block h-8 relative mb-3" />
 
           <div className="max-w-2xl mx-auto">
-            <h1 className="neucha-regular font-black [text-shadow:0_0_0.8px_currentColor] mt-4 sm:mt-6 text-[clamp(2.85rem,8.8vw,4.6rem)] leading-[1.08] mb-3 sm:mb-4 text-foreground tracking-tight">
+            <h1 className="neucha-regular font-black [text-shadow:0_0_0.8px_currentColor] mt-1 sm:mt-6 text-[clamp(2.25rem,7.5vw,4.6rem)] sm:text-[clamp(2.85rem,8.8vw,4.6rem)] leading-[1.08] mb-2 sm:mb-4 text-foreground tracking-tight">
               Find services. <span className="text-gradient">Or offer yours.</span>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-foreground/85 mb-5 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-medium px-2 xl:px-0">
+            <p className="text-sm sm:text-lg md:text-xl text-foreground/85 mb-3 sm:mb-6 max-w-2xl mx-auto leading-relaxed font-medium px-2 xl:px-0">
               Create an account, complete your profile details, and we will help show you to nearby clients for your services or goods, and even to people looking to connect as friends. You can also search for goods, service providers, or people near you.
             </p>
 
@@ -185,7 +185,7 @@ const SearchHero = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="flex flex-row flex-wrap items-center justify-center gap-3 mb-5 sm:mb-6"
+                className="flex flex-row flex-wrap items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-6"
               >
                 <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/login")}>
                   <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
