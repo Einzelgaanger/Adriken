@@ -9,36 +9,45 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const suggestions = [
   "Looking for a 2-bedroom house to rent near me",
-  "Need swimming lessons for kids this weekend",
-  "Looking for an interior designer for my living room",
-  "Find a private math tutor in Nairobi",
+  "Find a co-working space with good wifi in Kilimani",
   "Need a plumber for urgent kitchen repairs",
+  "Where to buy secondhand furniture in Nairobi",
   "Looking for a wedding photographer and videographer",
-  "Need a chef to prepare meals for a family event",
+  "Someone to practice spoken English with over coffee",
   "Find a driving instructor near Westlands",
-  "Looking for a trusted caregiver for my parent",
+  "Gym or yoga studio with morning classes",
   "Need a house cleaner for weekly cleaning",
-  "Looking for a secretary with admin and Excel skills",
-  "Find a security guard for my shop",
-  "Need guitar lessons for beginners",
-  "Looking for a real estate agent to help me buy land",
-  "Find a makeup artist for a graduation shoot",
-  "Need an electrician for a power issue at home",
-  "Looking for a social media manager for my business",
+  "Looking for a used bike or bicycle for sale",
+  "Find a private math tutor in Nairobi",
+  "Cafe with quiet space to work or study",
   "Need a pet sitter for 3 days",
-  "Find a babysitter for evening hours",
-  "Looking for someone to practice spoken English",
-  "Need a trusted moving service for my house",
-  "Looking for a gym trainer for weight loss",
+  "Board game or trivia night group to join",
+  "Looking for a real estate agent to help me buy land",
+  "Where to get fresh produce or groceries delivered",
+  "Need guitar lessons for beginners",
+  "Jogging or running buddy for weekday mornings",
+  "Find a makeup artist for a graduation shoot",
+  "Place to rent for a small birthday party",
+  "Looking for a trusted caregiver for my parent",
+  "Buy or sell gently used baby gear",
+  "Need an electrician for a power issue at home",
+  "Language exchange partner for French or Swahili",
   "Find a baker for birthday cupcakes",
+  "Co-living or shared apartment options",
+  "Looking for a social media manager for my business",
+  "Thrift or vintage clothes shops nearby",
   "Need help with CV writing and interview prep",
-  "Looking for a friendly coffee chat this weekend",
   "Find a travel buddy for a short trip",
-  "Need startup consulting for go-to-market",
-  "Looking for French language classes near me",
-  "Find an MC for a wedding reception",
-  "Need a content creator for product shoots",
-  "Looking for someone to go to a jazz date night and connect",
+  "Looking for an MC for a wedding reception",
+  "Quiet place to read or work with a laptop",
+  "Need a trusted moving service for my house",
+  "Someone to go to a jazz or live music night",
+  "Find a gym trainer for weight loss",
+  "Where to buy or sell secondhand electronics",
+  "Looking for swimming lessons for kids",
+  "Weekend hiking or nature group to join",
+  "Need a chef to prepare meals for a family event",
+  "Studio or venue for a photoshoot",
 ];
 
 const SearchHero = () => {
@@ -119,6 +128,29 @@ const SearchHero = () => {
         </div>
       </motion.div>
 
+      {/* Bottom running strip of prompts (reverse direction) */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+        className="absolute bottom-4 sm:bottom-6 inset-x-0 px-2 sm:px-4 z-30"
+      >
+        <div className="marquee-row">
+          <div className="marquee-track marquee-track-reverse">
+            {marqueeSuggestionsAlt.map((s, i) => (
+              <button
+                key={`bottom-${s}-${i}`}
+                type="button"
+                onClick={() => handleSuggestion(s)}
+                className="px-3.5 py-2.5 sm:px-4 sm:py-2 rounded-full bg-card/85 border border-primary/[0.1] text-[12px] sm:text-[13px] text-muted-foreground hover:border-primary/25 hover:text-primary hover:bg-primary/[0.04] hover:shadow-soft active:scale-[0.98] transition-all duration-200 min-h-[44px] sm:min-h-0 inline-flex items-center touch-manipulation whitespace-nowrap shrink-0"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
       <div className="container mx-auto px-4 sm:px-6 pt-12 sm:pt-14 pb-0 sm:pb-2 relative z-10">
         {showDesktopRobot && (
           <div className="absolute left-[-4%] top-[5%] h-[92%] w-[42%] z-20 pointer-events-none">
@@ -155,13 +187,13 @@ const SearchHero = () => {
                 transition={{ delay: 0.3, duration: 0.5 }}
                 className="flex flex-row flex-wrap items-center justify-center gap-3 mb-5 sm:mb-6"
               >
-                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full">
+                <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/login")}>
                   <div className="w-9 h-9 rounded-xl bg-primary/[0.1] flex items-center justify-center shrink-0">
                     <Users className="w-4.5 h-4.5 text-primary" />
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-bold text-foreground">Looking for a service or goods?</p>
-                    <p className="text-xs text-muted-foreground">Search below — no account needed</p>
+                    <p className="text-xs text-muted-foreground">Sign up or log in to search</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-card border border-primary/10 shadow-soft w-auto max-w-full cursor-pointer hover:border-primary/30 hover:shadow-glow transition-all duration-200" onClick={() => navigate("/signup")}>
@@ -177,67 +209,69 @@ const SearchHero = () => {
             )}
           </div>
           
-          {/* Search box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className={`relative max-w-2xl mx-auto rounded-2xl bg-card transition-all duration-300 ${
-              focused ? "shadow-glow border-2 border-primary/25" : "shadow-card border-2 border-primary/[0.08]"
-            }`}
-          >
-            <div className="flex flex-row items-start p-1.5 sm:p-1.5 gap-1.5 sm:gap-0">
-              <div className="flex-1 flex items-start gap-2.5 p-2.5 sm:p-2.5 min-w-0">
-                <Search className="w-5 h-5 text-primary/50 mt-0.5 shrink-0" aria-hidden />
-                <div className="relative w-full">
-                  <textarea
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSearch(); }
-                    }}
-                    placeholder=""
-                    className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground/40 text-base sm:text-base min-h-[32px] sm:min-h-[24px] max-h-[96px] font-body py-0 leading-relaxed"
-                    rows={1}
-                    aria-label="Search for businesses and services"
-                  />
-                  {!query.trim() && (
-                    <div className="pointer-events-none absolute left-0 right-0 -top-0.5 sm:-top-1 text-left">
-                      <AnimatePresence mode="wait">
-                        <motion.span
-                          key={liveSearchExamples[exampleIndex]}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 0.9, y: 0 }}
-                          exit={{ opacity: 0, y: -5 }}
-                          transition={{ duration: 0.26 }}
-                          className="inline-block text-[12px] sm:text-[13px] text-primary/65"
-                        >
-                          e.g. "{liveSearchExamples[exampleIndex]}"
-                        </motion.span>
-                      </AnimatePresence>
-                    </div>
-                  )}
+          {/* Search box — only when logged in; guests must sign in to search */}
+          {user && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className={`relative max-w-2xl mx-auto rounded-2xl bg-card transition-all duration-300 ${
+                focused ? "shadow-glow border-2 border-primary/25" : "shadow-card border-2 border-primary/[0.08]"
+              }`}
+            >
+              <div className="flex flex-row items-start p-1.5 sm:p-1.5 gap-1.5 sm:gap-0">
+                <div className="flex-1 flex items-start gap-2.5 p-2.5 sm:p-2.5 min-w-0">
+                  <Search className="w-5 h-5 text-primary/50 mt-0.5 shrink-0" aria-hidden />
+                  <div className="relative w-full">
+                    <textarea
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onFocus={() => setFocused(true)}
+                      onBlur={() => setFocused(false)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSearch(); }
+                      }}
+                      placeholder=""
+                      className="w-full bg-transparent resize-none border-none outline-none text-foreground placeholder:text-muted-foreground/40 text-base sm:text-base min-h-[32px] sm:min-h-[24px] max-h-[96px] font-body py-0 leading-relaxed"
+                      rows={1}
+                      aria-label="Search for businesses and services"
+                    />
+                    {!query.trim() && (
+                      <div className="pointer-events-none absolute left-0 right-0 -top-0.5 sm:-top-1 text-left">
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={liveSearchExamples[exampleIndex]}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 0.9, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.26 }}
+                            className="inline-block text-[12px] sm:text-[13px] text-primary/65"
+                          >
+                            e.g. "{liveSearchExamples[exampleIndex]}"
+                          </motion.span>
+                        </AnimatePresence>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                <Button
+                  variant="hero"
+                  size="lg"
+                  onClick={handleSearch}
+                  className="rounded-xl w-auto shrink-0 h-11 px-5 m-1"
+                  disabled={!query.trim()}
+                  aria-label="Search"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
               </div>
-              <Button
-                variant="hero"
-                size="lg"
-                onClick={handleSearch}
-                className="rounded-xl w-auto shrink-0 h-11 px-5 m-1"
-                disabled={!query.trim()}
-                aria-label="Search"
-              >
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </div>
 
-            <div className="px-4 sm:px-5 pb-2 flex items-center justify-center sm:justify-start gap-2 text-xs text-primary/40 font-medium">
-              <MapPin className="w-3 h-3 shrink-0" aria-hidden />
-              <span>Results prioritized by your location</span>
-            </div>
-          </motion.div>
+              <div className="px-4 sm:px-5 pb-2 flex items-center justify-center sm:justify-start gap-2 text-xs text-primary/40 font-medium">
+                <MapPin className="w-3 h-3 shrink-0" aria-hidden />
+                <span>Results prioritized by your location</span>
+              </div>
+            </motion.div>
+          )}
           
         </motion.div>
       </div>
