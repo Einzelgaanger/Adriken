@@ -71,8 +71,8 @@ const ViewingHistory = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-24 flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <div className="pt-16 sm:pt-20 flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-7 h-7 text-primary animate-spin" />
         </div>
       </div>
     );
@@ -83,24 +83,24 @@ const ViewingHistory = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6">
+      <div className="pt-16 sm:pt-20 pb-8 sm:pb-12 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
-                <Eye className="w-6 h-6 text-primary" /> Businesses I Checked
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+                <Eye className="w-5 h-5 text-primary shrink-0" /> Businesses I Checked
               </h1>
               {views && views.length > 0 && (
-                <Button variant="ghost" size="sm" onClick={() => clearHistory.mutate()} className="text-muted-foreground hover:text-destructive">
-                  <Trash2 className="w-4 h-4 mr-1" /> Clear
+                <Button variant="ghost" size="sm" onClick={() => clearHistory.mutate()} className="text-muted-foreground hover:text-destructive h-8 text-xs">
+                  <Trash2 className="w-3.5 h-3.5 mr-1" /> Clear
                 </Button>
               )}
             </div>
 
             {isLoading ? (
-              <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 text-primary animate-spin" /></div>
+              <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 text-primary animate-spin" /></div>
             ) : views && views.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {views.map((v: any) => {
                   const profile = v.profiles as any;
                   const listing = v.listings as any;
@@ -108,18 +108,18 @@ const ViewingHistory = () => {
                   const avatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${name}`;
                   return (
                     <Link key={v.id} to={`/provider/${v.listing_id}`} className="block">
-                      <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-4 hover:border-primary/30 transition-colors">
-                        <img src={avatar} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                      <div className="rounded-lg sm:rounded-xl bg-card border border-border p-3 sm:p-3.5 flex items-center gap-3 hover:border-primary/30 transition-colors">
+                        <img src={avatar} alt="" className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl object-cover shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-foreground truncate">{listing?.title || "Business"}</p>
-                          <p className="text-sm text-muted-foreground truncate">by {name}</p>
+                          <p className="font-semibold text-sm sm:text-base text-foreground truncate">{listing?.title || "Business"}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">by {name}</p>
                           {listing?.location && (
-                            <p className="text-xs text-muted-foreground mt-0.5">{listing.location}</p>
+                            <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 truncate">{listing.location}</p>
                           )}
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
+                          <p className="text-[11px] sm:text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3 shrink-0" />
                             {new Date(v.created_at).toLocaleDateString()}
                           </p>
                         </div>
@@ -129,10 +129,10 @@ const ViewingHistory = () => {
                 })}
               </div>
             ) : (
-              <div className="rounded-xl bg-card border border-border p-12 text-center">
-                <Eye className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground">No viewing history yet</p>
-                <Link to={user ? "/dashboard" : "/"}><Button variant="soft" className="mt-4">Browse Services</Button></Link>
+              <div className="rounded-xl bg-card border border-border p-8 sm:p-10 text-center">
+                <Eye className="w-9 h-9 text-muted-foreground/30 mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">No viewing history yet</p>
+                <Link to={user ? "/dashboard" : "/"}><Button variant="soft" size="sm" className="mt-3">Browse Services</Button></Link>
               </div>
             )}
           </motion.div>
