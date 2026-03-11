@@ -201,7 +201,7 @@ const SearchHero = () => {
                     <Briefcase className="w-4.5 h-4.5 text-emerald-600" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-bold text-foreground">Got a business or skill or want to get new friends reach out? Get found</p>
+                    <p className="text-sm font-bold text-foreground">Got a business, skill or want to get new friends reach out? Get found</p>
                     <p className="text-xs text-muted-foreground">Sign up and create your profile</p>
                   </div>
                 </div>
