@@ -49,17 +49,19 @@ const Navbar = () => {
           <span className="electrolize-regular text-[1.5rem] sm:text-[1.75rem] font-black leading-none">Adriken</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-0.5">
-          <Link to={user ? "/dashboard" : "/"}>
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
-          </Link>
-          <Link to="/nearby">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">See businesses and people near you</Button>
-          </Link>
-          <Link to={user ? "/profile/edit" : "/signup"}>
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Offer Services</Button>
-          </Link>
-        </div>
+        {user && (
+          <div className="hidden md:flex items-center gap-0.5">
+            <Link to="/dashboard">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Find Services</Button>
+            </Link>
+            <Link to="/nearby">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">See businesses and people near you</Button>
+            </Link>
+            <Link to="/profile/edit">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary font-medium">Offer Services</Button>
+            </Link>
+          </div>
+        )}
 
         <div className="hidden md:flex items-center gap-2.5">
           {user ? (
