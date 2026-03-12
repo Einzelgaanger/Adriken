@@ -11,15 +11,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
-// Capture hash at module load so we don't lose it when Supabase client consumes it before our effect runs
+// Capture URL state at module load so we can recover token flow even if hash handling races
 const getInitialRecoveryFromUrl = () => {
-  if (typeof window === "undefined") return { hash: false, code: false };
+  if (typeof window === "undefined") return { hash: false, code: false, flow: false };
   const h = window.location.hash;
   const q = new URLSearchParams(window.location.search);
-  const hasHash =
-    h.includes("type=recovery") || h.includes("access_token");
+  const hasHash = h.includes("type=recovery") || h.includes("access_token");
   const hasCode = !!q.get("code");
-  return { hash: hasHash, code: hasCode };
+  const hasFlow = q.get("flow") === "recovery";
+  return { hash: hasHash, code: hasCode, flow: hasFlow };
 };
 const initialUrl = getInitialRecoveryFromUrl();
 
@@ -28,8 +28,8 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isRecovery, setIsRecovery] = useState(initialUrl.hash);
-  const [checking, setChecking] = useState(!initialUrl.hash);
+  const [isRecovery, setIsRecovery] = useState(initialUrl.hash || initialUrl.flow);
+  const [checking, setChecking] = useState(!initialUrl.hash && !initialUrl.flow);
   const [hadCodeInUrl, setHadCodeInUrl] = useState(initialUrl.code);
   const [hasValidSession, setHasValidSession] = useState<boolean | null>(null);
   const navigate = useNavigate();
