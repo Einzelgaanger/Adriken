@@ -78,6 +78,7 @@ const ReviewsSection = ({ listingId, providerId }: ReviewsSectionProps) => {
       setComment("");
       setAnonName("");
       queryClient.invalidateQueries({ queryKey: ["reviews", listingId] });
+      queryClient.invalidateQueries({ queryKey: ["listing", listingId] });
       toast.success("Review submitted!");
     },
     onError: (err: any) => toast.error(err.message || "Failed to submit review"),

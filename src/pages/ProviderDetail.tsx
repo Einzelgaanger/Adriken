@@ -112,8 +112,8 @@ const ProviderDetail = () => {
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Star className="w-4 h-4 text-primary fill-primary" />
-                      <span className="font-semibold text-foreground">{Number(listing.rating).toFixed(1)}</span>
-                      ({listing.review_count} reviews)
+                      <span className="font-semibold text-foreground">{(Number(listing.rating) || 0).toFixed(1)}</span>
+                      ({Number(listing.review_count) ?? 0} {(Number(listing.review_count) ?? 0) === 1 ? "review" : "reviews"})
                     </span>
                     {listing.location && <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {listing.location}</span>}
                     {listing.response_time && <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {listing.response_time}</span>}

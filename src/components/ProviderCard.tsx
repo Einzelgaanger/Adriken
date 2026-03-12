@@ -65,8 +65,8 @@ const ProviderCard = ({ provider, index, matchReason }: ProviderCardProps) => {
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1.5">
                 <span className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 text-primary fill-primary shrink-0" />
-                  <span className="font-bold text-foreground">{provider.rating.toFixed(1)}</span>
-                  <span>({provider.reviews})</span>
+                  <span className="font-bold text-foreground">{(Number(provider.rating) || 0).toFixed(1)}</span>
+                  <span>({Number(provider.reviews) ?? 0} {(Number(provider.reviews) ?? 0) === 1 ? "review" : "reviews"})</span>
                 </span>
                 {provider.location && (
                   <span className="flex items-center gap-1">

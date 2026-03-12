@@ -275,6 +275,7 @@ export type Database = {
           live_location_enabled: boolean | null
           location: string | null
           longitude: number | null
+          onboarding_completed_at: string | null
           phone: string | null
           portfolio_images: string[] | null
           portfolio_videos: string[] | null
@@ -301,6 +302,7 @@ export type Database = {
           live_location_enabled?: boolean | null
           location?: string | null
           longitude?: number | null
+          onboarding_completed_at?: string | null
           phone?: string | null
           portfolio_images?: string[] | null
           portfolio_videos?: string[] | null
@@ -327,6 +329,7 @@ export type Database = {
           live_location_enabled?: boolean | null
           location?: string | null
           longitude?: number | null
+          onboarding_completed_at?: string | null
           phone?: string | null
           portfolio_images?: string[] | null
           portfolio_videos?: string[] | null

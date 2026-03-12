@@ -19,9 +19,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ViewingHistory from "./pages/ViewingHistory";
 import ProfileEdit from "./pages/ProfileEdit";
+import Onboarding from "./pages/Onboarding";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
+import { supabase } from "./integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
@@ -38,12 +41,37 @@ const HomeRoute = () => {
   return <Index />;
 };
 
+const DashboardRoute = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ["profile-onboarding", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("onboarding_completed_at").eq("user_id", user!.id).single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  if (authLoading || (user && profileLoading)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/login" replace />;
+  if (profile && profile.onboarding_completed_at == null) return <Navigate to="/onboarding" replace />;
+  return <Index />;
+};
+
 const AppRoutes = () => (
   <>
     <ScrollToTop />
     <Routes>
       <Route path="/" element={<HomeRoute />} />
-      <Route path="/dashboard" element={<Index />} />
+      <Route path="/dashboard" element={<DashboardRoute />} />
+      <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/results" element={<Results />} />
       <Route path="/nearby" element={<Nearby />} />
       <Route path="/provider/:id" element={<ProviderDetail />} />
