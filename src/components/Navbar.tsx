@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, User, Clock, Search, MapPin, KeyRound, Rocket } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useState, useEffect, forwardRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -11,6 +12,7 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const isAuthPage = ["/login", "/signup", "/check-email", "/forgot-password", "/reset-password"].includes(location.pathname);
 
   useEffect(() => {
@@ -21,6 +23,8 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
 
   const handleSignOut = async () => {
     await signOut();
+    queryClient.removeQueries({ queryKey: ["profile-onboarding"] });
+    queryClient.removeQueries({ queryKey: ["profile"] });
     toast.success("Signed out successfully");
     navigate("/");
   };

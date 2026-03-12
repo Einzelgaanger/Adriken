@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { buildAuthCallbackUrl } from "@/lib/auth-redirects";
+import { logSignIn } from "@/lib/analytics";
 
 interface AuthContextType {
   user: User | null;
@@ -92,6 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { error: new Error("Please confirm your email first before logging in.") };
     }
 
+    if (data?.user) void logSignIn(data.user.id, data.user.email);
     return { error: null };
   };
 

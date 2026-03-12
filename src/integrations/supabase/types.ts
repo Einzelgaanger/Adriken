@@ -436,12 +436,123 @@ export type Database = {
           },
         ]
       }
+      analytics_sign_ins: {
+        Row: {
+          id: string
+          user_id: string
+          email: string | null
+          signed_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          email?: string | null
+          signed_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          email?: string | null
+          signed_at?: string
+        }
+        Relationships: []
+      }
+      analytics_searches: {
+        Row: {
+          id: string
+          user_id: string | null
+          query: string
+          filters: Json
+          result_count: number | null
+          created_at: string
+          country: string | null
+          region: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          query: string
+          filters?: Json
+          result_count?: number | null
+          created_at?: string
+          country?: string | null
+          region?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          query?: string
+          filters?: Json
+          result_count?: number | null
+          created_at?: string
+          country?: string | null
+          region?: string | null
+        }
+        Relationships: []
+      }
+      analytics_page_views: {
+        Row: {
+          id: string
+          user_id: string | null
+          path: string
+          query_string: string | null
+          referrer: string | null
+          created_at: string
+          country: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          path: string
+          query_string?: string | null
+          referrer?: string | null
+          created_at?: string
+          country?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          path?: string
+          query_string?: string | null
+          referrer?: string | null
+          created_at?: string
+          country?: string | null
+        }
+        Relationships: []
+      }
+      analytics_prompt_usage: {
+        Row: {
+          id: string
+          user_id: string | null
+          prompt_type: string
+          created_at: string
+          metadata: Json
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          prompt_type: string
+          created_at?: string
+          metadata?: Json
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          prompt_type?: string
+          created_at?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_admin_status: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "completed" | "cancelled"

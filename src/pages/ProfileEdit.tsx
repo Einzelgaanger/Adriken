@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PhoneWithCountryInput from "@/components/PhoneWithCountryInput";
 import Navbar from "@/components/Navbar";
 import OnboardingTourBanner from "@/components/OnboardingTourBanner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -574,7 +575,7 @@ const ProfileEdit = () => {
             </div>
 
             {/* Contact & Social */}
-            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-5 shadow-soft ring-1 ring-black/[0.02]">
               <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Phone className="w-4 h-4 text-primary" />
@@ -583,33 +584,38 @@ const ProfileEdit = () => {
               </h2>
               <p className="text-sm text-muted-foreground">All optional. Visible on your profile so people can reach you.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</Label>
-                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 700 000 000" />
-                </div>
+                <PhoneWithCountryInput
+                  value={phone}
+                  onChange={setPhone}
+                  label={<><Phone className="w-3.5 h-3.5 text-primary" /> Mobile</>}
+                  placeholder="700 000 000"
+                />
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Public Email</Label>
-                  <Input type="email" value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="contact@you.com" />
+                  <Input type="email" value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="contact@you.com" className="rounded-xl border-border shadow-xs h-11" />
                 </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> WhatsApp</Label>
-                  <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+254 700 000 000" />
-                </div>
+                <PhoneWithCountryInput
+                  value={whatsapp}
+                  onChange={setWhatsapp}
+                  label={<><MessageSquare className="w-3.5 h-3.5 text-primary" /> WhatsApp</>}
+                  placeholder="700 000 000"
+                  className="sm:col-span-2 sm:max-w-[min(100%,theme(spacing.80))]"
+                />
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Instagram className="w-3.5 h-3.5" /> Instagram</Label>
-                  <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourhandle" />
+                  <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourhandle" className="rounded-xl border-border shadow-xs h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5"><Facebook className="w-3.5 h-3.5" /> Facebook</Label>
-                  <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="facebook.com/you" />
+                  <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="facebook.com/you" className="rounded-xl border-border shadow-xs h-11" />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5">🎵 TikTok</Label>
-                  <Input value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="@yourhandle" />
+                  <Input value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="@yourhandle" className="rounded-xl border-border shadow-xs h-11" />
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> Company or website</Label>
-                  <Input value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://yoursite.com" type="url" />
+                  <Input value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://yoursite.com" type="url" className="rounded-xl border-border shadow-xs h-11" />
                 </div>
               </div>
             </div>

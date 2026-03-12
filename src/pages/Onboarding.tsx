@@ -108,6 +108,11 @@ const Onboarding = () => {
     if (!authLoading && !user) navigate("/login", { replace: true });
   }, [authLoading, user, navigate]);
 
+  // First-time users only: if they already completed onboarding, send to dashboard
+  useEffect(() => {
+    if (profile && (profile as any).onboarding_completed_at) navigate("/dashboard", { replace: true });
+  }, [profile, navigate]);
+
   const saveProfile = async (updates: Record<string, unknown>) => {
     if (!user) return;
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
@@ -127,7 +132,8 @@ const Onboarding = () => {
       if (error) throw error;
       queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
       queryClient.setQueryData(["profile-onboarding", user.id], { onboarding_completed_at: completedAt });
-      navigate("/dashboard", { replace: true });
+      toast.success("You're all set! Taking you to your dashboard…");
+      setTimeout(() => navigate("/dashboard", { replace: true }), 900);
     } catch (e) {
       toast.error("Something went wrong");
     } finally {
@@ -203,7 +209,16 @@ const Onboarding = () => {
     }
   };
 
-  const startTour = () => navigate("/nearby?onboarding_tour=1");
+  const startTour = async () => {
+    if (!user) return;
+    const completedAt = new Date().toISOString();
+    const { error } = await supabase.from("profiles").update({ onboarding_completed_at: completedAt }).eq("user_id", user.id);
+    if (!error) {
+      queryClient.setQueryData(["profile-onboarding", user.id], { onboarding_completed_at: completedAt });
+      queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+    }
+    navigate("/nearby?onboarding_tour=1");
+  };
 
   const requestLocation = () => {
     if (!navigator.geolocation) {

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const TOUR_STEPS: Record<
   number,
@@ -46,17 +47,20 @@ export default function OnboardingTourBanner() {
 
   const handleNext = async () => {
     if (step.isLast) {
-      await supabase
+      const completedAt = new Date().toISOString();
+      const { error } = await supabase
         .from("profiles")
-        .update({ onboarding_completed_at: new Date().toISOString() })
+        .update({ onboarding_completed_at: completedAt })
         .eq("user_id", user.id);
+      if (error) return;
       queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
-      queryClient.setQueryData(["profile-onboarding", user.id], { onboarding_completed_at: new Date().toISOString() });
+      queryClient.setQueryData(["profile-onboarding", user.id], { onboarding_completed_at: completedAt });
       setSearchParams((prev) => {
         prev.delete("onboarding_tour");
         return prev;
       });
-      navigate("/dashboard", { replace: true });
+      toast.success("You're all set! Welcome to your dashboard.");
+      setTimeout(() => navigate("/dashboard", { replace: true }), 900);
       return;
     }
     navigate(step.nextPath);

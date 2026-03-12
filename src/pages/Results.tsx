@@ -7,6 +7,7 @@ import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { logSearch, logPromptUsage } from "@/lib/analytics";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
@@ -142,6 +143,9 @@ const Results = () => {
         goodsByUser[g.user_id].push({ name: g.name, price: g.price, description: g.description, location: g.location });
       });
 
+      const { data: authUser } = await supabase.auth.getUser();
+      const userId = authUser.user?.id ?? null;
+
       const { data: matchData, error: fnError } = await supabase.functions.invoke("match-listings", {
         body: {
           query,
@@ -161,6 +165,8 @@ const Results = () => {
       if (fnError) throw fnError;
 
       const aiMatches: AIMatch[] = matchData?.matches || [];
+      void logSearch({ userId, query, resultCount: aiMatches.length });
+      void logPromptUsage({ userId, promptType: "match_listings", metadata: { query, result_count: resultCount } });
       const matchMap = new Map(aiMatches.map((m: AIMatch) => [m.id, m]));
       const sorted = [...listings]
         .filter((l) => matchMap.has(l.id))

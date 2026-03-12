@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 import Index from "./pages/Index";
 import Results from "./pages/Results";
 import ProviderDetail from "./pages/ProviderDetail";
@@ -23,6 +24,15 @@ import Onboarding from "./pages/Onboarding";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
+import AdminGuard from "./components/AdminGuard";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminSignUps from "./pages/admin/AdminSignUps";
+import AdminSignIns from "./pages/admin/AdminSignIns";
+import AdminSearches from "./pages/admin/AdminSearches";
+import AdminPageViews from "./pages/admin/AdminPageViews";
+import AdminPrompts from "./pages/admin/AdminPrompts";
+import AdminRegional from "./pages/admin/AdminRegional";
 import { supabase } from "./integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -41,6 +51,7 @@ const HomeRoute = () => {
   return <Index />;
 };
 
+/** Dashboard: only first-time users (never completed onboarding) are sent to /onboarding. */
 const DashboardRoute = () => {
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -51,6 +62,7 @@ const DashboardRoute = () => {
       return data;
     },
     enabled: !!user,
+    staleTime: 15_000,
   });
 
   if (authLoading || (user && profileLoading)) {
@@ -61,13 +73,17 @@ const DashboardRoute = () => {
     );
   }
   if (!user) return <Navigate to="/login" replace />;
-  if (profile && profile.onboarding_completed_at == null) return <Navigate to="/onboarding" replace />;
+  // Only first-time users: profile loaded and onboarding never completed
+  if (profile != null && (profile.onboarding_completed_at == null || profile.onboarding_completed_at === "")) {
+    return <Navigate to="/onboarding" replace />;
+  }
   return <Index />;
 };
 
 const AppRoutes = () => (
   <>
     <ScrollToTop />
+    <AnalyticsTracker />
     <Routes>
       <Route path="/" element={<HomeRoute />} />
       <Route path="/dashboard" element={<DashboardRoute />} />
@@ -85,6 +101,15 @@ const AppRoutes = () => (
       <Route path="/profile/edit" element={<ProfileEdit />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfService />} />
+      <Route path="/weareadmins" element={<AdminGuard><AdminLayout /></AdminGuard>}>
+        <Route index element={<AdminOverview />} />
+        <Route path="signups" element={<AdminSignUps />} />
+        <Route path="signins" element={<AdminSignIns />} />
+        <Route path="searches" element={<AdminSearches />} />
+        <Route path="pages" element={<AdminPageViews />} />
+        <Route path="prompts" element={<AdminPrompts />} />
+        <Route path="regional" element={<AdminRegional />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
     <CookieConsent />

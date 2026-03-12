@@ -4,6 +4,7 @@ import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeNextPath } from "@/lib/auth-redirects";
+import { logSignIn } from "@/lib/analytics";
 
 const waitForSession = async (): Promise<Session | null> => {
   for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -41,6 +42,8 @@ const AuthCallback = () => {
 
         const session = await waitForSession();
         if (!session) throw new Error("Authentication session could not be restored.");
+
+        if (session.user) void logSignIn(session.user.id, session.user.email);
 
         if (window.location.hash.includes("access_token")) {
           const cleanUrl = `${window.location.pathname}${window.location.search}`;
