@@ -37,19 +37,20 @@ const ResetPassword = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const hasCode = !!searchParams.get("code");
+    const hasFlowRecovery = searchParams.get("flow") === "recovery";
 
-    // Listen for PASSWORD_RECOVERY (fires after PKCE code exchange or when using hash)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
         setIsRecovery(true);
+        setHasValidSession(!!session?.user);
         setChecking(false);
       }
     });
 
-    // Hash fragment (implicit flow) or type=recovery in query
     const hash = window.location.hash;
     const hashParams = new URLSearchParams(hash.replace("#", ""));
     const hasRecoveryToken =
+      hasFlowRecovery ||
       hash.includes("type=recovery") ||
       hashParams.get("type") === "recovery" ||
       searchParams.get("type") === "recovery" ||
@@ -59,9 +60,9 @@ const ResetPassword = () => {
       setIsRecovery(true);
       setChecking(false);
     }
+
     if (hasCode) {
       setHadCodeInUrl(true);
-      // detectSessionInUrl will exchange the code; we wait for PASSWORD_RECOVERY or timeout
     }
 
     const timeoutMs = hasCode ? 5000 : 2000;
