@@ -57,13 +57,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     });
 
-    // Record consent date on the profile after creation
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const signUp = async (email: string, password: string, fullName: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: buildAuthCallbackUrl("/dashboard"),
+      },
+    });
+
     if (!error && data.user) {
       await supabase.from("profiles").update({
         data_consent: true,
         consent_date: new Date().toISOString(),
       }).eq("user_id", data.user.id);
     }
+
     return { error: error as Error | null };
   };
 
@@ -71,7 +87,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: error as Error | null };
 
-    // Enforce confirmed email before allowing password login.
     if (data?.user && !data.user.email_confirmed_at) {
       await supabase.auth.signOut();
       return { error: new Error("Please confirm your email first before logging in.") };
