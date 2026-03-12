@@ -121,8 +121,8 @@ const ResetPassword = () => {
     );
   }
 
-  // No recovery flow, or recovery flow but no valid session (e.g. landed with empty #)
-  if (!isRecovery || (hasValidSession === false)) {
+  // No recovery context and no valid session
+  if ((!isRecovery && hasValidSession !== true) || hasValidSession === false) {
     const hash = window.location.hash.replace("#", "").trim();
     const hasNoToken = !hash || (!hash.includes("access_token") && !hash.includes("type=recovery"));
     const sameBrowserHint = hadCodeInUrl;
