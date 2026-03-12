@@ -11,15 +11,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
-// Capture hash at module load so we don't lose it when Supabase client consumes it before our effect runs
+// Capture URL state at module load so we can recover token flow even if hash handling races
 const getInitialRecoveryFromUrl = () => {
-  if (typeof window === "undefined") return { hash: false, code: false };
+  if (typeof window === "undefined") return { hash: false, code: false, flow: false };
   const h = window.location.hash;
   const q = new URLSearchParams(window.location.search);
-  const hasHash =
-    h.includes("type=recovery") || h.includes("access_token");
+  const hasHash = h.includes("type=recovery") || h.includes("access_token");
   const hasCode = !!q.get("code");
-  return { hash: hasHash, code: hasCode };
+  const hasFlow = q.get("flow") === "recovery";
+  return { hash: hasHash, code: hasCode, flow: hasFlow };
 };
 const initialUrl = getInitialRecoveryFromUrl();
 
@@ -28,8 +28,8 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isRecovery, setIsRecovery] = useState(initialUrl.hash);
-  const [checking, setChecking] = useState(!initialUrl.hash);
+  const [isRecovery, setIsRecovery] = useState(initialUrl.hash || initialUrl.flow);
+  const [checking, setChecking] = useState(!initialUrl.hash && !initialUrl.flow);
   const [hadCodeInUrl, setHadCodeInUrl] = useState(initialUrl.code);
   const [hasValidSession, setHasValidSession] = useState<boolean | null>(null);
   const navigate = useNavigate();
@@ -37,19 +37,20 @@ const ResetPassword = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const hasCode = !!searchParams.get("code");
+    const hasFlowRecovery = searchParams.get("flow") === "recovery";
 
-    // Listen for PASSWORD_RECOVERY (fires after PKCE code exchange or when using hash)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
         setIsRecovery(true);
+        setHasValidSession(!!session?.user);
         setChecking(false);
       }
     });
 
-    // Hash fragment (implicit flow) or type=recovery in query
     const hash = window.location.hash;
     const hashParams = new URLSearchParams(hash.replace("#", ""));
     const hasRecoveryToken =
+      hasFlowRecovery ||
       hash.includes("type=recovery") ||
       hashParams.get("type") === "recovery" ||
       searchParams.get("type") === "recovery" ||
@@ -59,9 +60,9 @@ const ResetPassword = () => {
       setIsRecovery(true);
       setChecking(false);
     }
+
     if (hasCode) {
       setHadCodeInUrl(true);
-      // detectSessionInUrl will exchange the code; we wait for PASSWORD_RECOVERY or timeout
     }
 
     const timeoutMs = hasCode ? 5000 : 2000;
@@ -73,15 +74,15 @@ const ResetPassword = () => {
     };
   }, []);
 
-  // Once we think we're in recovery, confirm we have a session (or form submit will fail)
+  // Confirm whether a valid authenticated session exists before allowing password update
   useEffect(() => {
-    if (!isRecovery || checking) return;
+    if (checking) return;
     let cancelled = false;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!cancelled) setHasValidSession(!!user);
     });
     return () => { cancelled = true; };
-  }, [isRecovery, checking]);
+  }, [checking]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,8 +121,8 @@ const ResetPassword = () => {
     );
   }
 
-  // No recovery flow, or recovery flow but no valid session (e.g. landed with empty #)
-  if (!isRecovery || (hasValidSession === false)) {
+  // No recovery context and no valid session
+  if ((!isRecovery && hasValidSession !== true) || hasValidSession === false) {
     const hash = window.location.hash.replace("#", "").trim();
     const hasNoToken = !hash || (!hash.includes("access_token") && !hash.includes("type=recovery"));
     const sameBrowserHint = hadCodeInUrl;

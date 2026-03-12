@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { supabase } from "@/integrations/supabase/client";
+import { buildRecoveryCallbackUrl } from "@/lib/auth-redirects";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,7 +24,7 @@ const ForgotPassword = () => {
     if (!email.trim()) return;
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: buildRecoveryCallbackUrl(),
     });
     setLoading(false);
     if (error) {

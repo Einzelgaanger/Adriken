@@ -10,6 +10,7 @@ import Navbar from "@/components/Navbar";
 import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { useAuth } from "@/contexts/AuthContext";
 import { lovable } from "@/integrations/lovable";
+import { buildAuthCallbackUrl } from "@/lib/auth-redirects";
 import { toast } from "sonner";
 import adrikenLogo from "@/assets/adriken-logo.png";
 
@@ -68,7 +69,8 @@ const Signup = () => {
 
   const handleGoogleSignUp = async () => {
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/dashboard`,
+      redirect_uri: buildAuthCallbackUrl("/dashboard"),
+      extraParams: { prompt: "select_account" },
     });
     if (error) {
       toast.error("Google sign-up failed", {

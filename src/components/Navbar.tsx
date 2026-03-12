@@ -2,12 +2,12 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, Clock, Search, MapPin, KeyRound, Rocket } from "lucide-react";
 import adrikenLogo from "@/assets/adriken-logo.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
-const Navbar = () => {
+const Navbar = forwardRef<HTMLElement>((_, ref) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
@@ -54,6 +54,7 @@ const Navbar = () => {
       </AnimatePresence>
 
       <nav
+      ref={ref}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
         scrolled
           ? "bg-white/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
@@ -218,6 +219,8 @@ const Navbar = () => {
     </nav>
     </>
   );
-};
+});
+
+Navbar.displayName = "Navbar";
 
 export default Navbar;
