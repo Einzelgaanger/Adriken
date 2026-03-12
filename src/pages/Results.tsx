@@ -2,6 +2,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowLeft, Loader2, SlidersHorizontal, Map as MapIcon, List as ListIcon, Navigation, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import OnboardingTourBanner from "@/components/OnboardingTourBanner";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -211,6 +212,7 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <OnboardingTourBanner />
       {/* Subtle warm gradient strip behind header */}
       <div className="absolute top-0 left-0 right-0 h-[180px] sm:h-[200px] pointer-events-none bg-[linear-gradient(180deg,hsl(28_35%_98.5%)_0%,hsl(26_30%_98%)_50%,transparent_100%)]" aria-hidden />
       <div className="relative pt-20 sm:pt-24 pb-10 sm:pb-20 px-4 sm:px-6 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">

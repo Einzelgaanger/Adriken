@@ -26,28 +26,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
 
 const STEPS = [
   { id: 1, title: "What you offer", icon: Briefcase },
   { id: 2, title: "About you", icon: User },
   { id: 3, title: "Contact", icon: Phone },
   { id: 4, title: "Location", icon: MapPin },
-  { id: 5, title: "Discover", icon: Sparkles },
+  { id: 5, title: "What's next", icon: Package },
+  { id: 6, title: "Tour", icon: Sparkles },
 ];
 
 type LatLng = { lat: number; lng: number };
-const toRad = (v: number) => (v * Math.PI) / 180;
-const haversineKm = (a: LatLng, b: LatLng) => {
-  const R = 6371;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const s1 = Math.sin(dLat / 2) ** 2;
-  const s2 = Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(s1 + s2));
-};
-const formatDistance = (km: number) =>
-  km < 1 ? `${Math.round(km * 1000)} m` : `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
 
 const Onboarding = () => {
   const { user, loading: authLoading } = useAuth();
@@ -56,8 +45,16 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
 
-  // Step 1: what they offer (goods | service | friends)
-  const [intent, setIntent] = useState<"goods" | "service" | "friends" | null>(null);
+  // Step 1: what they offer (any combination of goods, service, friends)
+  const [intents, setIntents] = useState<("goods" | "service" | "friends")[]>([]);
+  const toggleIntent = (value: "goods" | "service" | "friends") => {
+    setIntents((prev) => (prev.includes(value) ? prev.filter((x) => x !== value) : [...prev, value]));
+  };
+  const hasGoods = intents.includes("goods");
+  const hasService = intents.includes("service");
+  const hasFriends = intents.includes("friends");
+  const onlyFriends = intents.length === 1 && hasFriends;
+  const showBusinessName = hasGoods || hasService;
 
   // Step 2
   const [fullName, setFullName] = useState("");
@@ -91,7 +88,8 @@ const Onboarding = () => {
   useEffect(() => {
     if (profile) {
       const p = profile as any;
-      if (p.onboarding_intent === "goods" || p.onboarding_intent === "service" || p.onboarding_intent === "friends") setIntent(p.onboarding_intent);
+      if (p.onboarding_intents?.length) setIntents(p.onboarding_intents);
+      else if (p.onboarding_intent === "goods" || p.onboarding_intent === "service" || p.onboarding_intent === "friends") setIntents([p.onboarding_intent]);
       setFullName(profile.full_name || "");
       setBusinessName(p.business_name || "");
       setBio(profile.bio || "");
@@ -105,28 +103,6 @@ const Onboarding = () => {
     }
   }, [profile]);
 
-  const { data: nearbyListings } = useQuery({
-    queryKey: ["onboarding-nearby", userCoords?.lat, userCoords?.lng],
-    queryFn: async () => {
-      const { data: listings, error } = await supabase
-        .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, latitude, longitude)")
-        .eq("is_active", true);
-      if (error) throw error;
-      if (!listings?.length || !userCoords) return [];
-      return (listings as any[])
-        .map((l) => {
-          const lat = l.latitude ?? l.profiles?.latitude;
-          const lng = l.longitude ?? l.profiles?.longitude;
-          if (lat == null || lng == null) return null;
-          return { ...l, distanceKm: haversineKm(userCoords, { lat, lng }) };
-        })
-        .filter(Boolean)
-        .sort((a: any, b: any) => a.distanceKm - b.distanceKm)
-        .slice(0, 6);
-    },
-    enabled: step === 5 && !!userCoords,
-  });
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login", { replace: true });
@@ -160,13 +136,13 @@ const Onboarding = () => {
   };
 
   const handleStep1Next = async () => {
-    if (!intent) {
-      toast.error("Please choose one option");
+    if (intents.length === 0) {
+      toast.error("Please choose at least one");
       return;
     }
     setSaving(true);
     try {
-      await saveProfile({ onboarding_intent: intent });
+      await saveProfile({ onboarding_intents: intents });
       setStep(2);
     } catch {
       toast.error("Could not save");
@@ -184,7 +160,7 @@ const Onboarding = () => {
     try {
       await saveProfile({
         full_name: fullName.trim(),
-        business_name: intent === "friends" ? null : (businessName.trim() || null),
+        business_name: showBusinessName ? (businessName.trim() || null) : null,
         bio: bio.trim() || null,
       });
       setStep(3);
@@ -226,6 +202,8 @@ const Onboarding = () => {
       setSaving(false);
     }
   };
+
+  const startTour = () => navigate("/nearby?onboarding_tour=1");
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -296,7 +274,7 @@ const Onboarding = () => {
                   <Briefcase className="w-6 h-6 text-primary" />
                 </div>
                 <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">What brings you to Adriken?</h1>
-                <p className="text-sm text-muted-foreground mt-1">We'll tailor your profile and suggestions.</p>
+                <p className="text-sm text-muted-foreground mt-1">Pick all that apply — we'll tailor your experience.</p>
               </div>
               <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-3 shadow-soft">
                 {[
@@ -307,9 +285,9 @@ const Onboarding = () => {
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => setIntent(opt.value)}
+                    onClick={() => toggleIntent(opt.value)}
                     className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${
-                      intent === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/50"
+                      intents.includes(opt.value) ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/50"
                     }`}
                   >
                     <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
@@ -319,14 +297,14 @@ const Onboarding = () => {
                       <p className="font-semibold text-foreground">{opt.label}</p>
                       <p className="text-xs text-muted-foreground">{opt.sub}</p>
                     </div>
-                    {intent === opt.value && <CheckCircle2 className="w-5 h-5 text-primary ml-auto shrink-0" />}
+                    {intents.includes(opt.value) && <CheckCircle2 className="w-5 h-5 text-primary ml-auto shrink-0" />}
                   </button>
                 ))}
                 <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
                   <Button variant="ghost" onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
                     Skip onboarding
                   </Button>
-                  <Button onClick={handleStep1Next} disabled={saving || !intent} className="rounded-xl flex-1">
+                  <Button onClick={handleStep1Next} disabled={saving || intents.length === 0} className="rounded-xl flex-1">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
@@ -348,10 +326,10 @@ const Onboarding = () => {
                   <User className="w-6 h-6 text-primary" />
                 </div>
                 <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                  {intent === "friends" ? "Introduce yourself" : "About you"}
+                  {onlyFriends ? "Introduce yourself" : "About you"}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {intent === "friends" ? "A few details so others can find you." : "Tell us a bit about yourself so we can personalize your experience."}
+                  {onlyFriends ? "A few details so others can find you." : "Tell us a bit about yourself so we can personalize your experience."}
                 </p>
               </div>
               <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
@@ -359,7 +337,7 @@ const Onboarding = () => {
                   <Label>Your name *</Label>
                   <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Jane" className="rounded-xl" />
                 </div>
-                {intent !== "friends" && (
+                {showBusinessName && (
                   <div className="space-y-2">
                     <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Business name (optional)</Label>
                     <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. My Shop" className="rounded-xl" />
@@ -370,7 +348,7 @@ const Onboarding = () => {
                   <Textarea
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder={intent === "friends" ? "What you're into or looking for" : "What you do or what you're looking for"}
+                    placeholder={onlyFriends ? "What you're into or looking for" : "What you do or what you're looking for"}
                     rows={2}
                     className="rounded-xl resize-none"
                   />
@@ -492,66 +470,82 @@ const Onboarding = () => {
             >
               <div className="text-center mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <Sparkles className="w-6 h-6 text-primary" />
+                  <Package className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">You're all set</h1>
+                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">What's next for you</h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {intent === "friends" ? "Here are people and places near you." : "Here are some businesses near you to get started."}
+                  {hasGoods && hasService && "You can add your goods and your service offering in your profile. We'll show you where."}
+                  {hasGoods && !hasService && "You can upload your goods — photos, name, price, location — in your profile. We'll take you there."}
+                  {hasService && !hasGoods && "You can add your service — title, description, rates — in your profile. We'll show you where."}
+                  {onlyFriends && "Discover people and places near you. We'll take you through the app."}
+                  {hasFriends && (hasGoods || hasService) && "You can add goods or services in your profile and discover people nearby. We'll show you around."}
                 </p>
               </div>
-
-              {!userCoords && (
-                <div className="rounded-2xl bg-card border border-border p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-3">Enable location to see nearby businesses.</p>
-                  <Button onClick={requestLocation} disabled={locating} className="rounded-xl">
-                    {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Use my location"}
-                  </Button>
-                </div>
-              )}
-
-              {userCoords && nearbyListings && nearbyListings.length > 0 && (
-                <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 shadow-soft">
-                  <h2 className="font-display font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" /> Around you
-                  </h2>
-                  <div className="space-y-2">
-                    {nearbyListings.slice(0, 5).map((listing: any, i: number) => (
-                      <Link key={listing.id} to={`/provider/${listing.id}`} className="block p-3 rounded-xl border border-border hover:bg-secondary/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={listing.profiles?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${listing.profiles?.full_name || "U"}`}
-                            alt=""
-                            className="w-10 h-10 rounded-lg object-cover"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-foreground truncate">{listing.profiles?.business_name || listing.profiles?.full_name || "Business"}</p>
-                            <p className="text-xs text-muted-foreground truncate">{listing.title}</p>
-                          </div>
-                          <span className="text-xs text-muted-foreground shrink-0">{formatDistance(listing.distanceKm)}</span>
-                        </div>
-                      </Link>
-                    ))}
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+                {(hasGoods || hasService) && (
+                  <div className="rounded-xl bg-primary/5 border border-primary/20 p-3 sm:p-4">
+                    <p className="text-sm font-medium text-foreground">
+                      {hasGoods && "• Upload items: photos, name, price, description, location (e.g. properties, products)."}
+                    </p>
+                    {hasGoods && hasService && <br />}
+                    <p className="text-sm font-medium text-foreground">
+                      {hasService && "• Add your offering: title, description, skills, and rates so clients can find you."}
+                    </p>
                   </div>
-                  <Link to="/nearby" className="block mt-3">
-                    <Button variant="outline" size="sm" className="w-full rounded-xl">See all nearby</Button>
-                  </Link>
-                </div>
-              )}
-
-              <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 sm:p-5 flex items-center gap-3">
-                <CheckCircle2 className="w-10 h-10 text-primary shrink-0" />
-                <div>
-                  <p className="font-semibold text-foreground">Head to your dashboard to search, browse, and message providers.</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">You can always edit your profile later.</p>
+                )}
+                <p className="text-sm text-muted-foreground">We'll walk you through the key pages next.</p>
+                <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+                  <Button variant="ghost" onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
+                    Skip to dashboard
+                  </Button>
+                  <div className="flex gap-2 flex-1">
+                    <Button variant="outline" onClick={() => setStep(4)} className="rounded-xl">Back</Button>
+                    <Button onClick={() => setStep(6)} className="rounded-xl flex-1">
+                      Continue
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
                 </div>
               </div>
+            </motion.div>
+          )}
 
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep(4)} className="rounded-xl flex-1">Back</Button>
-                <Button onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Go to dashboard"}
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
+          {step === 6 && (
+            <motion.div
+              key="step6"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              className="space-y-6"
+            >
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
+                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Take a quick tour</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  We'll take you to Nearby, Search, and your Profile so you know where to do what.
+                </p>
+              </div>
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+                <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+                  <li>See who's around you (Nearby)</li>
+                  <li>Try searching for services, goods, or people</li>
+                  <li>Add your profile details, goods, or offering</li>
+                  <li>Land on your dashboard</li>
+                </ul>
+                <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+                  <Button variant="ghost" onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
+                    Skip to dashboard
+                  </Button>
+                  <div className="flex gap-2 flex-1">
+                    <Button variant="outline" onClick={() => setStep(5)} className="rounded-xl">Back</Button>
+                    <Button onClick={startTour} className="rounded-xl flex-1">
+                      Start tour
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}

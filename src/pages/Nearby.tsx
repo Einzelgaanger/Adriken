@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { ArrowLeft, Loader2, Map as MapIcon, List as ListIcon, MapPin, Navigation } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import OnboardingTourBanner from "@/components/OnboardingTourBanner";
 import ProviderCard from "@/components/ProviderCard";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,6 +121,7 @@ const Nearby = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <OnboardingTourBanner />
       <div className="pt-20 sm:pt-28 pb-10 sm:pb-20 px-3 sm:px-6 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]">
         <div className="container mx-auto max-w-3xl">
           <Link to={user ? "/dashboard" : "/"} className="inline-block mb-3 sm:mb-4">

@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/Navbar";
 import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 
 const CheckEmail = () => {
@@ -23,12 +22,11 @@ const CheckEmail = () => {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
-      <Navbar />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
       <BackgroundPathsLayer className="opacity-95" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.28)_0%,hsl(24_95%_68%_/_0.18)_28%,transparent_70%)] pointer-events-none" />
       <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/[0.12] blur-[140px] pointer-events-none" />
-      <div className="pt-24 sm:pt-28 pb-16 flex items-center justify-center min-h-[85vh] px-4 relative z-10">
+      <div className="pt-12 sm:pt-16 pb-16 flex items-center justify-center min-h-screen px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

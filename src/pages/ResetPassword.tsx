@@ -5,7 +5,6 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Navbar from "@/components/Navbar";
 import { BackgroundPathsLayer } from "@/components/ui/background-paths";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -108,13 +107,12 @@ const ResetPassword = () => {
   if (checking) {
     return (
       <div className="relative min-h-screen bg-background overflow-hidden">
-        <Navbar />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
         <BackgroundPathsLayer className="opacity-95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
         <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
         <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
-        <div className="pt-24 sm:pt-28 flex items-center justify-center min-h-[70vh] relative z-10">
+        <div className="pt-12 sm:pt-16 flex items-center justify-center min-h-screen relative z-10">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
@@ -129,7 +127,6 @@ const ResetPassword = () => {
     const noSessionHint = hasValidSession === false;
     return (
       <div className="relative min-h-screen bg-background overflow-hidden">
-        <Navbar />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
         <BackgroundPathsLayer className="opacity-95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
@@ -166,13 +163,12 @@ const ResetPassword = () => {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
-      <Navbar />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(28_35%_98%)_0%,hsl(26_40%_97%)_100%)]" />
       <BackgroundPathsLayer className="opacity-95" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,hsl(18_92%_62%_/_0.38)_0%,hsl(24_95%_68%_/_0.24)_28%,hsl(26_70%_90%_/_0.12)_52%,transparent_76%)] pointer-events-none" />
       <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-primary/[0.16] blur-[190px] pointer-events-none animate-hero-glow" />
       <div className="absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 0.5px, transparent 0)", backgroundSize: "32px 32px" }} />
-      <div className="pt-24 sm:pt-28 pb-16 sm:pb-20 flex items-center justify-center min-h-[88vh] px-4 sm:px-6 relative z-10">
+      <div className="pt-12 sm:pt-16 pb-16 sm:pb-20 flex items-center justify-center min-h-screen px-4 sm:px-6 relative z-10">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-[420px] mx-auto">
           <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 p-6 sm:p-7 shadow-card">
             <div className="pointer-events-none absolute -top-14 -right-10 w-44 h-44 rounded-full bg-orange-300/25 blur-2xl" />

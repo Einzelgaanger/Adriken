@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
+import OnboardingTourBanner from "@/components/OnboardingTourBanner";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -471,6 +472,7 @@ const ProfileEdit = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/[0.03] via-background to-background">
       <Navbar />
+      <OnboardingTourBanner />
       <div className="pt-20 sm:pt-28 pb-10 sm:pb-16 px-3 sm:px-6">
         <div className="container mx-auto max-w-2xl min-w-0">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5 overflow-x-hidden">
@@ -664,9 +666,14 @@ const ProfileEdit = () => {
                 My Goods
               </h2>
               <p className="text-sm text-muted-foreground">
-                {(profile as any)?.onboarding_intent === "friends"
-                  ? "You're here to connect — you can add goods or items anytime if you like. All optional."
-                  : "Add items or products (e.g. properties, vehicles). Name, price, description and location are optional and help others find you when searching."}
+                {(() => {
+                  const p = profile as any;
+                  const intents = p?.onboarding_intents ?? (p?.onboarding_intent ? [p.onboarding_intent] : []);
+                  const onlyFriends = intents.length === 1 && intents[0] === "friends";
+                  return onlyFriends
+                    ? "You're here to connect — you can add goods or items anytime if you like. All optional."
+                    : "Add items or products (e.g. properties, vehicles). Name, price, description and location are optional and help others find you when searching.";
+                })()}
               </p>
               {goods.map((good, idx) => (
                 <div key={good.id ?? `new-${idx}`} className="rounded-xl border border-border p-4 space-y-3 bg-secondary/30">
