@@ -124,22 +124,35 @@ const Results = () => {
     queryFn: async () => {
       const { data: listings, error: dbError } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, latitude, longitude, live_location_enabled)")
+        .select("*, profiles!listings_user_id_fkey(full_name, business_name, bio, avatar_url, location, latitude, longitude, live_location_enabled)")
         .eq("is_active", true);
 
       if (dbError) throw dbError;
       if (!listings || listings.length === 0) return { listings: [], matches: [] };
 
+      const userIds = [...new Set((listings as any[]).map((l) => l.user_id).filter(Boolean))];
+      const { data: allGoods } = await supabase
+        .from("profile_goods")
+        .select("id, user_id, name, price, description, location")
+        .in("user_id", userIds);
+      const goodsByUser: Record<string, { name: string | null; price: number | null; description: string | null; location: string | null }[]> = {};
+      (allGoods || []).forEach((g: any) => {
+        if (!goodsByUser[g.user_id]) goodsByUser[g.user_id] = [];
+        goodsByUser[g.user_id].push({ name: g.name, price: g.price, description: g.description, location: g.location });
+      });
+
       const { data: matchData, error: fnError } = await supabase.functions.invoke("match-listings", {
         body: {
           query,
-          listings: listings.map((l) => ({
+          listings: (listings as any[]).map((l) => ({
             id: l.id, title: l.title, description: l.description, type: l.listing_type,
             skills: l.skills, services: l.services, location: l.location,
             hourly_rate: l.hourly_rate, fixed_price: l.fixed_price, experience: l.experience,
             rating: l.rating, review_count: l.review_count, availability: l.availability,
-            business_name: (l as any).profiles?.business_name || "",
-            provider_name: (l as any).profiles?.full_name || "",
+            business_name: l.profiles?.business_name || "",
+            provider_name: l.profiles?.full_name || "",
+            bio: l.profiles?.bio || "",
+            goods: goodsByUser[l.user_id] || [],
           })),
         },
       });

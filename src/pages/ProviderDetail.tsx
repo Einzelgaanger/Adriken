@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Building2 } from "lucide-react";
+import { Star, MapPin, Clock, CheckCircle2, ArrowLeft, MessageSquare, Shield, Loader2, Phone, Mail, Instagram, Facebook, ExternalLink, Image, Building2, Globe, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
@@ -20,13 +20,27 @@ const ProviderDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("listings")
-        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, bio, phone, whatsapp, instagram, tiktok, facebook, email_public, certifications, portfolio_images, portfolio_videos)")
+        .select("*, profiles!listings_user_id_fkey(full_name, business_name, avatar_url, location, bio, phone, whatsapp, instagram, tiktok, facebook, email_public, website_url, certifications, portfolio_images, portfolio_videos)")
         .eq("id", id!)
         .single();
       if (error) throw error;
       return data;
     },
     enabled: !!id,
+  });
+
+  const { data: profileGoods } = useQuery({
+    queryKey: ["profile-goods", listing?.user_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile_goods")
+        .select("*")
+        .eq("user_id", listing!.user_id)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!listing?.user_id,
   });
 
   // Track profile view (only for signed-in users)
@@ -67,7 +81,7 @@ const ProviderDetail = () => {
   const portfolioImages: string[] = profile?.portfolio_images || [];
   const portfolioVideos: string[] = profile?.portfolio_videos || [];
   const certifications: string[] = profile?.certifications || [];
-  const hasContact = profile?.phone || profile?.whatsapp || profile?.email_public || profile?.instagram || profile?.facebook || profile?.tiktok;
+  const hasContact = profile?.phone || profile?.whatsapp || profile?.email_public || profile?.instagram || profile?.facebook || profile?.tiktok || profile?.website_url;
 
   return (
     <div className="min-h-screen bg-background">
@@ -153,6 +167,12 @@ const ProviderDetail = () => {
                       <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
                     </a>
                   )}
+                  {profile?.website_url && (
+                    <a href={profile.website_url.startsWith("http") ? profile.website_url : `https://${profile.website_url}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] sm:text-sm text-foreground hover:text-primary transition-colors p-2 rounded-xl hover:bg-secondary min-h-[42px]">
+                      <Globe className="w-4 h-4 text-muted-foreground" /> Website
+                      <ExternalLink className="w-3 h-3 ml-auto text-muted-foreground" />
+                    </a>
+                  )}
                 </div>
               </div>
             )}
@@ -197,6 +217,40 @@ const ProviderDetail = () => {
                   {portfolioVideos.map((url, i) => (
                     <div key={`v-${i}`} className="rounded-xl overflow-hidden border border-border aspect-square relative">
                       <video src={url} controls className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Goods */}
+            {profileGoods && profileGoods.length > 0 && (
+              <div className="rounded-2xl bg-card border border-border p-3.5 sm:p-6 mb-3.5 sm:mb-6">
+                <h2 className="font-display font-bold text-lg text-foreground mb-3 flex items-center gap-2">
+                  <Package className="w-5 h-5 text-primary" /> Goods & items
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {profileGoods.map((g: any) => (
+                    <div key={g.id} className="rounded-xl border border-border overflow-hidden bg-secondary/30">
+                      {(g.media_urls?.length > 0) ? (
+                        <div className="aspect-video bg-muted flex items-center justify-center">
+                          {/\.(mp4|webm|ogg)$/i.test(g.media_urls[0]) ? (
+                            <video src={g.media_urls[0]} controls className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={g.media_urls[0]} alt={g.name || "Item"} className="w-full h-full object-cover" />
+                          )}
+                        </div>
+                      ) : (
+                        <div className="aspect-video bg-muted flex items-center justify-center">
+                          <Package className="w-10 h-10 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="p-3">
+                        {g.name && <p className="font-semibold text-foreground">{g.name}</p>}
+                        {g.price != null && <p className="text-sm text-primary font-medium">KSh {Number(g.price).toLocaleString()}</p>}
+                        {g.description && <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">{g.description}</p>}
+                        {g.location && <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {g.location}</p>}
+                      </div>
                     </div>
                   ))}
                 </div>

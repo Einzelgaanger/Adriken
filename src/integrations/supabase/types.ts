@@ -281,6 +281,7 @@ export type Database = {
           tiktok: string | null
           updated_at: string
           user_id: string
+          website_url: string | null
           whatsapp: string | null
         }
         Insert: {
@@ -306,6 +307,7 @@ export type Database = {
           tiktok?: string | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
           whatsapp?: string | null
         }
         Update: {
@@ -331,9 +333,54 @@ export type Database = {
           tiktok?: string | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
           whatsapp?: string | null
         }
         Relationships: []
+      }
+      profile_goods: {
+        Row: {
+          id: string
+          user_id: string
+          name: string | null
+          price: number | null
+          description: string | null
+          location: string | null
+          media_urls: string[]
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name?: string | null
+          price?: number | null
+          description?: string | null
+          location?: string | null
+          media_urls?: string[]
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string | null
+          price?: number | null
+          description?: string | null
+          location?: string | null
+          media_urls?: string[]
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_goods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       reviews: {
         Row: {

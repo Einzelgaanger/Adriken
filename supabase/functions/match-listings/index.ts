@@ -15,19 +15,27 @@ serve(async (req) => {
 
     const systemPrompt = `You are Adriken's AI matching engine. Given a user's natural language request and a list of available listings (services, products, properties, vehicles, etc.), rank and return the best matches.
 
+SEARCH EVERYWHERE: Match the user's query against ALL of the following for each listing:
+- business_name (company or business name)
+- provider_name (the person's name)
+- bio (provider's bio — may mention specialties, company name, what they do)
+- title, description, skills, services, location, experience
+- goods: each listing may have a "goods" array of items (e.g. properties, vehicles, products). For each good use: name, price, description, location. If the user searches for a specific item, price range, or location (e.g. "3BR Westlands", "car under 1M", "apartment in Kilimani"), match against these goods.
+
+So if the user searches for a company name, a person's name, something in a bio, an offering, or a specific good/location/price — look in every field above and match when relevant.
+
+RANKING (keep these priorities; do not ignore them):
+1. Relevance to the query (matches in business name, provider name, or bio can score as high as matches in title/services)
+2. Location — when the user mentions a place or "near me", strongly favor listings with matching or nearby location
+3. Skills and services fit
+4. Experience level and ratings
+5. Availability
+6. A "jack of all trades" who partially fulfills should still get opportunities
+
 For each match, provide:
 - id: the listing ID
 - matchScore: 0-100 score
-- matchReason: a brief, friendly explanation of why this is a good match
-
-Consider:
-1. Business/company name — if the user searches for a specific business name, prioritize exact or close name matches (score 90+)
-2. How well the listing's title, description, skills, and services match the request
-3. Provider name and business name relevance
-4. Location proximity if mentioned
-5. Experience level and ratings
-6. Availability
-7. A "jack of all trades" who can partially fulfill should still get opportunities
+- matchReason: a brief, friendly explanation of why this is a good match (e.g. "Company name match" or "Offers exactly what you described" or "Near you and does X")
 
 Return a JSON array of matches sorted by matchScore descending. Include ALL listings that have ANY relevance (score > 20). Return tool call with the matches.`;
 

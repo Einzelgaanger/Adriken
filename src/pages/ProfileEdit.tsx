@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Camera, Upload, X, Loader2, MapPin, Phone, Mail, MessageSquare,
-  Instagram, Facebook, Plus, Sparkles, Star, Building2, Briefcase, Save
+  Instagram, Facebook, Plus, Sparkles, Star, Building2, Briefcase, Save, Globe, Package
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,7 @@ const ProfileEdit = () => {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const certInputRef = useRef<HTMLInputElement>(null);
+  const goodsInputRef = useRef<HTMLInputElement>(null);
 
   // Profile state
   const [saving, setSaving] = useState(false);
@@ -37,12 +38,17 @@ const ProfileEdit = () => {
   const [instagram, setInstagram] = useState("");
   const [tiktok, setTiktok] = useState("");
   const [facebook, setFacebook] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [liveLocation, setLiveLocation] = useState(false);
   const [portfolioImages, setPortfolioImages] = useState<string[]>([]);
   const [portfolioVideos, setPortfolioVideos] = useState<string[]>([]);
   const [certifications, setCertifications] = useState<string[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
+
+  type GoodItem = { id: string | null; name: string; price: string; description: string; location: string; media_urls: string[] };
+  const [goods, setGoods] = useState<GoodItem[]>([]);
+  const goodUploadIndexRef = useRef<number>(0);
 
   // Listing state
   const [listingTitle, setListingTitle] = useState("");
@@ -82,6 +88,20 @@ const ProfileEdit = () => {
         .maybeSingle();
       if (error) throw error;
       return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: profileGoods } = useQuery({
+    queryKey: ["profile-goods", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile_goods")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!user,
   });
@@ -132,11 +152,11 @@ const ProfileEdit = () => {
   const [initialState, setInitialState] = useState<string>("");
 
   const currentState = useMemo(() => JSON.stringify({
-    fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
-    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+    fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook, websiteUrl,
+    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications, goods,
     listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience,
-  }), [fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
-    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+  }), [fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook, websiteUrl,
+    avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications, goods,
     listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience]);
 
   const hasChanges = initialState !== "" && currentState !== initialState;
@@ -153,6 +173,7 @@ const ProfileEdit = () => {
       setInstagram((profile as any).instagram || "");
       setTiktok((profile as any).tiktok || "");
       setFacebook((profile as any).facebook || "");
+      setWebsiteUrl((profile as any).website_url || "");
       setAvatarUrl(profile.avatar_url || "");
       setLiveLocation(profile.live_location_enabled || false);
       setPortfolioImages((profile as any).portfolio_images || []);
@@ -160,6 +181,19 @@ const ProfileEdit = () => {
       setCertifications((profile as any).certifications || []);
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (profileGoods && Array.isArray(profileGoods)) {
+      setGoods(profileGoods.map((g: any) => ({
+        id: g.id,
+        name: g.name || "",
+        price: g.price != null ? String(g.price) : "",
+        description: g.description || "",
+        location: g.location || "",
+        media_urls: g.media_urls || [],
+      })));
+    }
+  }, [profileGoods]);
 
   useEffect(() => {
     if (existingListing) {
@@ -180,14 +214,14 @@ const ProfileEdit = () => {
       // small delay to allow listing state to settle
       const t = setTimeout(() => {
         setInitialState(JSON.stringify({
-          fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook,
-          avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications,
+          fullName, businessName, bio, location, phone, emailPublic, whatsapp, instagram, tiktok, facebook, websiteUrl,
+          avatarUrl, liveLocation, portfolioImages, portfolioVideos, certifications, goods,
           listingTitle, listingDescription, listingType, hourlyRate, fixedPrice, skills, services, experience,
         }));
       }, 300);
       return () => clearTimeout(t);
     }
-  }, [profile, existingListing, authLoading, isLoading]);
+  }, [profile, existingListing, profileGoods, authLoading, isLoading]);
 
   const uploadFile = async (file: File, bucket: string): Promise<string | null> => {
     const ext = file.name.split(".").pop();
@@ -235,6 +269,43 @@ const ProfileEdit = () => {
     }
     setUploading(null);
     if (certInputRef.current) certInputRef.current.value = "";
+  };
+
+  const handleGoodsMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const goodIndex = goodUploadIndexRef.current;
+    setUploading(`goods-${goodIndex}`);
+    for (const file of Array.from(files)) {
+      if (file.size > 20 * 1024 * 1024) { toast.error(`${file.name} too large (max 20MB)`); continue; }
+      const url = await uploadFile(file, "portfolios");
+      if (url) {
+        setGoods(prev => {
+          const next = [...prev];
+          if (next[goodIndex]) next[goodIndex] = { ...next[goodIndex], media_urls: [...next[goodIndex].media_urls, url] };
+          return next;
+        });
+      }
+    }
+    setUploading(null);
+    if (goodsInputRef.current) goodsInputRef.current.value = "";
+  };
+
+  const addGood = () => setGoods(prev => [...prev, { id: null, name: "", price: "", description: "", location: "", media_urls: [] }]);
+  const removeGood = (index: number) => setGoods(prev => prev.filter((_, i) => i !== index));
+  const updateGood = (index: number, field: keyof GoodItem, value: string | string[]) => {
+    setGoods(prev => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+  const removeGoodMedia = (goodIndex: number, mediaIndex: number) => {
+    setGoods(prev => {
+      const next = [...prev];
+      next[goodIndex] = { ...next[goodIndex], media_urls: next[goodIndex].media_urls.filter((_, i) => i !== mediaIndex) };
+      return next;
+    });
   };
 
   const handleGetLocation = () => {
@@ -285,6 +356,7 @@ const ProfileEdit = () => {
       instagram: instagram.trim(),
       tiktok: tiktok.trim(),
       facebook: facebook.trim(),
+      website_url: websiteUrl.trim(),
       avatar_url: avatarUrl,
       live_location_enabled: liveLocation,
       portfolio_images: portfolioImages,
@@ -301,6 +373,29 @@ const ProfileEdit = () => {
       } catch { /* ignore */ }
     }
     const { error: profileError } = await supabase.from("profiles").update(profileUpdate).eq("user_id", user.id);
+
+    // Save goods (profile_goods)
+    const keptGoodIds: string[] = [];
+    for (const g of goods) {
+      const payload = {
+        user_id: user.id,
+        name: g.name.trim() || null,
+        price: g.price.trim() ? parseFloat(g.price) : null,
+        description: g.description.trim() || null,
+        location: g.location.trim() || null,
+        media_urls: g.media_urls || [],
+      };
+      if (g.id) {
+        const { error: upErr } = await supabase.from("profile_goods").update(payload).eq("id", g.id);
+        if (!upErr) keptGoodIds.push(g.id);
+      } else {
+        const { data: ins, error: inErr } = await supabase.from("profile_goods").insert(payload).select("id").single();
+        if (!inErr && ins?.id) keptGoodIds.push(ins.id);
+      }
+    }
+    const { data: existingGoods } = await supabase.from("profile_goods").select("id").eq("user_id", user.id);
+    const toDelete = (existingGoods || []).filter((row: { id: string }) => !keptGoodIds.includes(row.id)).map((row: { id: string }) => row.id);
+    if (toDelete.length > 0) await supabase.from("profile_goods").delete().in("id", toDelete);
 
     // Save listing if title exists
     let listingError = null;
@@ -333,6 +428,7 @@ const ProfileEdit = () => {
       setInitialState(currentState);
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["my-listing"] });
+      queryClient.invalidateQueries({ queryKey: ["profile-goods"] });
     }
   };
 
@@ -509,6 +605,10 @@ const ProfileEdit = () => {
                   <Label className="flex items-center gap-1.5">🎵 TikTok</Label>
                   <Input value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="@yourhandle" />
                 </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> Company or website</Label>
+                  <Input value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://yoursite.com" type="url" />
+                </div>
               </div>
             </div>
 
@@ -553,6 +653,72 @@ const ProfileEdit = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* My goods — images/videos + name, price, description, location (all optional); searchable */}
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+              <h2 className="font-display font-bold text-lg text-foreground flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Package className="w-4 h-4 text-primary" />
+                </div>
+                My Goods
+              </h2>
+              <p className="text-sm text-muted-foreground">Add items or products (e.g. properties, vehicles). Name, price, description and location are optional and help others find you when searching.</p>
+              {goods.map((good, idx) => (
+                <div key={good.id ?? `new-${idx}`} className="rounded-xl border border-border p-4 space-y-3 bg-secondary/30">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground">Item {idx + 1}</span>
+                    <button type="button" onClick={() => removeGood(idx)} className="text-muted-foreground hover:text-destructive p-1">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label>Name (optional)</Label>
+                      <Input value={good.name} onChange={(e) => updateGood(idx, "name", e.target.value)} placeholder="e.g. 3BR apartment Westlands" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>Price KSh (optional)</Label>
+                      <Input type="number" value={good.price} onChange={(e) => updateGood(idx, "price", e.target.value)} placeholder="e.g. 45000" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Description (optional)</Label>
+                    <Textarea value={good.description} onChange={(e) => updateGood(idx, "description", e.target.value)} placeholder="Short description — used in search" rows={2} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Location (optional)</Label>
+                    <Input value={good.location} onChange={(e) => updateGood(idx, "location", e.target.value)} placeholder="e.g. Westlands, Nairobi" />
+                  </div>
+                  <div>
+                    <Label className="block mb-1.5">Images / videos (optional)</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => { goodUploadIndexRef.current = idx; goodsInputRef.current?.click(); }} disabled={uploading !== null}>
+                      {uploading === `goods-${idx}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4 mr-1" />}
+                      Add media
+                    </Button>
+                    {good.media_urls.length > 0 && (
+                      <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        {good.media_urls.map((url, mi) => (
+                          <div key={mi} className="relative group rounded-lg overflow-hidden border border-border aspect-square">
+                            {url.match(/\.(mp4|webm|ogg)$/i) ? (
+                              <video src={url} className="w-full h-full object-cover" />
+                            ) : (
+                              <img src={url} alt="" className="w-full h-full object-cover" />
+                            )}
+                            <button type="button" onClick={() => removeGoodMedia(idx, mi)} className="absolute top-0.5 right-0.5 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <input ref={goodsInputRef} type="file" accept="image/*,video/*" multiple className="hidden" onChange={handleGoodsMediaUpload} />
+              <Button type="button" variant="outline" onClick={addGood} className="w-full rounded-xl">
+                <Plus className="w-4 h-4 mr-2" /> Add another good
+              </Button>
             </div>
 
             {/* Certifications */}
