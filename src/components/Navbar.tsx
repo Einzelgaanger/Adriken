@@ -54,6 +54,7 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
       </AnimatePresence>
 
       <nav
+      ref={ref}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] ${
         scrolled
           ? "bg-white/95 backdrop-blur-2xl border-b border-primary/[0.06] shadow-xs"
