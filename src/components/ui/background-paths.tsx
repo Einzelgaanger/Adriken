@@ -51,12 +51,14 @@ type BackgroundPathsLayerProps = {
   className?: string;
 };
 
-export function BackgroundPathsLayer({ className = "" }: BackgroundPathsLayerProps) {
+export const BackgroundPathsLayer = forwardRef<HTMLDivElement, BackgroundPathsLayerProps>(({ className = "" }, ref) => {
   return (
-    <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
+    <div ref={ref} className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
       <FloatingPaths position={1} strokeClassName="text-primary/95" />
       <FloatingPaths position={-1} strokeClassName="text-orange-500/90" />
     </div>
   );
-}
+});
+
+BackgroundPathsLayer.displayName = "BackgroundPathsLayer";
 
