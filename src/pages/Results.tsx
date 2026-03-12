@@ -166,7 +166,7 @@ const Results = () => {
 
       const aiMatches: AIMatch[] = matchData?.matches || [];
       void logSearch({ userId, query, resultCount: aiMatches.length });
-      void logPromptUsage({ userId, promptType: "match_listings", metadata: { query, result_count: resultCount } });
+      void logPromptUsage({ userId, promptType: "match_listings", metadata: { query, result_count: aiMatches.length } });
       const matchMap = new Map(aiMatches.map((m: AIMatch) => [m.id, m]));
       const sorted = [...listings]
         .filter((l) => matchMap.has(l.id))
