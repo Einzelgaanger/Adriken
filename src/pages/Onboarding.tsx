@@ -12,6 +12,9 @@ import {
   Mail,
   Navigation,
   CheckCircle2,
+  Package,
+  Briefcase,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,10 +29,11 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
 const STEPS = [
-  { id: 1, title: "About you", icon: User },
-  { id: 2, title: "Contact", icon: Phone },
-  { id: 3, title: "Location", icon: MapPin },
-  { id: 4, title: "Discover", icon: Sparkles },
+  { id: 1, title: "What you offer", icon: Briefcase },
+  { id: 2, title: "About you", icon: User },
+  { id: 3, title: "Contact", icon: Phone },
+  { id: 4, title: "Location", icon: MapPin },
+  { id: 5, title: "Discover", icon: Sparkles },
 ];
 
 type LatLng = { lat: number; lng: number };
@@ -52,16 +56,19 @@ const Onboarding = () => {
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
 
-  // Step 1
+  // Step 1: what they offer (goods | service | friends)
+  const [intent, setIntent] = useState<"goods" | "service" | "friends" | null>(null);
+
+  // Step 2
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [bio, setBio] = useState("");
 
-  // Step 2
+  // Step 3
   const [phone, setPhone] = useState("");
   const [emailPublic, setEmailPublic] = useState("");
 
-  // Step 3
+  // Step 4
   const [userCoords, setUserCoords] = useState<LatLng | null>(null);
   const [liveLocation, setLiveLocation] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -83,11 +90,13 @@ const Onboarding = () => {
 
   useEffect(() => {
     if (profile) {
+      const p = profile as any;
+      if (p.onboarding_intent === "goods" || p.onboarding_intent === "service" || p.onboarding_intent === "friends") setIntent(p.onboarding_intent);
       setFullName(profile.full_name || "");
-      setBusinessName((profile as any).business_name || "");
+      setBusinessName(p.business_name || "");
       setBio(profile.bio || "");
       setPhone(profile.phone || "");
-      setEmailPublic((profile as any).email_public || "");
+      setEmailPublic(p.email_public || "");
       setLiveLocation(!!profile.live_location_enabled);
       if (profile.latitude != null && profile.longitude != null) {
         setUserCoords({ lat: profile.latitude, lng: profile.longitude });
@@ -116,7 +125,7 @@ const Onboarding = () => {
         .sort((a: any, b: any) => a.distanceKm - b.distanceKm)
         .slice(0, 6);
     },
-    enabled: step === 4 && !!userCoords,
+    enabled: step === 5 && !!userCoords,
   });
 
   useEffect(() => {
@@ -134,11 +143,14 @@ const Onboarding = () => {
     if (!user) return;
     setSaving(true);
     try {
-      await supabase
+      const completedAt = new Date().toISOString();
+      const { error } = await supabase
         .from("profiles")
-        .update({ onboarding_completed_at: new Date().toISOString() })
+        .update({ onboarding_completed_at: completedAt })
         .eq("user_id", user.id);
+      if (error) throw error;
       queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+      queryClient.setQueryData(["profile-onboarding", user.id], { onboarding_completed_at: completedAt });
       navigate("/dashboard", { replace: true });
     } catch (e) {
       toast.error("Something went wrong");
@@ -148,17 +160,13 @@ const Onboarding = () => {
   };
 
   const handleStep1Next = async () => {
-    if (!fullName.trim()) {
-      toast.error("Please enter your name");
+    if (!intent) {
+      toast.error("Please choose one option");
       return;
     }
     setSaving(true);
     try {
-      await saveProfile({
-        full_name: fullName.trim(),
-        business_name: businessName.trim() || null,
-        bio: bio.trim() || null,
-      });
+      await saveProfile({ onboarding_intent: intent });
       setStep(2);
     } catch {
       toast.error("Could not save");
@@ -168,11 +176,16 @@ const Onboarding = () => {
   };
 
   const handleStep2Next = async () => {
+    if (!fullName.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
     setSaving(true);
     try {
       await saveProfile({
-        phone: phone.trim() || null,
-        email_public: emailPublic.trim() || null,
+        full_name: fullName.trim(),
+        business_name: intent === "friends" ? null : (businessName.trim() || null),
+        bio: bio.trim() || null,
       });
       setStep(3);
     } catch {
@@ -186,12 +199,27 @@ const Onboarding = () => {
     setSaving(true);
     try {
       await saveProfile({
+        phone: phone.trim() || null,
+        email_public: emailPublic.trim() || null,
+      });
+      setStep(4);
+    } catch {
+      toast.error("Could not save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleStep4Next = async () => {
+    setSaving(true);
+    try {
+      await saveProfile({
         latitude: userCoords?.lat ?? null,
         longitude: userCoords?.lng ?? null,
         live_location_enabled: liveLocation,
         location: locationText.trim() || null,
       });
-      setStep(4);
+      setStep(5);
     } catch {
       toast.error("Could not save");
     } finally {
@@ -265,29 +293,40 @@ const Onboarding = () => {
             >
               <div className="text-center mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <User className="w-6 h-6 text-primary" />
+                  <Briefcase className="w-6 h-6 text-primary" />
                 </div>
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Welcome to Adriken</h1>
-                <p className="text-sm text-muted-foreground mt-1">Tell us a bit about yourself so we can personalize your experience.</p>
+                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">What brings you to Adriken?</h1>
+                <p className="text-sm text-muted-foreground mt-1">We'll tailor your profile and suggestions.</p>
               </div>
-              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
-                <div className="space-y-2">
-                  <Label>Your name *</Label>
-                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Jane" className="rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Business name (optional)</Label>
-                  <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. My Shop" className="rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Short bio (optional)</Label>
-                  <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What you do or what you're looking for" rows={2} className="rounded-xl resize-none" />
-                </div>
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-3 shadow-soft">
+                {[
+                  { value: "goods" as const, label: "Share or sell goods", sub: "Products, items, properties", icon: Package },
+                  { value: "service" as const, label: "Offer a service", sub: "Skills, gigs, professional help", icon: Briefcase },
+                  { value: "friends" as const, label: "Connect with people", sub: "Make friends, find community", icon: Users },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setIntent(opt.value)}
+                    className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${
+                      intent === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/50"
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                      <opt.icon className="w-5 h-5 text-foreground" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{opt.label}</p>
+                      <p className="text-xs text-muted-foreground">{opt.sub}</p>
+                    </div>
+                    {intent === opt.value && <CheckCircle2 className="w-5 h-5 text-primary ml-auto shrink-0" />}
+                  </button>
+                ))}
                 <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
                   <Button variant="ghost" onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
                     Skip onboarding
                   </Button>
-                  <Button onClick={handleStep1Next} disabled={saving} className="rounded-xl flex-1">
+                  <Button onClick={handleStep1Next} disabled={saving || !intent} className="rounded-xl flex-1">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
@@ -299,6 +338,62 @@ const Onboarding = () => {
           {step === 2 && (
             <motion.div
               key="step2"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              className="space-y-6"
+            >
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <User className="w-6 h-6 text-primary" />
+                </div>
+                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+                  {intent === "friends" ? "Introduce yourself" : "About you"}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {intent === "friends" ? "A few details so others can find you." : "Tell us a bit about yourself so we can personalize your experience."}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-card border border-border p-4 sm:p-6 space-y-4 shadow-soft">
+                <div className="space-y-2">
+                  <Label>Your name *</Label>
+                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Jane" className="rounded-xl" />
+                </div>
+                {intent !== "friends" && (
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> Business name (optional)</Label>
+                    <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. My Shop" className="rounded-xl" />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label>Short bio (optional)</Label>
+                  <Textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder={intent === "friends" ? "What you're into or looking for" : "What you do or what you're looking for"}
+                    rows={2}
+                    className="rounded-xl resize-none"
+                  />
+                </div>
+                <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+                  <Button variant="ghost" onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
+                    Skip onboarding
+                  </Button>
+                  <div className="flex gap-2 flex-1">
+                    <Button variant="outline" onClick={() => setStep(1)} className="rounded-xl">Back</Button>
+                    <Button onClick={handleStep2Next} disabled={saving} className="rounded-xl flex-1">
+                      {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              key="step3"
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -12 }}
@@ -325,8 +420,8 @@ const Onboarding = () => {
                     Skip onboarding
                   </Button>
                   <div className="flex gap-2 flex-1">
-                    <Button variant="outline" onClick={() => setStep(1)} className="rounded-xl">Back</Button>
-                    <Button onClick={handleStep2Next} disabled={saving} className="rounded-xl flex-1">
+                    <Button variant="outline" onClick={() => setStep(2)} className="rounded-xl">Back</Button>
+                    <Button onClick={handleStep3Next} disabled={saving} className="rounded-xl flex-1">
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
@@ -336,9 +431,9 @@ const Onboarding = () => {
             </motion.div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <motion.div
-              key="step3"
+              key="step4"
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -12 }}
@@ -376,8 +471,8 @@ const Onboarding = () => {
                     Skip onboarding
                   </Button>
                   <div className="flex gap-2 flex-1">
-                    <Button variant="outline" onClick={() => setStep(2)} className="rounded-xl">Back</Button>
-                    <Button onClick={handleStep3Next} disabled={saving} className="rounded-xl flex-1">
+                    <Button variant="outline" onClick={() => setStep(3)} className="rounded-xl">Back</Button>
+                    <Button onClick={handleStep4Next} disabled={saving} className="rounded-xl flex-1">
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
@@ -387,9 +482,9 @@ const Onboarding = () => {
             </motion.div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <motion.div
-              key="step4"
+              key="step5"
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -12 }}
@@ -400,7 +495,9 @@ const Onboarding = () => {
                   <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">You're all set</h1>
-                <p className="text-sm text-muted-foreground mt-1">Here are some businesses near you to get started.</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {intent === "friends" ? "Here are people and places near you." : "Here are some businesses near you to get started."}
+                </p>
               </div>
 
               {!userCoords && (
@@ -450,7 +547,7 @@ const Onboarding = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep(3)} className="rounded-xl flex-1">Back</Button>
+                <Button variant="outline" onClick={() => setStep(4)} className="rounded-xl flex-1">Back</Button>
                 <Button onClick={completeOnboarding} disabled={saving} className="rounded-xl flex-1">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Go to dashboard"}
                   <ArrowRight className="w-4 h-4 ml-1" />

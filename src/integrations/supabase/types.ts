@@ -276,6 +276,7 @@ export type Database = {
           location: string | null
           longitude: number | null
           onboarding_completed_at: string | null
+          onboarding_intent: string | null
           phone: string | null
           portfolio_images: string[] | null
           portfolio_videos: string[] | null
@@ -303,6 +304,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           onboarding_completed_at?: string | null
+          onboarding_intent?: string | null
           phone?: string | null
           portfolio_images?: string[] | null
           portfolio_videos?: string[] | null
@@ -330,6 +332,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           onboarding_completed_at?: string | null
+          onboarding_intent?: string | null
           phone?: string | null
           portfolio_images?: string[] | null
           portfolio_videos?: string[] | null

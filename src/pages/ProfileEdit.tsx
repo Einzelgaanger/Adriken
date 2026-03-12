@@ -663,7 +663,11 @@ const ProfileEdit = () => {
                 </div>
                 My Goods
               </h2>
-              <p className="text-sm text-muted-foreground">Add items or products (e.g. properties, vehicles). Name, price, description and location are optional and help others find you when searching.</p>
+              <p className="text-sm text-muted-foreground">
+                {(profile as any)?.onboarding_intent === "friends"
+                  ? "You're here to connect — you can add goods or items anytime if you like. All optional."
+                  : "Add items or products (e.g. properties, vehicles). Name, price, description and location are optional and help others find you when searching."}
+              </p>
               {goods.map((good, idx) => (
                 <div key={good.id ?? `new-${idx}`} className="rounded-xl border border-border p-4 space-y-3 bg-secondary/30">
                   <div className="flex items-center justify-between">
