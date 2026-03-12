@@ -74,15 +74,15 @@ const ResetPassword = () => {
     };
   }, []);
 
-  // Once we think we're in recovery, confirm we have a session (or form submit will fail)
+  // Confirm whether a valid authenticated session exists before allowing password update
   useEffect(() => {
-    if (!isRecovery || checking) return;
+    if (checking) return;
     let cancelled = false;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!cancelled) setHasValidSession(!!user);
     });
     return () => { cancelled = true; };
-  }, [isRecovery, checking]);
+  }, [checking]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
