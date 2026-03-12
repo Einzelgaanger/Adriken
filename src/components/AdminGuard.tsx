@@ -3,7 +3,15 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
-/** Protects /weareadmins: requires login, then checks get_my_admin_status(). Non-admins redirect to dashboard. */
+const ADMIN_EMAILS = ["binfred.ke@gmail.com", "adriankenadams@gmail.com"];
+
+function isAdminEmail(email: string | undefined): boolean {
+  if (!email) return false;
+  const lower = email.trim().toLowerCase();
+  return ADMIN_EMAILS.some((a) => a.toLowerCase() === lower);
+}
+
+/** Protects /weareadmins: requires login, then checks admin list (client + optional RPC). Non-admins redirect to dashboard. */
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const location = useLocation();
@@ -12,6 +20,10 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     if (!user) {
       setAdminStatus(false);
+      return;
+    }
+    if (isAdminEmail(user.email ?? undefined)) {
+      setAdminStatus(true);
       return;
     }
     let mounted = true;
