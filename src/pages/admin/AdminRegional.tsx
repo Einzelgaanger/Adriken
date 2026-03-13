@@ -2,6 +2,11 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { countryLabel } from "@/lib/adminAnalytics";
+
+const chartConfig = { visitors: { label: "Visitors", color: "hsl(217 91% 60%)" } };
 
 export default function AdminRegional() {
   const searchesByCountry = useQuery({
@@ -31,6 +36,14 @@ export default function AdminRegional() {
       return Object.entries(map).sort((a, b) => b[1] - a[1]);
     },
   });
+
+  const countryChartData = useMemo(() => {
+    const d = pageViewsByCountry.data ?? [];
+    return d.slice(0, 15).map(([country, visitors]) => {
+      const { name } = countryLabel(country);
+      return { country: country === "(unknown)" ? "Unknown" : name, visitors };
+    });
+  }, [pageViewsByCountry.data]);
 
   const profilesByLocation = useQuery({
     queryKey: ["admin", "regional-profiles"],
@@ -94,11 +107,25 @@ export default function AdminRegional() {
       <Card className="border-border/80 shadow-soft rounded-xl">
         <CardHeader>
           <CardTitle>Page views by country</CardTitle>
+          <p className="text-sm text-muted-foreground">Top 15 countries (chart).</p>
         </CardHeader>
         <CardContent>
           {pageViewsByCountry.isLoading && (
             <div className="flex justify-center py-8">
               <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+          {!pageViewsByCountry.isLoading && !pageViewsByCountry.error && countryChartData.length > 0 && (
+            <div className="mb-6">
+              <ChartContainer config={chartConfig} className="h-[240px] w-full">
+                <BarChart data={countryChartData} layout="vertical" margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
+                  <XAxis type="number" tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis type="category" dataKey="country" tickLine={false} axisLine={false} width={100} tick={{ fontSize: 12 }} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="visitors" fill="var(--color-visitors)" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ChartContainer>
             </div>
           )}
           {!pageViewsByCountry.isLoading && !pageViewsByCountry.error && (

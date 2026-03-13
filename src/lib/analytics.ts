@@ -35,6 +35,28 @@ export async function logSearch(params: {
   }
 }
 
+/** Detect device type from User-Agent. */
+export function getDeviceType(): "mobile" | "desktop" | "tablet" {
+  if (typeof navigator === "undefined" || !navigator.userAgent) return "desktop";
+  const ua = navigator.userAgent.toLowerCase();
+  if (/tablet|ipad|playbook|silk|kindle/i.test(ua)) return "tablet";
+  if (/mobile|android|iphone|ipod|blackberry|opera mini|iemobile/i.test(ua)) return "mobile";
+  return "desktop";
+}
+
+const VISITOR_ID_KEY = "adriken_visitor_id";
+
+/** Get or create a persistent visitor id (localStorage). */
+export function getVisitorId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem(VISITOR_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID ? crypto.randomUUID() : "v_" + Date.now() + "_" + Math.random().toString(36).slice(2, 11);
+    localStorage.setItem(VISITOR_ID_KEY, id);
+  }
+  return id;
+}
+
 /** Log a page view. */
 export async function logPageView(params: {
   userId: string | null;
@@ -42,6 +64,9 @@ export async function logPageView(params: {
   queryString?: string | null;
   referrer?: string | null;
   country?: string | null;
+  visitorId?: string | null;
+  device?: "mobile" | "desktop" | "tablet" | null;
+  userAgent?: string | null;
 }) {
   try {
     await supabase.from("analytics_page_views").insert({
@@ -50,6 +75,9 @@ export async function logPageView(params: {
       query_string: params.queryString ?? null,
       referrer: params.referrer ?? null,
       country: params.country ?? null,
+      visitor_id: params.visitorId ?? null,
+      device: params.device ?? null,
+      user_agent: params.userAgent ?? null,
     });
   } catch {
     // Non-blocking
