@@ -94,8 +94,8 @@ export async function logPromptUsage(params: {
     await supabase.from("analytics_prompt_usage").insert({
       user_id: params.userId ?? null,
       prompt_type: params.promptType,
-      metadata: params.metadata ?? {},
-    });
+      metadata: (params.metadata ?? {}) as any,
+    } as any);
   } catch {
     // Non-blocking
   }

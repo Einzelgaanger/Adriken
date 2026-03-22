@@ -94,14 +94,14 @@ function useCountStats(table: string, dateColumn: string) {
   return useQuery({
     queryKey: ["admin", "count-stats", table],
     queryFn: async () => {
-      const { data, error } = await supabase.from(table).select(dateColumn);
+      const { data, error } = await supabase.from(table as any).select(dateColumn);
       if (error) throw error;
       const now = new Date();
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
       let today = 0, last7 = 0, last30 = 0;
-      (data || []).forEach((r: Record<string, string>) => {
+      ((data || []) as any[]).forEach((r: Record<string, string>) => {
         const d = r[dateColumn];
         if (d >= todayStart) today++;
         if (d >= sevenDaysAgo) last7++;
