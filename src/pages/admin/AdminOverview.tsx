@@ -42,7 +42,7 @@ function usePageViewsForAnalytics() {
         .gte("created_at", cutoff.toISOString())
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as PageViewRow[];
+      return (data ?? []) as unknown as PageViewRow[];
     },
   });
 }
