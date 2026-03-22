@@ -14,6 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_allowed_emails: {
+        Row: {
+          email: string
+        }
+        Insert: {
+          email: string
+        }
+        Update: {
+          email?: string
+        }
+        Relationships: []
+      }
+      analytics_page_views: {
+        Row: {
+          country: string | null
+          created_at: string
+          device: string | null
+          id: string
+          path: string
+          query_string: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          path: string
+          query_string?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          path?: string
+          query_string?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
+      analytics_prompt_usage: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          prompt_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          prompt_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          prompt_type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      analytics_searches: {
+        Row: {
+          country: string | null
+          created_at: string
+          filters: Json | null
+          id: string
+          query: string
+          region: string | null
+          result_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          query: string
+          region?: string | null
+          result_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          query?: string
+          region?: string | null
+          result_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      analytics_sign_ins: {
+        Row: {
+          email: string | null
+          id: string
+          signed_at: string
+          user_id: string
+        }
+        Insert: {
+          email?: string | null
+          id?: string
+          signed_at?: string
+          user_id: string
+        }
+        Update: {
+          email?: string | null
+          id?: string
+          signed_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           created_at: string
@@ -106,6 +235,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_send_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message_id: string | null
+          metadata: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email?: string
+          status?: string
+          template_name?: string
+        }
+        Relationships: []
+      }
+      email_send_state: {
+        Row: {
+          auth_email_ttl_minutes: number
+          batch_size: number
+          id: number
+          retry_after_until: string | null
+          send_delay_ms: number
+          transactional_email_ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_unsubscribe_tokens: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
       }
       listings: {
         Row: {
@@ -222,6 +438,50 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "conversations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_goods: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          media_urls: string[]
+          name: string | null
+          price: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          media_urls?: string[]
+          name?: string | null
+          price?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          media_urls?: string[]
+          name?: string | null
+          price?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_goods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -347,50 +607,6 @@ export type Database = {
         }
         Relationships: []
       }
-      profile_goods: {
-        Row: {
-          id: string
-          user_id: string
-          name: string | null
-          price: number | null
-          description: string | null
-          location: string | null
-          media_urls: string[]
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          name?: string | null
-          price?: number | null
-          description?: string | null
-          location?: string | null
-          media_urls?: string[]
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          name?: string | null
-          price?: number | null
-          description?: string | null
-          location?: string | null
-          media_urls?: string[]
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_goods_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       reviews: {
         Row: {
           booking_id: string | null
@@ -436,111 +652,27 @@ export type Database = {
           },
         ]
       }
-      analytics_sign_ins: {
+      suppressed_emails: {
         Row: {
-          id: string
-          user_id: string
-          email: string | null
-          signed_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          email?: string | null
-          signed_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          email?: string | null
-          signed_at?: string
-        }
-        Relationships: []
-      }
-      analytics_searches: {
-        Row: {
-          id: string
-          user_id: string | null
-          query: string
-          filters: Json
-          result_count: number | null
           created_at: string
-          country: string | null
-          region: string | null
-        }
-        Insert: {
-          id?: string
-          user_id?: string | null
-          query: string
-          filters?: Json
-          result_count?: number | null
-          created_at?: string
-          country?: string | null
-          region?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string | null
-          query?: string
-          filters?: Json
-          result_count?: number | null
-          created_at?: string
-          country?: string | null
-          region?: string | null
-        }
-        Relationships: []
-      }
-      analytics_page_views: {
-        Row: {
+          email: string
           id: string
-          user_id: string | null
-          path: string
-          query_string: string | null
-          referrer: string | null
-          created_at: string
-          country: string | null
+          metadata: Json | null
+          reason: string
         }
         Insert: {
-          id?: string
-          user_id?: string | null
-          path: string
-          query_string?: string | null
-          referrer?: string | null
           created_at?: string
-          country?: string | null
+          email: string
+          id?: string
+          metadata?: Json | null
+          reason: string
         }
         Update: {
-          id?: string
-          user_id?: string | null
-          path?: string
-          query_string?: string | null
-          referrer?: string | null
           created_at?: string
-          country?: string | null
-        }
-        Relationships: []
-      }
-      analytics_prompt_usage: {
-        Row: {
-          id: string
-          user_id: string | null
-          prompt_type: string
-          created_at: string
-          metadata: Json
-        }
-        Insert: {
+          email?: string
           id?: string
-          user_id?: string | null
-          prompt_type: string
-          created_at?: string
-          metadata?: Json
-        }
-        Update: {
-          id?: string
-          user_id?: string | null
-          prompt_type?: string
-          created_at?: string
-          metadata?: Json
+          metadata?: Json | null
+          reason?: string
         }
         Relationships: []
       }
@@ -549,9 +681,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_my_admin_status: {
-        Args: Record<PropertyKey, never>
+      delete_email: {
+        Args: { message_id: number; queue_name: string }
         Returns: boolean
+      }
+      enqueue_email: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      get_my_admin_status: { Args: never; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
+      move_to_dlq: {
+        Args: {
+          dlq_name: string
+          message_id: number
+          payload: Json
+          source_queue: string
+        }
+        Returns: number
+      }
+      read_email_batch: {
+        Args: { batch_size: number; queue_name: string; vt: number }
+        Returns: {
+          message: Json
+          msg_id: number
+          read_ct: number
+        }[]
       }
     }
     Enums: {
