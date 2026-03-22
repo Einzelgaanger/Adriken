@@ -25,11 +25,11 @@ export async function logSearch(params: {
     await supabase.from("analytics_searches").insert({
       user_id: params.userId ?? null,
       query: params.query,
-      filters: params.filters ?? {},
+      filters: (params.filters ?? {}) as any,
       result_count: params.resultCount ?? null,
       country: params.country ?? null,
       region: params.region ?? null,
-    });
+    } as any);
   } catch {
     // Non-blocking
   }
@@ -94,8 +94,8 @@ export async function logPromptUsage(params: {
     await supabase.from("analytics_prompt_usage").insert({
       user_id: params.userId ?? null,
       prompt_type: params.promptType,
-      metadata: params.metadata ?? {},
-    });
+      metadata: (params.metadata ?? {}) as any,
+    } as any);
   } catch {
     // Non-blocking
   }

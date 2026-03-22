@@ -80,7 +80,7 @@ export function computeTrafficMetrics(rows: PageViewRow[]): TrafficMetrics {
   return {
     visitors,
     pageviews,
-    sessions,
+    sessions: sessions.length,
     viewsPerVisit: Math.round(viewsPerVisit * 100) / 100,
     avgVisitDurationMs,
     avgVisitDurationFormatted,
